@@ -1,0 +1,215 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
+  // output   = "../generated/client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  /// User 流水號 id
+  id           Int        @id @default(autoincrement())
+  /// 使用者id
+  uid          String     @unique
+  /// 密碼
+  password     String
+  /// 姓名
+  name         String     @default("InitAccount")
+  /// 使用者金額
+  balance      Int        @default(0)
+  /// 角色權限
+  role         Role       @relation(fields: [roleId], references: [id])
+  roleId       Int        @default(2) @map("role_id")
+  /// 部門
+  department   Department @relation(fields: [departmentId], references: [id])
+  departmentId Int        @default(1) @map("department_id")
+  /// 是否已經初始化
+  isInit       Boolean    @default(false) @map("is_init")
+  /// 軟刪除使用者
+  isDisable    Boolean    @default(false) @map("is_disable")
+  /// 版本戳，避免不同裝置或操作者同時操作
+  version      Int        @default(0)
+  /// 建立者使用者uid
+  createdBy String?       @map("created_by")
+  createdByUser User?     @relation("UserCreatedBy", fields: [createdBy], references: [uid])
+  createdUsers User[]     @relation("UserCreatedBy")
+
+  /// 建立時間
+  createdAt DateTime @default(now()) @map("created_at")
+  /// 更新時間
+  updatedAt DateTime @updatedAt @map("update_at")
+
+  /// 現有的 refreshToken
+  refreshTokens    UserRefreshToken[]
+  /// 建立的記帳清單
+  transactions     Transaction[]
+  /// 擁有的記帳清單項目
+  transactionItems TransactionItem[]
+  /// 金額異動紀錄
+  userBalanceLogs  UserBalanceLog[]
+  /// 使用者操作紀錄
+  auditLogs        AuditLog[]
+
+  @@map("users")
+}
+
+/// 使用者當前擁有的 refresh token
+model UserRefreshToken {
+  /// UserRefreshToken 流水號 id
+  id        Int      @id @default(autoincrement())
+  /// 屬於那一個使用者
+  uid       String
+  user      User     @relation(fields: [uid], references: [uid])
+  /// refresh token
+  token     String   @db.Text
+  /// 建立時間
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([uid])
+  @@map("user_refresh_tokens")
+}
+
+/// 使用者金額異動紀錄
+model UserBalanceLog {
+  id             BigInt   @id @default(autoincrement())
+  /// 使用者Uid 
+  user           User     @relation(fields: [uid], references: [uid])
+  uid            String
+  /// 這次異動的金額（可正負）
+  value          Int
+  /// 異動後金額
+  currentBalance Int      @map("current_balance")
+  /// 異動參考項目，關聯的 transactionId 或其他 ID
+  reference      String?
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@map("user_balance_logs")
+}
+
+/// 部門
+model Department {
+  /// Department 流水號 id
+  id    Int    @id @default(autoincrement())
+  /// 部門名稱
+  name  String @unique
+  /// 部門使用者
+  users User[]
+
+  @@map("departments")
+}
+
+/// 使用者角色權限
+model Role {
+  /// Role 流水號 id
+  id              Int              @id @default(autoincrement())
+  /// 角色名稱
+  name            String           @unique
+  /// 屬於此角色的使用者
+  users           User[]
+  /// 屬於此角色的權限
+  rolePermissions RolePermission[]
+
+  @@map("roles")
+}
+
+/// 角色與權限關聯表
+model RolePermission {
+  /// RolePermission 流水號 id
+  roleId       Int        @map("role_id")
+  id           Int        @id @default(autoincrement())
+  /// 角色 id
+  role         Role       @relation(fields: [roleId], references: [id])
+  /// 權限 id
+  permissionId Int        @map("permission_id")
+  permission   Permission @relation(fields: [permissionId], references: [id])
+
+  @@unique([roleId, permissionId]) // 避免重複綁定
+  @@map("role_permissions")
+}
+
+/// 權限（例如: "user:read", "transaction:write", "user:delete"）
+model Permission {
+  /// Permission 流水號 id
+  id          Int              @id @default(autoincrement())
+  /// 操作權限
+  action      String           @unique
+  /// 權限描述
+  description String?
+  /// 擁有此權限的角色
+  roles       RolePermission[]
+
+  @@map("permissions")
+}
+
+/// 記帳清單
+model Transaction {
+  /// Transaction 流水號 id
+  id                BigInt            @id @default(autoincrement())
+  /// 記帳清單唯一id
+  transactionId     String            @unique @map("transaction_id")
+  /// 註解
+  remark            String?           @db.Text
+  /// 創建清單的使用者uid
+  createdBy         String            @map("created_by")
+  createdByUser     User              @relation(fields: [createdBy], references: [uid])
+  /// 建立時間
+  createdAt         DateTime          @default(now()) @map("created_at")
+  /// 更新時間
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+  /// 關聯的項目
+  transactionsItems TransactionItem[]
+
+  @@map("transactions")
+}
+
+/// 記帳清單項目
+model TransactionItem {
+  /// TransactionItem 流水號 id
+  id            BigInt      @id @default(autoincrement())
+  /// 屬於那一個記帳清單
+  transactionId String      @map("transaction_id")
+  transaction   Transaction @relation(fields: [transactionId], references: [transactionId])
+  /// 異動金額
+  value         Int
+  /// 異動原因
+  details       String?
+  /// 屬於那一個使用者
+  uid           String
+  user          User        @relation(fields: [uid], references: [uid])
+  /// 建立時間
+  createdAt     DateTime    @default(now()) @map("created_at")
+  /// 更新時間
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+
+  @@map("transaction_items")
+}
+
+/// 使用者操作紀錄
+model AuditLog {
+  id        BigInt   @id @default(autoincrement())
+  uid       String
+  user      User     @relation(fields: [uid], references: [uid])
+  /// 操作 action
+  action    String
+  /// 細節說明
+  content   String
+  /// 其他資料
+  meta      Json?
+  /// 使用者ip
+  ip        String?
+  /// 使用者代理
+  userAgent String?  @map("userAgent")
+  /// 建立時間
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("audit_logs")
+}
