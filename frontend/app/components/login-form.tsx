@@ -1,0 +1,60 @@
+import { cn } from '~/lib/utils';
+import { Button } from '~/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '~/components/ui/card';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { Form } from 'react-router';
+
+export function LoginForm({
+  className,
+  ...props
+}: React.ComponentProps<'div'>) {
+  return (
+    <div className={cn('flex flex-col gap-6', className)} {...props}>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl">登入</CardTitle>
+          <CardDescription>使用工號登入，不需要輸入密碼</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form method="post">
+            <div className="flex flex-col gap-6">
+              <div className="grid gap-3">
+                <Label htmlFor="uid">ID</Label>
+                <Input
+                  id="uid"
+                  name="uid"
+                  type="text"
+                  placeholder="Enter your ID"
+                  required
+                />
+              </div>
+              <div className="grid gap-3">
+                <Label htmlFor="password">Password</Label>
+                {/* 暫時寫死預設密碼 */}
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={'66666666'}
+                  disabled
+                />
+              </div>
+              <div className="flex flex-col gap-3">
+                <Button type="submit" className="w-full cursor-pointer">
+                  Login
+                </Button>
+              </div>
+            </div>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
