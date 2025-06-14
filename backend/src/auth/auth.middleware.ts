@@ -3,7 +3,6 @@ import {
   Injectable,
   Logger,
   NestMiddleware,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
@@ -20,6 +19,7 @@ export class AuthenticationMiddleware implements NestMiddleware {
   ) {}
 
   use(req: Request, res: Response, next: NextFunction): void {
+    this.logger.debug('AuthenticationMiddleware');
     this.cls.run(() => {
       // 預設為 guest
       this.cls.set('user', {
@@ -44,6 +44,8 @@ export class AuthenticationMiddleware implements NestMiddleware {
           // 保持 guest 狀態，由後續的guard處理
           this.logger.warn(`jwt verify error: ${err}`);
         }
+      }else{
+        this.logger.warn('without jwt token');
       }
 
       next();

@@ -10,10 +10,11 @@ async function bootstrap() {
     bufferLogs: true,
   });
   app.setGlobalPrefix('api');
+  app.enableCors();
   const configService = app.get(ConfigService);
   const port = configService.get('app.port') as number;
   const logger = app.get(WINSTON_MODULE_NEST_PROVIDER);
-  app.use(morgan('tiny',{
+  app.use(morgan('tiny', {
     stream: {
       write: (message) => {
         logger.log(message, 'HTTP');

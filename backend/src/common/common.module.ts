@@ -68,7 +68,6 @@ import path from 'path';
             new winston.transports.Console({
               format: winston.format.combine(
                 winston.format.timestamp(),
-                winston.format.ms(),
                 nestWinstonModuleUtilities.format.nestLike('Nest', {
                   colors: true,
                   prettyPrint: true,
