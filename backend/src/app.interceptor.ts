@@ -24,19 +24,3 @@ export class ResponseInterceptor implements NestInterceptor {
     );
   }
 }
-
-@Injectable()
-export class BigIntInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    return next.handle().pipe(
-      map((data) =>
-        JSON.stringify(data, (key, value) => {
-          if (typeof value === 'bigint') {
-            return value.toString();
-          }
-          return value;
-        }),
-      ),
-    );
-  }
-}

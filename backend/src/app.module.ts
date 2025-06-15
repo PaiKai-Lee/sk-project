@@ -8,7 +8,7 @@ import { MeModule } from './me/me.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { AppFilter } from './app.filter';
-import { ResponseInterceptor, BigIntInterceptor } from './app.interceptor';
+import { ResponseInterceptor } from './app.interceptor';
 import { AuthenticationMiddleware } from './auth/auth.middleware';
 
 @Module({
@@ -16,10 +16,6 @@ import { AuthenticationMiddleware } from './auth/auth.middleware';
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: BigIntInterceptor,
-    },
     {
       provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,
