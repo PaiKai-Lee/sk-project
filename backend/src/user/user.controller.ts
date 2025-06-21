@@ -5,56 +5,99 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ChangePasswordDto, CreateUserDto } from './dtos';
+import { CreateUserDto } from './dtos';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 // @UseGuards(AuthGuard)
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Get()
-  async getUsers() {
-    return this.userService.getUsers({
-      select: {
+  async getUsers(
+    @Query('columns') columns?: string | string[],
+    @Query('showDisable') showDisable?: string
+  ) {
+    // 預設只撈沒停用的帳號
+    const where = (showDisable === 'true')
+      ? {}
+      : { isDisable: false };
+
+    const select = {
         id: true,
         uid: true,
         name: true,
-        balance: true,
-        role: {
+      balance: false,
+      role: false as boolean | { select: { name: true } },
+      isInit: false,
+      isDisable: false,
+      version: false,
+    }
+
+    if (columns) {
+      columns = Array.isArray(columns) ? columns : [columns];
+      columns.forEach((key) => {
+        if (Object.hasOwn(select, key)) {
+          if (key === 'role') {
+            select[key] = {
           select: {
             name: true,
           },
-        },
-        isInit: true,
-        isDisable: true,
-        version: true,
-      },
+            }
+            return;
+          }
+          select[key] = true
+        }
+      })
+    }
+
+    return this.userService.getUsers({
+      select,
+      where,
       orderBy: { uid: 'asc' },
     });
   }
 
   @Get(':uid')
-  async getUser(@Param('uid') uid: string) {
-    return this.userService.getUserByUid(uid, {
+  async getUser(
+    @Param('uid') uid: string,
+    @Query('columns') columns?: string | string[]
+  ) {
+
+    const select = {
       id: true,
       uid: true,
       name: true,
-      balance: true,
-      role: {
+      balance: false,
+      role: false as boolean | { select: { name: true } },
+      isInit: false,
+      isDisable: false,
+      version: false,
+    }
+
+    if (columns) {
+      columns = Array.isArray(columns) ? columns : [columns];
+      columns.forEach((key) => {
+        if (Object.hasOwn(select, key)) {
+          if (key === 'role') {
+            select[key] = {
         select: {
           name: true,
         },
-      },
-      isInit: true,
-      isDisable: true,
-      version: true,
-      password: false,
-    });
+            }
+            return;
+          }
+          select[key] = true
+        }
+      })
+    }
+
+    return this.userService.getUserByUid(uid, select);
   }
 
   @Post()

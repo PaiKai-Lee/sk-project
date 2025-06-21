@@ -33,10 +33,10 @@ export class UserService {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async getUsers({ select, orderBy }: Prisma.UserFindManyArgs) {
+  async getUsers({ select, where, orderBy }: Prisma.UserFindManyArgs) {
     this.logger.debug('getUsers');
     this.logger.debug('seconde get users logging');
-    return this.prisma.user.findMany({ select, orderBy });
+    return this.prisma.user.findMany({ select, where, orderBy });
   }
 
   async getUserByUid(uid: string, select?: Prisma.UserSelect) {
