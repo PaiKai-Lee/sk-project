@@ -12,8 +12,11 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dtos';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { RoleGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/auth/enums/role.enum';
 
-// @UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) { }
@@ -29,9 +32,9 @@ export class UserController {
       : { isDisable: false };
 
     const select = {
-        id: true,
-        uid: true,
-        name: true,
+      id: true,
+      uid: true,
+      name: true,
       balance: false,
       role: false as boolean | { select: { name: true } },
       isInit: false,
@@ -45,9 +48,9 @@ export class UserController {
         if (Object.hasOwn(select, key)) {
           if (key === 'role') {
             select[key] = {
-          select: {
-            name: true,
-          },
+              select: {
+                name: true,
+              },
             }
             return;
           }
@@ -86,9 +89,9 @@ export class UserController {
         if (Object.hasOwn(select, key)) {
           if (key === 'role') {
             select[key] = {
-        select: {
-          name: true,
-        },
+              select: {
+                name: true,
+              },
             }
             return;
           }
@@ -105,16 +108,22 @@ export class UserController {
     return this.userService.createUser(createUserDto);
   }
 
+  @UseGuards(RoleGuard)
+  @Roles(Role.Root)
   @Patch(':uid/disable')
   async disableUser(@Param('uid') uid: string) {
     return this.userService.disableUser(uid);
   }
 
+  @UseGuards(RoleGuard)
+  @Roles(Role.Root)
   @Patch(':uid/enable')
   async enableUser(@Param('uid') uid: string) {
     return this.userService.enableUser(uid);
   }
 
+  @UseGuards(RoleGuard)
+  @Roles(Role.Root)
   @Patch(':uid/password')
   async resetUserPassword(@Param('uid') uid: string) {
     return this.userService.resetUserPassword(uid);
