@@ -1,0 +1,171 @@
+@hostname = localhost
+@port = 3000
+@host = {{hostname}}:{{port}}
+@contentType = application/json
+
+### Auth
+
+### Login
+# @name login
+POST http://{{host}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "uid": "ts-001",
+  "password": "66666666"
+}
+
+###
+
+@accessToken = {{login.response.body.$.data.accessToken}}
+@refreshToken = {{login.response.body.$.data.refreshToken}}
+
+### Logout
+POST http://{{host}}/api/auth/logout
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Refresh Token
+POST http://{{host}}/api/auth/refresh-token
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+###
+
+### Get Profile
+GET http://{{host}}/api/auth/profile
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Me
+
+### Get Me
+GET http://{{host}}/api/me
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Change Name
+PATCH http://{{host}}/api/me/change-name
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "用戶一號"
+}
+
+###
+
+### Change Password
+PATCH http://{{host}}/api/me/change-password
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "newPassword": "666666",
+  "confirmPassword": "666666"
+}
+
+###
+
+### Transactions
+
+### Get Transactions
+GET http://{{host}}/api/transactions?page=1&pageSize=10
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get One Transaction
+GET http://{{host}}/api/transactions/TRX-20250421-000311-01894
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Create Transaction
+POST http://{{host}}/api/transactions
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "remark":"不吃早餐",
+  "items": [
+    {
+      "uid":"root",
+      "value":-100,
+      "details":"早餐代墊"
+    },
+    {
+      "uid":"ts-001",
+      "value":100,
+      "details":"早餐"
+    }
+  ]
+}
+
+###
+
+### Users
+
+### Get Users
+GET http://{{host}}/api/users
+  ?showDisable=false
+  &columns=isInit
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get One User
+GET http://{{host}}/api/users/ts-001
+  ?columns=isInit
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Create User
+POST http://{{host}}/api/users
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "uid": "ts-002",
+  "roleId": 2
+}
+
+###
+
+### Disable User
+PATCH http://{{host}}/api/users/ts-002/disable
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Enable User
+PATCH http://{{host}}/api/users/ts-002/enable
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Reset User Password
+PATCH http://{{host}}/api/users/ts-002/reset-password
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get User Transaction Items
+GET http://{{host}}/api/users/ts-001/transaction-items
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get User Balance Logs
+GET http://{{host}}/api/users/ts-001/balance-logs
+Authorization: Bearer {{accessToken}}
+
+###
