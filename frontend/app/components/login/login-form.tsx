@@ -20,7 +20,7 @@ export function LoginForm({
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">登入</CardTitle>
-          <CardDescription>使用工號登入，不需要輸入密碼</CardDescription>
+          <CardDescription>使用工號登入，不需要修改密碼</CardDescription>
         </CardHeader>
         <CardContent>
           <Form method="post">
@@ -42,8 +42,8 @@ export function LoginForm({
                   id="password"
                   name="password"
                   type="password"
-                  value={'66666666'}
-                  disabled
+                  defaultValue='66666666'
+                // readOnly
                 />
               </div>
               <div className="flex flex-col gap-3">

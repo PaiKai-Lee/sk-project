@@ -1,32 +1,33 @@
-import {
-  BadgeCheck,
-  LogOut,
-  Settings,
-  Moon,
-  Sun,
-} from 'lucide-react';
-import { useTheme } from 'next-themes';
+import { BadgeCheck, LogOut, Settings } from 'lucide-react';
+import { useAuth } from '~/context/auth';
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
 import {
-  SidebarContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from '~/components/ui/sidebar';
 import { ModeToggle } from './theme-toggle';
+import { useNavigate } from 'react-router';
 
 export function NavSetting() {
   const { isMobile } = useSidebar();
+  const navigate = useNavigate();
+  const auth = useAuth();
+
+  async function handleLogout() {
+    console.log('handleLogout');
+    await auth.logout();
+    return navigate('/login');
+  }
 
   return (
     <SidebarMenu>
@@ -52,7 +53,7 @@ export function NavSetting() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>

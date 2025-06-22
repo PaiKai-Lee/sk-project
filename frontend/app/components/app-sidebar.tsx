@@ -19,15 +19,9 @@ import {
 } from '~/components/ui/sidebar';
 import { NavSetting } from '~/components/nav-setting';
 import { Link } from 'react-router';
-import { ModeToggle } from './theme-toggle';
 
 // Menu items.
-const items = [
-  {
-    title: 'Home',
-    url: '/',
-    icon: Home,
-  },
+export const routeItems = [
   {
     title: 'Overview',
     url: '/overview',
@@ -63,7 +57,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {routeItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <Link to={item.url}>
