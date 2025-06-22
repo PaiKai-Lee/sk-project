@@ -14,7 +14,7 @@ import { Toaster } from '~/components/ui/sonner';
 import { ThemeProvider } from './components/theme-toggle';
 import { AuthProvider } from './context/auth';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { QueryClient } from '@tanstack/react-query';
 const queryClient = new QueryClient();
 

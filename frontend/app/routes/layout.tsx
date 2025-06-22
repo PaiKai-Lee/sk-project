@@ -1,7 +1,4 @@
-import {
-  SidebarInset,
-  SidebarProvider,
-} from '~/components/ui/sidebar';
+import { SidebarInset, SidebarProvider } from '~/components/ui/sidebar';
 import { AppSidebar } from '~/components/app-sidebar';
 import { Outlet, useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
@@ -38,7 +35,7 @@ export default function Layout() {
       <AppSidebar />
       <SidebarInset>
         <SiteHeader />
-        <div className='container mx-auto my-6'>
+        <div className="container mx-auto my-6">
           {profileQuery.isSuccess && <Outlet />}
         </div>
       </SidebarInset>

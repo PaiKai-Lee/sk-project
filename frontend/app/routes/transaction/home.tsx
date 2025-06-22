@@ -31,13 +31,15 @@ export default function TransactionPage() {
   const {
     transactionItems,
     updateTransactionItems,
-    setTransactionItems
+    setTransactionItems,
+    setIsCartChecked,
   } = useTransaction();
-  const { usersQuery } = useOutletContext<{ usersQuery: UseQueryResult<IResponseData<IUserResponse[]>, Error> }>();
+  const { usersQuery } = useOutletContext<{
+    usersQuery: UseQueryResult<IResponseData<IUserResponse[]>, Error>;
+  }>();
 
   useEffect(() => {
     if (usersQuery.data) {
-      console.log(usersQuery.data);
       setTransactionItems(
         usersQuery.data.data.map((user) => ({
           name: user.name,
@@ -53,10 +55,10 @@ export default function TransactionPage() {
     return () => {
       setTransactionItems([]);
     };
-  }, [usersQuery.dataUpdatedAt]);
-
+  }, [usersQuery.dataUpdatedAt, usersQuery.data]);
 
   function amountChangeHandler(e: React.ChangeEvent<HTMLInputElement>) {
+    setIsCartChecked(false);
     const uid = e.target.dataset.uid as string;
     const type = e.target.dataset.type as string;
     const amount = Number(e.target.value);
@@ -83,6 +85,7 @@ export default function TransactionPage() {
   }
 
   function detailChangeHandler(e: React.ChangeEvent<HTMLInputElement>) {
+    setIsCartChecked(false);
     const uid = e.target.dataset.uid as string;
     const type = e.target.dataset.type as string;
     const details = e.target.value;
@@ -130,7 +133,9 @@ export default function TransactionPage() {
                   <Text className="text-xs font-light">{item.uid}</Text>
                 </TableCell>
                 <TableCell className="w-[100px]">
-                  <Text className={item.balance < 0 ? 'text-red-500' : ''}>{item.balance}</Text>
+                  <Text className={item.balance < 0 ? 'text-red-500' : ''}>
+                    {item.balance}
+                  </Text>
                 </TableCell>
                 <TableCell className="w-[100px]">
                   <Input
@@ -141,7 +146,9 @@ export default function TransactionPage() {
                     onChange={amountChangeHandler}
                   />
                   {errors[item.uid]?.deposit && (
-                    <Text className="text-red-500">{errors[item.uid]?.deposit}</Text>
+                    <Text className="text-red-500">
+                      {errors[item.uid]?.deposit}
+                    </Text>
                   )}
                 </TableCell>
                 <TableCell>
@@ -153,7 +160,9 @@ export default function TransactionPage() {
                     onChange={detailChangeHandler}
                   />
                   {errors[item.uid]?.depositDetails && (
-                    <Text className="text-red-500">{errors[item.uid]?.depositDetails}</Text>
+                    <Text className="text-red-500">
+                      {errors[item.uid]?.depositDetails}
+                    </Text>
                   )}
                 </TableCell>
                 <TableCell className="w-[100px]">
@@ -165,7 +174,9 @@ export default function TransactionPage() {
                     onChange={amountChangeHandler}
                   />
                   {errors[item.uid]?.withdraw && (
-                    <Text className="text-red-500">{errors[item.uid]?.withdraw}</Text>
+                    <Text className="text-red-500">
+                      {errors[item.uid]?.withdraw}
+                    </Text>
                   )}
                 </TableCell>
                 <TableCell className="text-right">
@@ -177,7 +188,9 @@ export default function TransactionPage() {
                     onChange={detailChangeHandler}
                   />
                   {errors[item.uid]?.withdrawDetails && (
-                    <Text className="text-red-500">{errors[item.uid]?.withdrawDetails}</Text>
+                    <Text className="text-red-500">
+                      {errors[item.uid]?.withdrawDetails}
+                    </Text>
                   )}
                 </TableCell>
               </TableRow>

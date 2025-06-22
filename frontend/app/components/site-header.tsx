@@ -19,7 +19,7 @@ export function SiteHeader() {
           orientation="vertical"
           className="mx-2 data-[orientation=vertical]:h-4"
         />
-        <Heading1 className='text-lg'>{title}</Heading1>
+        <Heading1 className="text-lg">{title}</Heading1>
         <div className="ml-auto flex items-center gap-2">
           <Text>{auth.profile?.uid}</Text>
           <Button variant="ghost" asChild size="sm" className="hidden sm:flex">

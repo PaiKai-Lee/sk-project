@@ -34,6 +34,8 @@ type TransactionProviderState = {
     type: string,
     value: number | string
   ) => void;
+  isCartChecked: boolean;
+  setIsCartChecked: (isCartChecked: boolean) => void;
   cart: TransactionCart[];
   totalDeposit: number;
   totalWithdraw: number;
@@ -47,6 +49,8 @@ export function TransactionProvider({ children }: TransactionProviderProps) {
   const [transactionItems, setTransactionItems] = useState<TransactionItems[]>(
     []
   );
+  const [isCartChecked, setIsCartChecked] = useState(false);
+
   const cart = useMemo(() => {
     const result: TransactionCart[] = [];
 
@@ -108,6 +112,8 @@ export function TransactionProvider({ children }: TransactionProviderProps) {
         transactionItems,
         setTransactionItems,
         updateTransactionItems,
+        isCartChecked,
+        setIsCartChecked,
         cart,
         totalDeposit,
         totalWithdraw,

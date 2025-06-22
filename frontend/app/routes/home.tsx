@@ -1,9 +1,9 @@
-import { redirect } from "react-router";
+import { redirect } from 'react-router';
 
 export function clientLoader() {
-    return redirect('/overview');
+  return redirect('/overview');
 }
 
 export default function Home() {
-    return null;
+  return null;
 }
