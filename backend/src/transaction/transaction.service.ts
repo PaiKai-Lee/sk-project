@@ -172,7 +172,7 @@ export class TransactionService {
 
         for (const user of users) {
           const transactionItems = transactionItemsMap[user.uid];
-          const newBalance = user.balance - transactionItems.value;
+          const newBalance = user.balance + transactionItems.value;
           await tx.user.update({
             where: {
               uid: user.uid,
