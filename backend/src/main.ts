@@ -15,13 +15,15 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get('app.port') as number;
   const logger = app.get(WINSTON_MODULE_NEST_PROVIDER);
-  app.use(morgan('tiny', {
-    stream: {
-      write: (message) => {
-        logger.log(message, 'HTTP');
+  app.use(
+    morgan('tiny', {
+      stream: {
+        write: (message) => {
+          logger.log(message, 'HTTP');
+        },
       },
-    },
-  }));
+    }),
+  );
   app.useLogger(logger);
   app.use((req: Request, res: Response, next: NextFunction) => {
     // 參考MDN處理BigInt
@@ -31,7 +33,7 @@ async function bootstrap() {
       return this.toString();
     };
     next();
-  })
+  });
   app.enableShutdownHooks();
   await app.listen(port);
   logger.log(`Server running on port ${port}`, 'Bootstrap');

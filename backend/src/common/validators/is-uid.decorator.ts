@@ -1,5 +1,9 @@
 // src/common/validators/is-uid.decorator.ts
-import { registerDecorator, ValidationOptions, ValidationArguments } from 'class-validator';
+import {
+  registerDecorator,
+  ValidationOptions,
+  ValidationArguments,
+} from 'class-validator';
 
 export function IsUid(validationOptions?: ValidationOptions) {
   return (object: object, propertyName: string) => {

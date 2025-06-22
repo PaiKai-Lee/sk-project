@@ -194,10 +194,10 @@ export class TransactionService {
           data: {
             transactionId,
             remark,
-            createdByUser:{
-                connect:{
-                    uid: authUser.uid
-                }
+            createdByUser: {
+              connect: {
+                uid: authUser.uid,
+              },
             },
             transactionsItems: {
               createMany: {

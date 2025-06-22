@@ -1,9 +1,5 @@
 // src/auth/middleware/authentication.middleware.ts
-import {
-  Injectable,
-  Logger,
-  NestMiddleware,
-} from '@nestjs/common';
+import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 import { Request, Response, NextFunction } from 'express';
@@ -44,7 +40,7 @@ export class AuthenticationMiddleware implements NestMiddleware {
           // 保持 guest 狀態，由後續的guard處理
           this.logger.warn(`jwt verify error: ${err}`);
         }
-      }else{
+      } else {
         this.logger.warn('without jwt token');
       }
 

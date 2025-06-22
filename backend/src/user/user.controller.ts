@@ -19,17 +19,15 @@ import { Role } from 'src/auth/enums/role.enum';
 @UseGuards(AuthGuard)
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
   @Get()
   async getUsers(
     @Query('fields') fields?: string | string[],
-    @Query('showDisable') showDisable?: string
+    @Query('showDisable') showDisable?: string,
   ) {
     // 預設只撈沒停用的帳號
-    const where = (showDisable === 'true')
-      ? {}
-      : { isDisable: false };
+    const where = showDisable === 'true' ? {} : { isDisable: false };
 
     const select = {
       id: true,
@@ -40,7 +38,7 @@ export class UserController {
       isInit: false,
       isDisable: false,
       version: false,
-    }
+    };
 
     if (fields) {
       fields = Array.isArray(fields) ? fields : [fields];
@@ -51,12 +49,12 @@ export class UserController {
               select: {
                 name: true,
               },
-            }
+            };
             return;
           }
-          select[key] = true
+          select[key] = true;
         }
-      })
+      });
     }
 
     return this.userService.getUsers({
@@ -69,9 +67,8 @@ export class UserController {
   @Get(':uid')
   async getUser(
     @Param('uid') uid: string,
-    @Query('fields') fields?: string | string[]
+    @Query('fields') fields?: string | string[],
   ) {
-
     const select = {
       id: true,
       uid: true,
@@ -81,7 +78,7 @@ export class UserController {
       isInit: false,
       isDisable: false,
       version: false,
-    }
+    };
 
     if (fields) {
       fields = Array.isArray(fields) ? fields : [fields];
@@ -92,12 +89,12 @@ export class UserController {
               select: {
                 name: true,
               },
-            }
+            };
             return;
           }
-          select[key] = true
+          select[key] = true;
         }
-      })
+      });
     }
 
     return this.userService.getUserByUid(uid, select);

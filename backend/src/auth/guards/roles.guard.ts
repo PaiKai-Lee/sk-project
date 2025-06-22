@@ -9,7 +9,7 @@ export class RoleGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     private cls: ClsService<AppClsStore>,
-  ) { }
+  ) {}
 
   canActivate(context: ExecutionContext): boolean {
     // 取得handler的roles

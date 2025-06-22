@@ -34,7 +34,7 @@ export class MeController {
           name: true,
         },
       },
-      department:{
+      department: {
         select: {
           name: true,
         },
