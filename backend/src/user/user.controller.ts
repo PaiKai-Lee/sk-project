@@ -23,7 +23,7 @@ export class UserController {
 
   @Get()
   async getUsers(
-    @Query('columns') columns?: string | string[],
+    @Query('fields') fields?: string | string[],
     @Query('showDisable') showDisable?: string
   ) {
     // 預設只撈沒停用的帳號
@@ -42,9 +42,9 @@ export class UserController {
       version: false,
     }
 
-    if (columns) {
-      columns = Array.isArray(columns) ? columns : [columns];
-      columns.forEach((key) => {
+    if (fields) {
+      fields = Array.isArray(fields) ? fields : [fields];
+      fields.forEach((key) => {
         if (Object.hasOwn(select, key)) {
           if (key === 'role') {
             select[key] = {
@@ -69,7 +69,7 @@ export class UserController {
   @Get(':uid')
   async getUser(
     @Param('uid') uid: string,
-    @Query('columns') columns?: string | string[]
+    @Query('fields') fields?: string | string[]
   ) {
 
     const select = {
@@ -83,9 +83,9 @@ export class UserController {
       version: false,
     }
 
-    if (columns) {
-      columns = Array.isArray(columns) ? columns : [columns];
-      columns.forEach((key) => {
+    if (fields) {
+      fields = Array.isArray(fields) ? fields : [fields];
+      fields.forEach((key) => {
         if (Object.hasOwn(select, key)) {
           if (key === 'role') {
             select[key] = {

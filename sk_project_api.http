@@ -116,14 +116,15 @@ Content-Type: application/json
 ### Get Users
 GET http://{{host}}/api/users
   ?showDisable=false
-  &columns=isInit
+  &fields=isInit
+  &fields=isDisable
 Authorization: Bearer {{accessToken}}
 
 ###
 
 ### Get One User
 GET http://{{host}}/api/users/ts-001
-  ?columns=isInit
+  ?fields=isInit
 Authorization: Bearer {{accessToken}}
 
 ###
