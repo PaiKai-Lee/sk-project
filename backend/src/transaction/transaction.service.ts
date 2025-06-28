@@ -20,25 +20,24 @@ export class TransactionService {
     private readonly transactionHelper: TransactionHelper,
     private readonly cls: ClsService<AppClsStore>,
     private readonly eventEmitter: EventEmitter2,
-  ) {}
+  ) { }
 
   async getTransactions(getTransactionsDto: GetTransactionsDto) {
     this.logger.debug('getTransactions' + JSON.stringify(getTransactionsDto));
     const {
       page = 1,
       pageSize = 10,
-      orderBy = 'createdAt',
-      order = 'desc',
-      includeItems = 'true',
-      all = 'false',
+      sort = ['createdAt:desc'],
+      includeItems = false,
+      all = false,
       startDate,
       endDate,
       userName,
     } = getTransactionsDto;
 
     const where: Prisma.TransactionWhereInput = {};
-    const skip = all === 'true' ? undefined : (page - 1) * pageSize;
-    const take = all === 'true' ? undefined : pageSize;
+    const skip = all ? undefined : (page - 1) * pageSize;
+    const take = all ? undefined : pageSize;
 
     if (startDate || endDate) {
       where.createdAt = {};
@@ -60,6 +59,14 @@ export class TransactionService {
       };
     }
 
+    const orderBy = [] as Prisma.TransactionOrderByWithRelationInput[];
+    if (sort) {
+      sort.forEach((key) => {
+        const [field, order] = key.split(':');
+        orderBy.push({ [field]: order as Prisma.SortOrder });
+      });
+    }
+
     // 查總筆數（不受 skip/take 影響）
     const total = await this.prisma.transaction.count({ where });
 
@@ -67,14 +74,7 @@ export class TransactionService {
       skip,
       take,
       where,
-      orderBy: [
-        {
-          id: 'desc',
-        },
-        {
-          [orderBy]: order,
-        },
-      ],
+      orderBy,
       select: {
         transactionId: true,
         remark: true,
@@ -85,7 +85,7 @@ export class TransactionService {
           },
         },
         createdAt: true,
-        transactionsItems: includeItems === 'true' && {
+        transactionsItems: includeItems && {
           select: {
             id: true,
             user: { select: { uid: true, name: true } },
@@ -100,8 +100,8 @@ export class TransactionService {
     const transactionsResult = await this.prisma.transaction.findMany(query);
     return {
       pagination: {
-        page: all === 'true' ? null : page,
-        pageSize: all === 'true' ? null : pageSize,
+        page: all ? null : page,
+        pageSize: all ? null : pageSize,
         total,
       },
       rows: transactionsResult,

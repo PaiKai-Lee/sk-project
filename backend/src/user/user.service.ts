@@ -9,7 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/common/prisma';
 import { BcryptService } from 'src/common/utils';
-import { CreateUserDto, ChangePasswordDto } from './dtos';
+import { CreateUserDto, ChangePasswordDto, GetUsersQueryDto } from './dtos';
 import { ClsService } from 'nestjs-cls';
 import { AppClsStore } from 'src/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -31,11 +31,50 @@ export class UserService {
     private readonly prisma: PrismaService,
     private readonly bcryptService: BcryptService,
     private readonly eventEmitter: EventEmitter2,
-  ) {}
+  ) { }
 
-  async getUsers({ select, where, orderBy }: Prisma.UserFindManyArgs) {
+  async getUsers(getUsersQueryDto: GetUsersQueryDto) {
     this.logger.debug('getUsers');
-    this.logger.debug('seconde get users logging');
+    const {
+      fields,
+      sort = ['id:asc'],
+      showDisable = false
+    } = getUsersQueryDto;
+    // 預設只撈沒停用的帳號
+    const where = showDisable ? {} : { isDisable: false };
+
+    const select = {
+      id: true,
+      uid: true,
+      name: true,
+      balance: false,
+      role: false as boolean | { select: { name: true } },
+      isInit: false,
+      isDisable: false,
+      version: false,
+    };
+
+    if (fields) {
+      fields.forEach((key) => {
+        if (key === 'role') {
+          select[key] = {
+            select: {
+              name: true,
+            },
+          };
+          return;
+        }
+        select[key] = true;
+      });
+    }
+
+    const orderBy = [] as Prisma.UserOrderByWithRelationInput[];
+    if (sort) {
+      sort.forEach((key) => {
+        const [field, order] = key.split(':');
+        orderBy.push({ [field]: order as Prisma.SortOrder });
+      });
+    }
     return this.prisma.user.findMany({ select, where, orderBy });
   }
 

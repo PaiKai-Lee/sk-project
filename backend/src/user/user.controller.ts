@@ -10,58 +10,24 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dtos';
+import { CreateUserDto, GetUsersQueryDto } from './dtos';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { RoleGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/auth/enums/role.enum';
+import { Prisma } from '@prisma/client';
 
 @UseGuards(AuthGuard)
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Get()
   async getUsers(
-    @Query('fields') fields?: string | string[],
-    @Query('showDisable') showDisable?: string,
+    @Query(new ValidationPipe({ transform: true })) query: GetUsersQueryDto,
   ) {
-    // 預設只撈沒停用的帳號
-    const where = showDisable === 'true' ? {} : { isDisable: false };
 
-    const select = {
-      id: true,
-      uid: true,
-      name: true,
-      balance: false,
-      role: false as boolean | { select: { name: true } },
-      isInit: false,
-      isDisable: false,
-      version: false,
-    };
-
-    if (fields) {
-      fields = Array.isArray(fields) ? fields : [fields];
-      fields.forEach((key) => {
-        if (Object.hasOwn(select, key)) {
-          if (key === 'role') {
-            select[key] = {
-              select: {
-                name: true,
-              },
-            };
-            return;
-          }
-          select[key] = true;
-        }
-      });
-    }
-
-    return this.userService.getUsers({
-      select,
-      where,
-      orderBy: { uid: 'asc' },
-    });
+    return this.userService.getUsers(query);
   }
 
   @Get(':uid')

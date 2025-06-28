@@ -80,6 +80,7 @@ Content-Type: application/json
 GET http://{{host}}/api/transactions
     ?page=1
     &pageSize=10
+    &sort=createdAt:asc
 Authorization: Bearer {{accessToken}}
 
 ###
@@ -119,7 +120,9 @@ Content-Type: application/json
 GET http://{{host}}/api/users
   ?showDisable=false
   &fields=isInit
-  &fields=isDisable
+  &fields=balance
+  &sort=balance:desc
+  &sort=id:asc
 Authorization: Bearer {{accessToken}}
 
 ###
