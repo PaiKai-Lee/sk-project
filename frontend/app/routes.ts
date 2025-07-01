@@ -15,7 +15,11 @@ export default [
         index('routes/transaction/home.tsx'),
       ]),
     ]),
-    route('transaction-records', 'routes/transaction-records.tsx'),
+    ...prefix('transaction-records', [
+      layout('routes/transaction-records/layout.tsx', [
+        index('routes/transaction-records/home.tsx'),
+      ]),
+    ]),
     route('notification', 'routes/notification.tsx'),
     route('demo', 'routes/demo.tsx'),
   ]),

@@ -28,11 +28,6 @@ export const routeItems = [
     icon: ChartNoAxesCombined,
   },
   {
-    title: 'Notification',
-    url: '/notification',
-    icon: Bell,
-  },
-  {
     title: 'Transaction',
     url: '/transaction',
     icon: SquarePlus,
@@ -41,6 +36,11 @@ export const routeItems = [
     title: 'Transaction Records',
     url: '/transaction-records',
     icon: DatabaseBackup,
+  },
+  {
+    title: 'Notification',
+    url: '/notification',
+    icon: Bell,
   },
   {
     title: 'Demo',

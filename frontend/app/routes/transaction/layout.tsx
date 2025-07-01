@@ -3,6 +3,7 @@ import { Outlet } from 'react-router';
 import { toast } from 'sonner';
 import UserClient from '~/api/users';
 import { TransactionProvider } from '~/context/transaction';
+import { Skeleton } from '~/components/ui/skeleton';
 
 export default function TransactionLayout() {
   const usersQuery = useQuery({
@@ -19,12 +20,19 @@ export default function TransactionLayout() {
     refetchOnWindowFocus: false,
   });
 
-  if (usersQuery.isFetching) {
-    return <div>fetching...</div>;
-  }
-
   if (usersQuery.isLoading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex flex-col gap-5 lg:flex-row">
+        <div className="basis-3/5">
+          {Array.from({ length: 10 }).map((_, index) => (
+            <Skeleton key={index} className='h-[50px] w-full mb-2' />
+          ))}
+        </div>
+        <div className="basis-2/5" >
+          <Skeleton className='h-[100px] w-full' />
+        </div>
+      </div >
+    )
   }
 
   if (usersQuery.isError) {

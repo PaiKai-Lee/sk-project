@@ -65,6 +65,7 @@ export function Cart() {
       await queryClient.invalidateQueries({
         queryKey: ['users', { showDisable: 'false' }],
       });
+      form.reset();
     },
     onError: (error) => {
       toast.error('交易提交失敗');

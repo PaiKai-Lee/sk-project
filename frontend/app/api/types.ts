@@ -7,6 +7,12 @@ export interface IResponseData<T> {
 
 export type IApiResponse<T> = AxiosResponse<IResponseData<T>>;
 
+export interface Pagination {
+  page: number;
+  pageSize: number;
+  total: number;
+}
+
 // Auth
 
 export interface ILoginResponse {
@@ -57,15 +63,11 @@ export interface IOneTransactionResponse {
     name: string;
   };
   createdAt: string;
-  transactionsItems: ITransactionItem[];
+  transactionsItems?: ITransactionItem[];
 }
 
 export interface ITransactionsResponse {
-  pagination: {
-    page: number;
-    pageSize: number;
-    total: number;
-  };
+  pagination: Pagination;
   rows: IOneTransactionResponse[];
 }
 

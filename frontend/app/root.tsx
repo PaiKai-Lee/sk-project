@@ -51,7 +51,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export function HydrateFallback() {
-  return <h1>Loading...</h1>;
+  return <h1>First Loading...</h1>;
 }
 
 export default function App() {
@@ -61,7 +61,7 @@ export default function App() {
         <AuthProvider>
           <Outlet />
         </AuthProvider>
-        <ReactQueryDevtools initialIsOpen={false} />
+        {/* <ReactQueryDevtools initialIsOpen={true} /> */}
       </QueryClientProvider>
     </ThemeProvider>
   );
