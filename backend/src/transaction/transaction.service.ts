@@ -50,13 +50,7 @@ export class TransactionService {
     }
 
     if (userName) {
-      where.transactionsItems = {
-        some: {
-          user: {
-            name: userName,
-          },
-        },
-      };
+      where.createdByUser = { name: { equals: userName } };
     }
 
     const orderBy = [] as Prisma.TransactionOrderByWithRelationInput[];
@@ -144,48 +138,30 @@ export class TransactionService {
     this.logger.debug(createTransactionDto);
     const { remark, items: createTransactionItemsDto } = createTransactionDto;
     const authUser = this.cls.get('user');
-    //TODO: 使用者扣款(加鎖避免競爭)
     const createTransactionResult = await this.prisma.$transaction(
       async (tx) => {
-        // 取得所有使用者的錢並扣款
-        const users = await tx.user.findMany({
-          select: {
-            uid: true,
-            balance: true,
-          },
-          where: {
-            uid: {
-              in: createTransactionItemsDto.map((item) => item.uid),
-            },
-          },
-        });
-
-        const transactionItemsMap = createTransactionItemsDto.reduce(
-          (acc, item) => {
-            acc[item.uid] = item;
-            return acc;
-          },
-          {},
-        ) as Record<string, CreateTransactionItemDto>;
-
         const userBalanceLog: Prisma.UserBalanceLogCreateManyInput[] = [];
 
-        for (const user of users) {
-          const transactionItems = transactionItemsMap[user.uid];
-          const newBalance = user.balance + transactionItems.value;
-          await tx.user.update({
+        for (const item of createTransactionItemsDto) {
+          const user = await tx.user.update({
             where: {
-              uid: user.uid,
+              uid: item.uid,
             },
             data: {
-              balance: newBalance,
+              balance: {
+                increment: item.value,
+              },
             },
+            select: {
+              uid: true,
+              balance: true,
+            }
           });
           // 建立balance-log，後續更新使用
           userBalanceLog.push({
             uid: user.uid,
-            value: transactionItems.value,
-            currentBalance: newBalance,
+            value: item.value,
+            currentBalance: user.balance,
           });
         }
         const transactionId = this.transactionHelper.generateTrxId();
@@ -213,7 +189,7 @@ export class TransactionService {
 
         return {
           transactionId,
-          users: users.map((user) => user.uid),
+          users: createTransactionItemsDto.map((item) => item.uid),
         };
       },
     );
