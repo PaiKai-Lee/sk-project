@@ -1,8 +1,12 @@
-import { registerDecorator, ValidationOptions, ValidationArguments } from 'class-validator';
+import {
+  registerDecorator,
+  ValidationOptions,
+  ValidationArguments,
+} from 'class-validator';
 
 export function SortArrayValid(
   allowedFields: string[],
-  validationOptions?: ValidationOptions
+  validationOptions?: ValidationOptions,
 ) {
   return function (object: Object, propertyName: string) {
     registerDecorator({
@@ -18,8 +22,7 @@ export function SortArrayValid(
           return value.every((item: string) => {
             const [field, order] = item.split(':');
             return (
-              allowed.includes(field) &&
-              (order === 'asc' || order === 'desc')
+              allowed.includes(field) && (order === 'asc' || order === 'desc')
             );
           });
         },

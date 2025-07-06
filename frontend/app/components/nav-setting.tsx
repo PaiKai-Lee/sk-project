@@ -24,7 +24,6 @@ export function NavSetting() {
   const auth = useAuth();
 
   async function handleLogout() {
-    console.log('handleLogout');
     await auth.logout();
     return navigate('/login');
   }

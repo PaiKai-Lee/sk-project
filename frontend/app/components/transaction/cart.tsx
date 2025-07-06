@@ -62,9 +62,14 @@ export function Cart() {
     },
     onSuccess: async (data) => {
       toast.success('交易提交成功');
-      await queryClient.invalidateQueries({
-        queryKey: ['users', { showDisable: 'false' }],
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['users', { showDisable: 'false' }],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['overview'],
+        }),
+      ]);
       form.reset();
     },
     onError: (error) => {

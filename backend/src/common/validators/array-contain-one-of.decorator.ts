@@ -1,6 +1,13 @@
-import { registerDecorator, ValidationOptions, ValidationArguments } from 'class-validator';
+import {
+  registerDecorator,
+  ValidationOptions,
+  ValidationArguments,
+} from 'class-validator';
 
-export function ArrayContainsOneOf(values: any[], validationOptions?: ValidationOptions) {
+export function ArrayContainsOneOf(
+  values: any[],
+  validationOptions?: ValidationOptions,
+) {
   return function (object: Object, propertyName: string) {
     registerDecorator({
       name: 'arrayContainsOneOf',
@@ -11,13 +18,15 @@ export function ArrayContainsOneOf(values: any[], validationOptions?: Validation
       validator: {
         validate(value: any[], args: ValidationArguments) {
           const required = args.constraints[0];
-          return Array.isArray(value) && required.some(v => value.includes(v));
+          return (
+            Array.isArray(value) && required.some((v) => value.includes(v))
+          );
         },
         defaultMessage(args: ValidationArguments) {
           const required = args.constraints[0];
           return `${args.property} 必須包含: ${required.join(', ')}`;
-        }
-      }
+        },
+      },
     });
   };
 }

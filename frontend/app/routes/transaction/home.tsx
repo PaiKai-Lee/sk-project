@@ -1,3 +1,4 @@
+import type { Route } from '../transaction/+types/home';
 import {
   Table,
   TableBody,
@@ -25,6 +26,13 @@ const amountInputSchema = z
 const detailInputSchema = z
   .string({ message: 'must be a string' })
   .max(30, { message: 'must be less than 30 character' });
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: 'transaction' },
+    { name: 'description', content: 'transaction page' },
+  ];
+}
 
 export default function TransactionPage() {
   const [errors, setErrors] = useState({});

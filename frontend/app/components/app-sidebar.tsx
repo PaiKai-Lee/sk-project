@@ -5,6 +5,7 @@ import {
   Bell,
   DatabaseBackup,
   SquarePlus,
+  ShieldUser,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -19,6 +20,7 @@ import {
 } from '~/components/ui/sidebar';
 import { NavSetting } from '~/components/nav-setting';
 import { Link } from 'react-router';
+import { useAuth } from '~/context/auth';
 
 // Menu items.
 export const routeItems = [
@@ -43,6 +45,11 @@ export const routeItems = [
     icon: Bell,
   },
   {
+    title: 'Admin',
+    url: '/admin',
+    icon: ShieldUser,
+  },
+  {
     title: 'Demo',
     url: '/demo',
     icon: CirclePlus,
@@ -50,6 +57,7 @@ export const routeItems = [
 ];
 
 export function AppSidebar() {
+  const auth = useAuth();
   return (
     <Sidebar variant="floating" collapsible="icon">
       <SidebarContent>
@@ -57,16 +65,20 @@ export function AppSidebar() {
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {routeItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link to={item.url}>
-                      {item.icon && <item.icon />}
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {routeItems.map((item) => {
+                if (item.title === 'Admin' && !auth.isAdmin) return null;
+
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <Link to={item.url}>
+                        {item.icon && <item.icon />}
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

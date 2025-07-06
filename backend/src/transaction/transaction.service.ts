@@ -20,7 +20,7 @@ export class TransactionService {
     private readonly transactionHelper: TransactionHelper,
     private readonly cls: ClsService<AppClsStore>,
     private readonly eventEmitter: EventEmitter2,
-  ) { }
+  ) {}
 
   async getTransactions(getTransactionsDto: GetTransactionsDto) {
     this.logger.debug('getTransactions' + JSON.stringify(getTransactionsDto));
@@ -155,7 +155,7 @@ export class TransactionService {
             select: {
               uid: true,
               balance: true,
-            }
+            },
           });
           // 建立balance-log，後續更新使用
           userBalanceLog.push({

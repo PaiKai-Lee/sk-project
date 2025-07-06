@@ -1,13 +1,13 @@
 import { SidebarInset, SidebarProvider } from '~/components/ui/sidebar';
 import { AppSidebar } from '~/components/app-sidebar';
-import { Outlet, useNavigate } from 'react-router';
+import { Navigate, Outlet } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import AuthClient from '~/api/auth';
 import { useEffect } from 'react';
 import { SiteHeader } from '~/components/site-header';
 import { useAuth } from '~/context/auth';
+import { Skeleton } from '~/components/ui/skeleton';
 export default function Layout() {
-  const navigate = useNavigate();
   const auth = useAuth();
   const profileQuery = useQuery({
     queryKey: ['auth', 'profile'],
@@ -15,30 +15,40 @@ export default function Layout() {
       const { data } = await AuthClient.getProfile();
       return data;
     },
+    select: (rawData) => rawData.data,
     retry: false,
   });
 
   useEffect(() => {
-    if (profileQuery.isError) {
-      navigate('/login');
+    if (profileQuery.data) {
+      auth.setProfile(profileQuery.data);
     }
-  }, [profileQuery.isError]);
+  }, [profileQuery.data]);
 
-  useEffect(() => {
-    if (profileQuery.isSuccess) {
-      auth.setProfile(profileQuery.data.data);
-    }
-  }, [profileQuery.isSuccess]);
+  if (profileQuery.isError) {
+    return <Navigate to="/login" />;
+  }
 
-  return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <SiteHeader />
-        <div className="container mx-auto my-6">
-          {profileQuery.isSuccess && <Outlet />}
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
-  );
+  if (profileQuery.isLoading) {
+    return (
+      <div className="flex flex-col flex-1 h-screen gap-4 p-4 lg:flex-row">
+        <Skeleton className="h-screen hidden lg:block lg:basis-1/5" />
+        <Skeleton className="h-screen lg:basis-4/5 " />
+      </div>
+    );
+  }
+
+  if (profileQuery.isSuccess && profileQuery.data) {
+    return (
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <SiteHeader />
+          <div className="container mx-auto my-6">
+            <Outlet />
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    );
+  }
 }

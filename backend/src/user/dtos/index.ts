@@ -20,6 +20,14 @@ export class CreateUserDto {
   @IsUid({ message: 'uid格式錯誤' })
   uid: string;
 
+  @IsOptional()
+  @IsNotEmpty({ message: '名稱不得為空' })
+  @Matches(/^[\u4e00-\u9fa5a-zA-Z0-9]+$/, {
+    message: '只能包含中文、英文與數字',
+  })
+  @Length(1, 10, { message: '長度需為 1 至 10 字' })
+  name: string;
+
   @IsNotEmpty({ message: 'roleId不得為空' })
   @IsNumber()
   roleId: number;
@@ -32,6 +40,10 @@ export class ChangeUserNameDto {
   })
   @Length(1, 10, { message: '長度需為 1 至 10 字' })
   name: string;
+
+  @IsNotEmpty({ message: '版本戳不得為空' })
+  @IsNumber()
+  version: number;
 }
 
 export class ChangePasswordDto {
@@ -46,6 +58,10 @@ export class ChangePasswordDto {
   @IsAlphanumeric('en-US', { message: '密碼只能包含英文與數字' })
   @Length(6, 20, { message: '密碼長度需為 6 至 20 字' })
   confirmPassword: string;
+
+  @IsNotEmpty({ message: '版本戳不得為空' })
+  @IsNumber()
+  version: number;
 }
 
 const ALLOWED_FIELDS = [

@@ -11,18 +11,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/components/ui/dialog';
-import {  useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Table } from 'lucide-react';
 
-export function meta({ }: Route.MetaArgs) {
+export function meta({}: Route.MetaArgs) {
   return [
     { title: 'demo' },
     { name: 'description', content: 'Welcome to React Router!' },
   ];
 }
 
-export async function clientLoader({ }: Route.ClientLoaderArgs) {
+export async function clientLoader({}: Route.ClientLoaderArgs) {
   return { data: 'data', time: Date.now() };
 }
 
@@ -45,20 +45,26 @@ export default function Demo({ loaderData }: Route.ComponentProps) {
     queryKey: ['data', selectNumber],
     enabled: !!selectNumber,
     queryFn: async () => {
-      const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${selectNumber}/comments`);
+      const res = await fetch(
+        `https://jsonplaceholder.typicode.com/posts/${selectNumber}/comments`
+      );
       if (!res.ok) {
         throw new Error('Network response was not ok');
       }
       return res.json();
     },
-  })
+  });
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-5">
       <Button onClick={handleToggleTheme}>Click me</Button>
       <hr />
-      <Button data-number={1} onClick={clickHandler}>Open</Button>
-      <Button data-number={2} onClick={clickHandler}>Open2</Button>
+      <Button data-number={1} onClick={clickHandler}>
+        Open
+      </Button>
+      <Button data-number={2} onClick={clickHandler}>
+        Open2
+      </Button>
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -85,7 +91,7 @@ export default function Demo({ loaderData }: Route.ComponentProps) {
             <DialogClose asChild>
               <Button type="button">Cancel</Button>
             </DialogClose>
-            <Button type="submit" >Confirm</Button>
+            <Button type="submit">Confirm</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

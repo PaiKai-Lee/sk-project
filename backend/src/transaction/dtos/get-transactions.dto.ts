@@ -10,7 +10,6 @@ import {
 } from 'class-validator';
 import { SortArrayValid } from 'src/common/validators/sort-array-valid.decorator';
 
-
 const ALLOWED_SORTS = ['id', 'createdAt', 'transactionId'];
 export class GetTransactionsDto {
   @IsOptional()

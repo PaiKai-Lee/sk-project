@@ -85,3 +85,14 @@ export interface IUserResponse {
   isDisable?: boolean;
   version?: number;
 }
+
+// Overview
+
+export interface IOverviewResponse {
+  totalBalance: number;
+  overdrawUsers: Omit<
+    IUserResponse,
+    'role' | 'isInit' | 'isDisable' | 'version'
+  >[];
+  recentTransactions: IOneTransactionResponse[];
+}

@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from 'react-router';
+import { Navigate, Outlet, useNavigate } from 'react-router';
 import AuthClient from '~/api/auth';
 import { useAuth } from '~/context/auth';
 import { useQuery } from '@tanstack/react-query';
@@ -6,22 +6,25 @@ import { useEffect } from 'react';
 
 export default function LoginLayout() {
   const auth = useAuth();
-  const navigate = useNavigate();
   const profileQuery = useQuery({
     queryKey: ['auth', 'profile'],
     queryFn: async () => {
       const { data } = await AuthClient.getProfile();
       return data;
     },
+    select: (data) => data.data,
     retry: false,
   });
 
   useEffect(() => {
     if (profileQuery.isSuccess) {
-      auth.setProfile(profileQuery.data.data);
-      navigate('/');
+      auth.setProfile(profileQuery.data);
     }
   }, [profileQuery.isSuccess]);
+
+  if (profileQuery.isSuccess && profileQuery.data) {
+    return <Navigate to="/" />;
+  }
 
   if (profileQuery.isError) {
     return (

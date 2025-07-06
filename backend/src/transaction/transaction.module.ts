@@ -11,5 +11,6 @@ import { AuditLogModule } from 'src/audit-log';
   imports: [CommonModule, AuditLogModule, forwardRef(() => UserModule)],
   controllers: [TransactionController],
   providers: [TransactionService, TransactionListener, TransactionHelper],
+  exports: [TransactionService],
 })
 export class TransactionModule {}

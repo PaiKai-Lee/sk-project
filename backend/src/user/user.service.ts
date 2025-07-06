@@ -21,6 +21,7 @@ import {
   UserPasswordChangedEvent,
   UserPasswordResetEvent,
 } from './user.event';
+import { Role } from 'src/auth/enums/role.enum';
 
 @Injectable()
 export class UserService {
@@ -31,17 +32,23 @@ export class UserService {
     private readonly prisma: PrismaService,
     private readonly bcryptService: BcryptService,
     private readonly eventEmitter: EventEmitter2,
-  ) { }
+  ) {}
 
   async getUsers(getUsersQueryDto: GetUsersQueryDto) {
     this.logger.debug('getUsers');
-    const {
-      fields,
-      sort = ['id:asc'],
-      showDisable = false
-    } = getUsersQueryDto;
+    const { fields, sort = ['id:asc'], showDisable = false } = getUsersQueryDto;
     // 預設只撈沒停用的帳號
-    const where = showDisable ? {} : { isDisable: false };
+    const where = {
+      NOT: {
+        role: {
+          name: Role.Root,
+        },
+      },
+    };
+
+    if (!showDisable) {
+      where['isDisable'] = false;
+    }
 
     const select = {
       id: true,
@@ -78,10 +85,15 @@ export class UserService {
     return this.prisma.user.findMany({ select, where, orderBy });
   }
 
-  async getUserByUid(uid: string, select?: Prisma.UserSelect) {
+  async getUserByUid(
+    uid: string,
+    select?: Prisma.UserSelect,
+    where?: Prisma.UserWhereUniqueInput,
+  ) {
     this.logger.debug(`getUserByUid: ${uid}`);
+    where = where ? { uid, ...where } : { uid };
     return this.prisma.user.findUnique({
-      where: { uid },
+      where,
       select,
     });
   }
@@ -132,7 +144,7 @@ export class UserService {
   async createUser(createUserDto: CreateUserDto) {
     this.logger.debug(`createUser: ${JSON.stringify(createUserDto)}`);
     const authUser = this.cls.get('user');
-    const { uid, roleId } = createUserDto;
+    const { uid, roleId, name } = createUserDto;
 
     // 確認是否有重複使用者
     const user = await this.getUserByUid(uid);
@@ -159,6 +171,7 @@ export class UserService {
     const createData: Prisma.UserCreateInput = {
       uid,
       password: hashedPassword,
+      isInit: true, // 目部不開放修改密碼，都預設初始化
       role: {
         connect: {
           id: roleId,
@@ -170,6 +183,10 @@ export class UserService {
         },
       },
     };
+
+    if (name) {
+      createData.name = name;
+    }
 
     const createdUser = await this.prisma.user.create({
       data: createData,
@@ -188,10 +205,10 @@ export class UserService {
     return createdUser;
   }
 
-  async disableUser(uid: string) {
+  async disableUser(uid: string, version: number) {
     this.logger.debug(`disableUser: ${uid}`);
     const disableResult = await this.prisma.user.update({
-      where: { uid, NOT: [{ uid: 'root' }, { isDisable: true }] },
+      where: { uid, version, NOT: [{ uid: 'root' }, { isDisable: true }] },
       data: { isDisable: true, version: { increment: 1 } },
       omit: {
         password: true,
@@ -205,10 +222,10 @@ export class UserService {
     return disableResult;
   }
 
-  async enableUser(uid: string) {
+  async enableUser(uid: string, version: number) {
     this.logger.debug(`enableUser: ${uid}`);
     const enableResult = await this.prisma.user.update({
-      where: { uid, NOT: [{ uid: 'root' }, { isDisable: false }] },
+      where: { uid, version, NOT: [{ uid: 'root' }, { isDisable: false }] },
       data: { isDisable: false, version: { increment: 1 } },
       omit: {
         password: true,
@@ -222,14 +239,14 @@ export class UserService {
     return enableResult;
   }
 
-  async resetUserPassword(uid: string) {
+  async resetUserPassword(uid: string, version: number) {
     this.logger.debug(`resetUserPassword: ${uid}`);
     const defaultPassword = this.configService.getOrThrow(
       'app.defaultPassword',
     );
     const hashedPassword = await this.bcryptService.hash(defaultPassword);
     const resetResult = await this.prisma.user.update({
-      where: { uid, NOT: { uid: 'root' } },
+      where: { uid, version, NOT: { uid: 'root' } },
       data: { password: hashedPassword, version: { increment: 1 } },
       omit: { password: true },
     });

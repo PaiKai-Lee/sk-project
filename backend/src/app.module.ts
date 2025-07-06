@@ -10,9 +10,17 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { AppFilter } from './app.filter';
 import { ResponseInterceptor } from './app.interceptor';
 import { AuthenticationMiddleware } from './auth/auth.middleware';
+import { OverviewModule } from './overview/overview.module';
 
 @Module({
-  imports: [CommonModule, AuthModule, UserModule, TransactionModule, MeModule],
+  imports: [
+    CommonModule,
+    AuthModule,
+    UserModule,
+    TransactionModule,
+    MeModule,
+    OverviewModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,

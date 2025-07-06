@@ -20,13 +20,12 @@ import { Prisma } from '@prisma/client';
 @UseGuards(AuthGuard)
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
   @Get()
   async getUsers(
     @Query(new ValidationPipe({ transform: true })) query: GetUsersQueryDto,
   ) {
-
     return this.userService.getUsers(query);
   }
 
@@ -66,30 +65,41 @@ export class UserController {
     return this.userService.getUserByUid(uid, select);
   }
 
+  @UseGuards(RoleGuard)
+  @Roles(Role.Root, Role.Admin)
   @Post()
   async createUser(@Body(new ValidationPipe()) createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
   }
 
   @UseGuards(RoleGuard)
-  @Roles(Role.Root)
+  @Roles(Role.Root, Role.Admin)
   @Patch(':uid/disable')
-  async disableUser(@Param('uid') uid: string) {
-    return this.userService.disableUser(uid);
+  async disableUser(
+    @Param('uid') uid: string,
+    @Body('version') version: number,
+  ) {
+    return this.userService.disableUser(uid, version);
   }
 
   @UseGuards(RoleGuard)
-  @Roles(Role.Root)
+  @Roles(Role.Root, Role.Admin)
   @Patch(':uid/enable')
-  async enableUser(@Param('uid') uid: string) {
-    return this.userService.enableUser(uid);
+  async enableUser(
+    @Param('uid') uid: string,
+    @Param('version') version: number,
+  ) {
+    return this.userService.enableUser(uid, version);
   }
 
   @UseGuards(RoleGuard)
-  @Roles(Role.Root)
+  @Roles(Role.Root, Role.Admin)
   @Patch(':uid/password')
-  async resetUserPassword(@Param('uid') uid: string) {
-    return this.userService.resetUserPassword(uid);
+  async resetUserPassword(
+    @Param('uid') uid: string,
+    @Body('version') version: number,
+  ) {
+    return this.userService.resetUserPassword(uid, version);
   }
 
   @Get(':uid/transactions-items')

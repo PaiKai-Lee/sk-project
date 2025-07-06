@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useMemo,
+} from 'react';
 import AuthClient from '~/api/auth';
 import { tokenManager } from '~/lib/token-manager';
 import type { ILoginResponse } from '~/api/types';
@@ -28,6 +34,7 @@ type AuthProviderState = {
         permissions: string[];
       }
     | undefined;
+  isAdmin: boolean;
   setProfile: (profile: any) => void;
   login: (email: string, password: string) => AsyncResult<ILoginResponse>;
   logout: () => AsyncResult<null>;
@@ -39,6 +46,9 @@ const AuthProviderContext = createContext<AuthProviderState | undefined>(
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
+  const isAdmin = useMemo(() => {
+    return profile?.role === 'root' || profile?.role === 'admin';
+  }, [profile]);
 
   const logout = useCallback(async (): AsyncResult<null> => {
     // 清除 token 和狀態
@@ -73,6 +83,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     <AuthProviderContext.Provider
       value={{
         profile,
+        isAdmin,
         setProfile,
         logout,
         login,

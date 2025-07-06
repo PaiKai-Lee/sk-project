@@ -16,6 +16,7 @@ import { AuthProvider } from './context/auth';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { QueryClient } from '@tanstack/react-query';
+import { LoaderPinwheel } from 'lucide-react';
 const queryClient = new QueryClient();
 
 export const links: Route.LinksFunction = () => [
@@ -51,7 +52,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export function HydrateFallback() {
-  return <h1>First Loading...</h1>;
+  return <LoaderPinwheel className="animate-spin" />;
 }
 
 export default function App() {

@@ -175,3 +175,8 @@ GET http://{{host}}/api/users/ts-001/balance-logs
 Authorization: Bearer {{accessToken}}
 
 ###
+
+### Get Overview
+
+GET http://{{host}}/api/overview
+Authorization: Bearer {{accessToken}}
