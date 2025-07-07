@@ -180,3 +180,17 @@ Authorization: Bearer {{accessToken}}
 
 GET http://{{host}}/api/overview
 Authorization: Bearer {{accessToken}}
+
+###
+
+### Get Roles
+
+GET http://{{host}}/api/roles
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get Departments
+
+GET http://{{host}}/api/departments
+Authorization: Bearer {{accessToken}}

@@ -11,6 +11,8 @@ import { AppFilter } from './app.filter';
 import { ResponseInterceptor } from './app.interceptor';
 import { AuthenticationMiddleware } from './auth/auth.middleware';
 import { OverviewModule } from './overview/overview.module';
+import { RoleModule } from './role/role.module';
+import { DepartmentModule } from './department/department.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { OverviewModule } from './overview/overview.module';
     TransactionModule,
     MeModule,
     OverviewModule,
+    RoleModule,
+    DepartmentModule
   ],
   controllers: [AppController],
   providers: [
