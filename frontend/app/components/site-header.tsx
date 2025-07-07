@@ -24,11 +24,11 @@ export function SiteHeader() {
         <div className="ml-auto flex items-center gap-4">
           <div className="flex items-center gap-1">
             <CircleUser className="size-5" />
-            <Text className='font-semibold'>{auth.profile?.uid}</Text>
+            <Text className="font-semibold">{auth.profile?.uid}</Text>
           </div>
           <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
             <div className="flex items-center gap-1">
-              <GitHubIcon className='size-5'/>
+              <GitHubIcon className="size-5" />
               <a
                 href="https://github.com/PaiKai-Lee/sk-project"
                 rel="noopener noreferrer"

@@ -1,6 +1,6 @@
 import type { Route } from '../transaction-records/+types/home';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import TransactionsClient from '~/api/transactions';
 import { ServerDataTable } from '~/components/transaction-records/data-table';
 import { DataTablePagination } from '~/components/transaction-records/data-table-pagination';
@@ -35,6 +35,7 @@ import { Text } from '~/components/ui/typography';
 import { Skeleton } from '~/components/ui/skeleton';
 import { toast } from 'sonner';
 import { Loader, LoaderCircle } from 'lucide-react';
+import { useLocation } from 'react-router';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -54,6 +55,7 @@ export type Transaction = {
 };
 
 export default function TransactionRecordsHome() {
+  const location = useLocation();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [transactionId, setTransactionId] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationState>({
@@ -66,6 +68,20 @@ export default function TransactionRecordsHome() {
     columnFilters,
     1000
   ) as ColumnFiltersState;
+
+  useEffect(() => {
+    if (location.state) {
+      setColumnFilters([
+        {
+          id: 'transactionId',
+          value: location.state.transactionId,
+        },
+      ]);
+    }
+    return () => {
+      setColumnFilters([]);
+    };
+  }, [location.state]);
 
   const transactionQuery = useQuery({
     queryKey: [
@@ -91,6 +107,9 @@ export default function TransactionRecordsHome() {
           if (item.id === 'createdBy') {
             apiParams.append('userName', `${item.value}`);
           }
+          if (item.id === 'transactionId') {
+            apiParams.append('transactionId', `${item.value}`);
+          }
         });
       }
       const { data } = await TransactionsClient.getTransactions({
@@ -104,7 +123,6 @@ export default function TransactionRecordsHome() {
     queryKey: ['transactions', transactionId],
     enabled: !!transactionId,
     queryFn: async () => {
-      console.log('trigger');
       const { data } = await TransactionsClient.getOneTransaction(
         transactionId as string
       );
@@ -186,7 +204,7 @@ export default function TransactionRecordsHome() {
 
   return (
     <>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-4">
         <Input
           placeholder="Filter by name…"
           value={
@@ -196,6 +214,16 @@ export default function TransactionRecordsHome() {
             table?.getColumn('createdBy')?.setFilterValue(e.target.value)
           }
           className="max-w-sm"
+        />
+        <Input
+          placeholder="Filter by transaction ID…"
+          className="max-w-sm"
+          value={
+            (table.getColumn('transactionId')?.getFilterValue() as string) ?? ''
+          }
+          onChange={(e) =>
+            table?.getColumn('transactionId')?.setFilterValue(e.target.value)
+          }
         />
         {transactionQuery.isFetching && <Loader className="animate-spin" />}
       </div>

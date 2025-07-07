@@ -12,6 +12,8 @@ import { Text } from '~/components/ui/typography';
 import { useQuery } from '@tanstack/react-query';
 import OverviewClient from '~/api/overview';
 import { Loader2Icon } from 'lucide-react';
+import { useNavigate } from 'react-router';
+import { Button } from '~/components/ui/button';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -21,12 +23,21 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function OverviewPage() {
+  const navigate = useNavigate();
   const overviewQuery = useQuery({
     queryKey: ['overview'],
     queryFn: () => OverviewClient.getOverview(),
     select: (rowData) => rowData?.data?.data,
     staleTime: 60 * 1000 * 5,
   });
+
+  function handleTransactionClick(transactionId: string) {
+    navigate(`/transaction-records`, {
+      state: {
+        transactionId,
+      },
+    });
+  }
 
   return (
     <>
@@ -62,7 +73,15 @@ export default function OverviewPage() {
             {overviewQuery?.data &&
               overviewQuery.data.recentTransactions.map((transaction) => (
                 <TableRow key={transaction.transactionId}>
-                  <TableCell>{transaction.transactionId}</TableCell>
+                  <TableCell
+                    onClick={() =>
+                      handleTransactionClick(transaction.transactionId)
+                    }
+                  >
+                    <Button variant="link" className="p-0 cursor-pointer">
+                      {transaction.transactionId}
+                    </Button>
+                  </TableCell>
                   <TableCell>{transaction.remark}</TableCell>
                   <TableCell>
                     <Text>{transaction.createdByUser.name}</Text>
