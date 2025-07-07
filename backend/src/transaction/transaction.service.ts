@@ -33,6 +33,7 @@ export class TransactionService {
       startDate,
       endDate,
       userName,
+      transactionId,
     } = getTransactionsDto;
 
     const where: Prisma.TransactionWhereInput = {};
@@ -51,6 +52,10 @@ export class TransactionService {
 
     if (userName) {
       where.createdByUser = { name: { equals: userName } };
+    }
+
+    if (transactionId) {
+      where.transactionId = { equals: transactionId };
     }
 
     const orderBy = [] as Prisma.TransactionOrderByWithRelationInput[];

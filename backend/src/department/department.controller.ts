@@ -1,15 +1,13 @@
-import { Controller, Get, Logger, Query, ValidationPipe } from "@nestjs/common";
-import { DepartmentService } from "./department.service";
+import { Controller, Get, Logger, Query, ValidationPipe } from '@nestjs/common';
+import { DepartmentService } from './department.service';
 
 @Controller('departments')
 export class DepartmentController {
-    private readonly logger = new Logger(DepartmentController.name)
-    constructor(
-        private readonly departmentService: DepartmentService
-    ) { }
+  private readonly logger = new Logger(DepartmentController.name);
+  constructor(private readonly departmentService: DepartmentService) {}
 
-    @Get()
-    async getRoles() {
-        return this.departmentService.getDepartments();
-    }
+  @Get()
+  async getRoles() {
+    return this.departmentService.getDepartments();
+  }
 }

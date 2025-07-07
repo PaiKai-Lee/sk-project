@@ -53,4 +53,8 @@ export class GetTransactionsDto {
   @IsOptional()
   @IsString()
   userName?: string;
+
+  @IsOptional()
+  @IsString()
+  transactionId?: string;
 }

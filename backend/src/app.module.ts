@@ -23,7 +23,7 @@ import { DepartmentModule } from './department/department.module';
     MeModule,
     OverviewModule,
     RoleModule,
-    DepartmentModule
+    DepartmentModule,
   ],
   controllers: [AppController],
   providers: [

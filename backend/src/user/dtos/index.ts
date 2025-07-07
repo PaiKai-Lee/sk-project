@@ -31,6 +31,10 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'roleId不得為空' })
   @IsNumber()
   roleId: number;
+
+  @IsNotEmpty({ message: 'departmentId不得為空' })
+  @IsNumber()
+  departmentId: number;
 }
 
 export class ChangeUserNameDto {
@@ -69,12 +73,13 @@ const ALLOWED_FIELDS = [
   'uid',
   'name',
   'balance',
+  'department',
   'role',
   'isInit',
   'isDisable',
   'version',
 ];
-const ALLOWED_SORTS = ['id', 'uid', 'name', 'balance'];
+const ALLOWED_SORTS = ['id', 'uid', 'name', 'balance', 'department'];
 export class GetUsersQueryDto {
   @IsOptional()
   @Transform(({ value }) => (Array.isArray(value) ? value : [value]))

@@ -119,8 +119,8 @@ Content-Type: application/json
 ### Get Users
 GET http://{{host}}/api/users
   ?showDisable=false
-  &fields=isInit
-  &fields=balance
+  &fields=department
+  &fields=role
   &sort=balance:desc
   &sort=id:asc
 Authorization: Bearer {{accessToken}}
@@ -186,6 +186,7 @@ Authorization: Bearer {{accessToken}}
 ### Get Roles
 
 GET http://{{host}}/api/roles
+  ?includePermissions=true
 Authorization: Bearer {{accessToken}}
 
 ###

@@ -56,6 +56,7 @@ export class UserService {
       name: true,
       balance: false,
       role: false as boolean | { select: { name: true } },
+      department: false as boolean | { select: { name: true } },
       isInit: false,
       isDisable: false,
       version: false,
@@ -64,6 +65,14 @@ export class UserService {
     if (fields) {
       fields.forEach((key) => {
         if (key === 'role') {
+          select[key] = {
+            select: {
+              name: true,
+            },
+          };
+          return;
+        }
+        if (key === 'department') {
           select[key] = {
             select: {
               name: true,
@@ -144,7 +153,7 @@ export class UserService {
   async createUser(createUserDto: CreateUserDto) {
     this.logger.debug(`createUser: ${JSON.stringify(createUserDto)}`);
     const authUser = this.cls.get('user');
-    const { uid, roleId, name } = createUserDto;
+    const { uid, roleId, name, departmentId } = createUserDto;
 
     // 確認是否有重複使用者
     const user = await this.getUserByUid(uid);
@@ -175,6 +184,11 @@ export class UserService {
       role: {
         connect: {
           id: roleId,
+        },
+      },
+      department: {
+        connect: {
+          id: departmentId,
         },
       },
       createdByUser: {

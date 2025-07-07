@@ -40,6 +40,7 @@ export class UserController {
       name: true,
       balance: false,
       role: false as boolean | { select: { name: true } },
+      department: false as boolean | { select: { name: true } },
       isInit: false,
       isDisable: false,
       version: false,
@@ -50,6 +51,14 @@ export class UserController {
       fields.forEach((key) => {
         if (Object.hasOwn(select, key)) {
           if (key === 'role') {
+            select[key] = {
+              select: {
+                name: true,
+              },
+            };
+            return;
+          }
+          if (key === 'department') {
             select[key] = {
               select: {
                 name: true,
