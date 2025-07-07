@@ -30,10 +30,13 @@ import {
 } from '~/components/ui/select';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import UserClient from '~/api/users';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import RoleClient from '~/api/roles';
+import DepartmentClient from '~/api/departments';
+import { Separator } from '../ui/separator';
 
 const formSchema = z.object({
   uid: z.string({
@@ -53,6 +56,11 @@ const formSchema = z.object({
     required_error: 'roleId不得為空',
     invalid_type_error: 'roleId必須為數字',
   }),
+
+  departmentId: z.coerce.number({
+    required_error: 'departmentId不得為空',
+    invalid_type_error: 'departmentId必須為數字',
+  }),
 });
 
 export function CreateUserSheet() {
@@ -60,12 +68,25 @@ export function CreateUserSheet() {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
 
+  const roleQuery = useQuery({
+    queryKey: ['roles'],
+    queryFn: () => RoleClient.getRoles(),
+    select: (data) => data.data.data,
+    staleTime: 60 * 1000 * 60,
+  });
+
+  const departmentQuery = useQuery({
+    queryKey: ['departments'],
+    queryFn: () => DepartmentClient.getDepartments(),
+    select: (data) => data.data.data,
+    staleTime: 60 * 1000 * 60,
+  });
+
   const userCreateMutation = useMutation({
     mutationFn: (value: { uid: string; name?: string; roleId: number }) => {
       return UserClient.createUser(value);
     },
     onSuccess: async (data) => {
-      console.log(data);
       await queryClient.invalidateQueries({
         queryKey: ['users'],
       });
@@ -83,7 +104,8 @@ export function CreateUserSheet() {
     defaultValues: {
       name: '',
       uid: '',
-      roleId: 3,
+      roleId: 0,
+      departmentId: 0,
     },
   });
 
@@ -103,7 +125,7 @@ export function CreateUserSheet() {
     <>
       <Sheet open={open} onOpenChange={openChangeHandler}>
         <SheetTrigger asChild>
-          <Button className="max-w-min">Create New User</Button>
+          <Button className="max-w-min cursor-pointer">Create New User</Button>
         </SheetTrigger>
         <SheetContent>
           <SheetHeader>
@@ -124,7 +146,6 @@ export function CreateUserSheet() {
                     <FormControl>
                       <Input placeholder="Uid" autoComplete="off" {...field} />
                     </FormControl>
-                    <FormDescription>This is Employee ID</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -142,34 +163,69 @@ export function CreateUserSheet() {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>This is User Name</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={form.control}
-                name="roleId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Role</FormLabel>
-                    <Select onValueChange={field.onChange}>
-                      <FormControl>
-                        <SelectTrigger className="w-[150px]">
-                          <SelectValue placeholder="Select a role" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="3">User</SelectItem>
-                        <SelectItem value="2">Admin</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>This is User Role</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <Separator />
+              <div className="flex flex-col gap-4 md:flex-row md:justify-between">
+                <FormField
+                  control={form.control}
+                  name="roleId"
+                  render={({ field }) => (
+                    <FormItem className="basis-1/2">
+                      <Select onValueChange={field.onChange}>
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select a role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {roleQuery.data?.map((role) => {
+                            if (role.name !== 'root') {
+                              return (
+                                <SelectItem
+                                  key={role.id}
+                                  value={role.id.toString()}
+                                >
+                                  {role.name}
+                                </SelectItem>
+                              );
+                            }
+                          })}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="departmentId"
+                  render={({ field }) => (
+                    <FormItem className="basis-1/2">
+                      <Select onValueChange={field.onChange}>
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Department" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {departmentQuery.data?.map((department) => (
+                            <SelectItem
+                              key={department.id}
+                              value={department.id.toString()}
+                            >
+                              {department.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </form>
           </Form>
           <SheetFooter>

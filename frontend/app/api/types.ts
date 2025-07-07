@@ -81,6 +81,9 @@ export interface IUserResponse {
   role?: {
     name: string;
   };
+  department?: {
+    name: string;
+  };
   isInit?: boolean;
   isDisable?: boolean;
   version?: number;
@@ -95,4 +98,34 @@ export interface IOverviewResponse {
     'role' | 'isInit' | 'isDisable' | 'version'
   >[];
   recentTransactions: IOneTransactionResponse[];
+}
+
+// Roles
+
+export interface RolePermission {
+  roleId: number;
+  id: number;
+  permissionId: number;
+  permission: Permission;
+}
+
+export interface IRoleResponse {
+  id: number;
+  name: string;
+  rolePermissions?: RolePermission[];
+}
+
+// Permissions
+
+export interface Permission {
+  id: number;
+  action: string;
+  description: string;
+}
+
+// Departments
+
+export interface IDepartmentResponse {
+  id: number;
+  name: string;
 }
