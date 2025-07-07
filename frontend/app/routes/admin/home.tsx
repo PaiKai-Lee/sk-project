@@ -32,6 +32,9 @@ export type User = {
   role: {
     name: string;
   };
+  department: {
+    name: string;
+  };
   isInit: boolean;
   isDisable: boolean;
   version: number;
@@ -48,7 +51,7 @@ export default function AdminPage() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const selectedFields = useMemo(
-    () => ['balance', 'role', 'isInit', 'isDisable', 'version'],
+    () => ['balance', 'department', 'role', 'isInit', 'isDisable', 'version'],
     []
   );
   const userQuery = useQuery({
@@ -75,7 +78,6 @@ export default function AdminPage() {
       return switchFunc(value.uid);
     },
     onSuccess: async (data) => {
-      console.log(data);
       await queryClient.invalidateQueries({
         queryKey: ['users'],
       });
@@ -108,7 +110,7 @@ export default function AdminPage() {
               }
             >
               Uid
-              <ArrowUpDown className="ml-2 h-4 w-4" />
+              <ArrowUpDown className="h-4 w-4" />
             </Button>
           );
         },
@@ -125,7 +127,7 @@ export default function AdminPage() {
               }
             >
               Name
-              <ArrowUpDown className="ml-2 h-4 w-4" />
+              <ArrowUpDown className="h-4 w-4" />
             </Button>
           );
         },
@@ -142,7 +144,7 @@ export default function AdminPage() {
               }
             >
               Balance
-              <ArrowUpDown className="ml-2 h-4 w-4" />
+              <ArrowUpDown className="h-4 w-4" />
             </Button>
           );
         },
@@ -153,6 +155,26 @@ export default function AdminPage() {
             return <Text>{row.original.balance}</Text>;
           }
         },
+      },
+      {
+        id: 'department',
+        accessorKey: 'department.name',
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+            >
+              Department
+              <ArrowUpDown className="h-4 w-4" />
+            </Button>
+          );
+        },
+        cell: ({ row }) => (
+          <Badge variant="outline">{row.original.department.name}</Badge>
+        ),
       },
       {
         id: 'role',

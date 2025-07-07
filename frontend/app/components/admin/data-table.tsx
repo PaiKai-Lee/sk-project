@@ -59,21 +59,62 @@ export function DataTable<TData, TValue>({
   });
   return (
     <>
-      <Input
-        placeholder="Filter by name…"
-        value={(table.getColumn('name')?.getFilterValue() as string) || ''}
-        onChange={(event) =>
-          table.getColumn('name')?.setFilterValue(event.target.value)
-        }
-        className="max-w-sm"
-      />
+      <div className="flex flex-col gap-2 md:flex-row">
+        <Input
+          placeholder="Filter by uid…"
+          value={(table.getColumn('uid')?.getFilterValue() as string) || ''}
+          onChange={(event) =>
+            table.getColumn('uid')?.setFilterValue(event.target.value)
+          }
+          className="md:max-w-sm"
+        />
+        <Input
+          placeholder="Filter by name…"
+          value={(table.getColumn('name')?.getFilterValue() as string) || ''}
+          onChange={(event) =>
+            table.getColumn('name')?.setFilterValue(event.target.value)
+          }
+          className="md:max-w-sm"
+        />
+        <Input
+          placeholder="Filter by department…"
+          value={
+            (table.getColumn('department')?.getFilterValue() as string) || ''
+          }
+          onChange={(event) =>
+            table.getColumn('department')?.setFilterValue(event.target.value)
+          }
+          className="md:max-w-sm"
+        />
+      </div>
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
+                if (
+                  ['uid', 'department', 'role', 'isInit'].includes(header.id)
+                ) {
+                  return (
+                    <TableHead
+                      key={header.id}
+                      className="w-[100px] max-w-[100px] text-center"
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  );
+                }
+
                 return (
-                  <TableHead key={header.id} className="w-[100px] text-center">
+                  <TableHead
+                    key={header.id}
+                    className="max-w-[100px] text-center"
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -94,7 +135,10 @@ export function DataTable<TData, TValue>({
                 data-state={row.getIsSelected() ? 'selected' : ''}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className={'w-[100px] text-center'}>
+                  <TableCell
+                    key={cell.id}
+                    className={'max-w-[100px] text-center'}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
