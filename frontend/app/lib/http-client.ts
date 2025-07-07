@@ -4,7 +4,7 @@ import { tokenManager } from '~/lib/token-manager';
 import AuthClient from '~/api/auth';
 
 const httpClient = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },
