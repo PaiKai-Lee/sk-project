@@ -6,13 +6,11 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from '~/components/ui/sheet';
 
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -34,40 +32,66 @@ import { Input } from '../ui/input';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import UserClient from '~/api/users';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import RoleClient from '~/api/roles';
 import DepartmentClient from '~/api/departments';
 import { Separator } from '../ui/separator';
+
+export type User  = {
+  id: string;
+  uid: string;
+  name: string;
+  balance: number;
+  role: {
+    id: number;
+    name: string;
+  };
+  department: {
+    id: number;
+    name: string;
+  };
+  isInit: boolean;
+  isDisable: boolean;
+  version: number;
+};
 
 const formSchema = z.object({
   uid: z.string({
     required_error: 'uid不得為空',
   }),
-
   name: z
     .string()
     .min(1, { message: '名稱不得為空' })
     .max(10, { message: '長度需為 1 至 10 字' })
     .regex(/^[\u4e00-\u9fa5a-zA-Z0-9]+$/, {
       message: '只能包含中文、英文與數字',
-    })
-    .optional(),
+    }),
 
   roleId: z.coerce.number({
     required_error: 'roleId不得為空',
-    invalid_type_error: 'roleId不正確',
+    invalid_type_error: 'roleId必須為數字',
   }),
 
   departmentId: z.coerce.number({
     required_error: 'departmentId不得為空',
-    invalid_type_error: 'departmentId不正確',
+    invalid_type_error: 'departmentId必須為數字',
+  }),
+
+  version: z.coerce.number({
+    required_error: '版本戳不得為空',
+    invalid_type_error: '版本戳必須為數字',
   }),
 });
 
-export function CreateUserSheet() {
-  const FORM_ID = 'create-user-form';
+export function EditUserSheet(props: { 
+    isEditOpen: boolean; 
+    setIsEditOpen: React.Dispatch<React.SetStateAction<boolean>>; 
+    selectedUser: User | null 
+}) {
+  const { isEditOpen, setIsEditOpen, selectedUser } = props;
+
+  const FORM_ID = 'edit-user-form';
   const queryClient = useQueryClient();
-  const [open, setOpen] = useState(false);
 
   const roleQuery = useQuery({
     queryKey: ['roles'],
@@ -83,56 +107,71 @@ export function CreateUserSheet() {
     staleTime: 60 * 1000 * 60,
   });
 
-  const userCreateMutation = useMutation({
+  const userEditMutation = useMutation({
     mutationFn: (value: {
       uid: string;
-      name?: string;
+      name: string;
       roleId: number;
       departmentId: number;
+      version: number;
     }) => {
-      return UserClient.createUser(value);
+      return UserClient.editUser(value.uid, {
+        name: value.name,
+        roleId: value.roleId,
+        departmentId: value.departmentId,
+        version: value.version,
+      });
     },
     onSuccess: async (data) => {
       await queryClient.invalidateQueries({
         queryKey: ['users'],
       });
-      toast.success('新增成功');
-      setOpen(false);
+      toast.success('更新成功');
+      setIsEditOpen(false);
     },
     onError: (error) => {
       console.error(error);
-      toast.error('新增失敗');
+      toast.error('更新失敗');
     },
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      uid: '',
-      roleId: 0,
-      departmentId: 0,
+      uid: selectedUser?.uid || '',
+      name: selectedUser?.name || '',
+      roleId: selectedUser?.role.id,
+      departmentId: selectedUser?.department.id,
+      version: selectedUser?.version,
     },
   });
 
+  useEffect(() => {
+    if (selectedUser) {
+      form.reset({
+        uid: selectedUser.uid,
+        name: selectedUser.name,
+        roleId: selectedUser.role.id,
+        departmentId: selectedUser.department.id,
+        version: selectedUser.version,
+      });
+    }
+  }, [selectedUser, form]);
+
   function submitHandler(values: z.infer<typeof formSchema>) {
-    userCreateMutation.mutate(values);
+    userEditMutation.mutate(values);
     form.reset();
   }
 
   function openChangeHandler(status: boolean) {
-    setOpen(status);
-    if (status) {
-      form.reset();
-    }
+    setIsEditOpen(status);
   }
+
+  if(!selectedUser) return null;
 
   return (
     <>
-      <Sheet open={open} onOpenChange={openChangeHandler}>
-        <SheetTrigger asChild>
-          <Button className="max-w-min cursor-pointer">Create New User</Button>
-        </SheetTrigger>
+      <Sheet open={isEditOpen} onOpenChange={openChangeHandler}>
         <SheetContent>
           <SheetHeader>
             <SheetTitle>Create New User</SheetTitle>
@@ -151,7 +190,7 @@ export function CreateUserSheet() {
                   <FormItem>
                     <FormLabel>Uid</FormLabel>
                     <FormControl>
-                      <Input placeholder="Uid" autoComplete="off" {...field} />
+                      <Input placeholder="Uid" autoComplete="off" {...field} disabled />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -181,7 +220,7 @@ export function CreateUserSheet() {
                   name="roleId"
                   render={({ field }) => (
                     <FormItem className="basis-1/2">
-                      <Select onValueChange={field.onChange}>
+                      <Select onValueChange={field.onChange} value={field.value.toString()}>
                         <FormControl>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select a role" />
@@ -211,7 +250,7 @@ export function CreateUserSheet() {
                   name="departmentId"
                   render={({ field }) => (
                     <FormItem className="basis-1/2">
-                      <Select onValueChange={field.onChange}>
+                      <Select onValueChange={field.onChange} value={field.value.toString()}>
                         <FormControl>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Department" />
@@ -232,12 +271,24 @@ export function CreateUserSheet() {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="version"
+                  render={({ field }) => (
+                    <FormItem className="hidden">
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem> 
+                  )}
+                />
               </div>
             </form>
           </Form>
           <SheetFooter>
             <Button type="submit" form={FORM_ID}>
-              Submit
+              Edit
             </Button>
             <SheetClose asChild>
               <Button variant="outline">Close</Button>

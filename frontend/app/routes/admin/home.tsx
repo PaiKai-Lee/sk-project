@@ -23,6 +23,7 @@ import { Text } from '~/components/ui/typography';
 
 import { DataTable } from '~/components/admin/data-table';
 import { CreateUserSheet } from '~/components/admin/create-user-sheet';
+import { EditUserSheet } from '~/components/admin/edit-user-sheet';
 
 export type User = {
   id: string;
@@ -30,9 +31,11 @@ export type User = {
   name: string;
   balance: number;
   role: {
+    id: number;
     name: string;
   };
   department: {
+    id: number;
     name: string;
   };
   isInit: boolean;
@@ -40,13 +43,14 @@ export type User = {
   version: number;
 };
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [{ title: 'admin' }, { name: 'description', content: 'admin page' }];
 }
 
 export default function AdminPage() {
   const queryClient = useQueryClient();
 
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
@@ -214,12 +218,25 @@ export default function AdminPage() {
           />
         ),
       },
+      {
+        id: 'action',
+        cell: ({ row }) => (
+          <Button
+            className='cursor-pointer hover:bg-accent hover:text-accent-foreground' 
+            variant="outline" 
+            onClick={(value) => {
+            setSelectedUser(row.original);
+            setIsEditOpen(true);
+          }}>Edit</Button>
+        ),
+      }
     ];
   }, []);
 
   return (
     <div className="flex flex-col gap-4">
       <CreateUserSheet />
+      <EditUserSheet isEditOpen={isEditOpen} setIsEditOpen={setIsEditOpen} selectedUser={selectedUser} />
       <DataTable columns={columns} data={userQuery?.data || []} />
       <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
         <AlertDialogContent>
