@@ -5,22 +5,23 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto, GetUsersQueryDto } from './dtos';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { RoleGuard } from 'src/auth/guards/roles.guard';
+import { CreateUserDto, EditUserDto, GetUsersQueryDto } from './dtos';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { RoleGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/auth/enums/role.enum';
-import { Prisma } from '@prisma/client';
+import { CanUpdateSelfGuard } from 'src/guards/can-update-self.guard';
 
 @UseGuards(AuthGuard)
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Get()
   async getUsers(
@@ -81,7 +82,17 @@ export class UserController {
     return this.userService.createUser(createUserDto);
   }
 
-  @UseGuards(RoleGuard)
+  @UseGuards(RoleGuard, CanUpdateSelfGuard)
+  @Roles(Role.Root, Role.Admin)
+  @Put(':uid')
+  async editUser(
+    @Param('uid') uid: string,
+    @Body(new ValidationPipe()) editUserDto: EditUserDto
+  ) {
+    return this.userService.editUser(uid, editUserDto);
+  }
+
+  @UseGuards(RoleGuard, CanUpdateSelfGuard)
   @Roles(Role.Root, Role.Admin)
   @Patch(':uid/disable')
   async disableUser(
@@ -91,7 +102,7 @@ export class UserController {
     return this.userService.disableUser(uid, version);
   }
 
-  @UseGuards(RoleGuard)
+  @UseGuards(RoleGuard, CanUpdateSelfGuard)
   @Roles(Role.Root, Role.Admin)
   @Patch(':uid/enable')
   async enableUser(
@@ -102,7 +113,7 @@ export class UserController {
   }
 
   @UseGuards(RoleGuard)
-  @Roles(Role.Root, Role.Admin)
+  @Roles(Role.Root)
   @Patch(':uid/password')
   async resetUserPassword(
     @Param('uid') uid: string,

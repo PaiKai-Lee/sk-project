@@ -12,7 +12,7 @@ import {
 import { TransactionService } from './transaction.service';
 import { CreateTransactionDto } from './dtos/create-transaction.dto';
 import { GetTransactionsDto } from './dtos/get-transactions.dto';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @UseGuards(AuthGuard)
 @Controller('transactions')

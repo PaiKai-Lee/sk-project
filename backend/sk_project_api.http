@@ -128,8 +128,10 @@ Authorization: Bearer {{accessToken}}
 ###
 
 ### Get One User
-GET http://{{host}}/api/users/ts-001
-  ?fields=isInit
+GET http://{{host}}/api/users/ts-003
+  ?fields=isInit,
+  &fields=role,
+  &fields=version
 Authorization: Bearer {{accessToken}}
 
 ###
@@ -142,6 +144,18 @@ Content-Type: application/json
 {
   "uid": "ts-002",
   "roleId": 2
+}
+
+###
+
+### Edit User
+PUT http://{{host}}/api/users/ts-003
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "roleId": 1,
+  "version": 6
 }
 
 ###

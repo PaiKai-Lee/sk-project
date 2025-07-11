@@ -3,6 +3,7 @@ import { OnEvent } from '@nestjs/event-emitter';
 import {
   UserCreatedEvent,
   UserDisabledEvent,
+  UserEditedEvent,
   UserEnabledEvent,
   UserNameChangedEvent,
   UserPasswordChangedEvent,
@@ -52,6 +53,26 @@ export class UserListener {
         },
       },
     });
+  }
+
+  @OnEvent('user.updated')
+  async handleUserEditedEvent(event: UserEditedEvent) {
+    const { context, editData } = event;
+    const contentString = Object.entries(editData)
+      .map(([key, value]) => `${key}: ${value}`)
+      .join(', ');
+    console.log(contentString);
+    await this.auditLogService.createAuditLog({
+      userAgent: context.reqInfo.userAgent,
+      ip: context.reqInfo.ip,
+      action: 'user.updated',
+      content: `編輯使用者: uid: ${event.uid}, ${contentString}`,
+      user: {
+        connect: {
+          uid: context.user.uid,
+        },
+      },
+    })
   }
 
   @OnEvent('user.enabled')

@@ -3,19 +3,26 @@ import {
   ConflictException,
   Injectable,
   Logger,
-  UseGuards,
+  NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/common/prisma';
 import { BcryptService } from 'src/common/utils';
-import { CreateUserDto, ChangePasswordDto, GetUsersQueryDto } from './dtos';
+import {
+  CreateUserDto,
+  ChangePasswordDto,
+  GetUsersQueryDto,
+  ChangeUserNameDto,
+  EditUserDto,
+} from './dtos';
 import { ClsService } from 'nestjs-cls';
 import { AppClsStore } from 'src/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
   UserCreatedEvent,
   UserDisabledEvent,
+  UserEditedEvent,
   UserEnabledEvent,
   UserNameChangedEvent,
   UserPasswordChangedEvent,
@@ -32,7 +39,7 @@ export class UserService {
     private readonly prisma: PrismaService,
     private readonly bcryptService: BcryptService,
     private readonly eventEmitter: EventEmitter2,
-  ) {}
+  ) { }
 
   async getUsers(getUsersQueryDto: GetUsersQueryDto) {
     this.logger.debug('getUsers');
@@ -55,8 +62,8 @@ export class UserService {
       uid: true,
       name: true,
       balance: false,
-      role: false as boolean | { select: { name: true } },
-      department: false as boolean | { select: { name: true } },
+      role: false as boolean,
+      department: false as boolean,
       isInit: false,
       isDisable: false,
       version: false,
@@ -64,22 +71,6 @@ export class UserService {
 
     if (fields) {
       fields.forEach((key) => {
-        if (key === 'role') {
-          select[key] = {
-            select: {
-              name: true,
-            },
-          };
-          return;
-        }
-        if (key === 'department') {
-          select[key] = {
-            select: {
-              name: true,
-            },
-          };
-          return;
-        }
         select[key] = true;
       });
     }
@@ -119,6 +110,7 @@ export class UserService {
         isInit: true,
         role: {
           select: {
+            id: true,
             name: true,
             rolePermissions: {
               select: {
@@ -219,6 +211,67 @@ export class UserService {
     return createdUser;
   }
 
+  async editUser(uid: string, editUserDto: EditUserDto) {
+    this.logger.debug(`editUser: ${JSON.stringify(editUserDto)}`);
+    const { name, roleId, departmentId, version } = editUserDto;
+
+    const user = await this.getUserByUid(uid);
+    if (!user) {
+      throw new NotFoundException('找不到使用者');
+    }
+
+    // 不可以設定 role root
+    const rootRoleId = await this.prisma.role.findUniqueOrThrow({
+      select: { id: true },
+      where: { name: 'root' },
+    });
+    if (roleId === rootRoleId.id) {
+      throw new BadRequestException('不可以設定 root role');
+    }
+
+    const editData: Prisma.UserUpdateInput = {
+      isInit: true,
+      version: { increment: 1 },
+    };
+
+    if (name) {
+      editData.name = name;
+    }
+
+    if (roleId) {
+      editData.role = {
+        connect: {
+          id: roleId,
+        },
+      };
+    }
+
+    if (departmentId) {
+      editData.department = {
+        connect: {
+          id: departmentId,
+        },
+      };
+    }
+
+    const editedUser = await this.prisma.user.update({
+      where: { uid, version, NOT: { uid: 'root' } },
+      data: editData,
+      omit: { password: true },
+    });
+
+    this.eventEmitter.emit(
+      'user.update',
+      new UserEditedEvent({
+        uid,
+        editData: editUserDto,
+        context: this.cls.get(),
+      }),
+    );
+
+    return editedUser;
+  }
+
   async disableUser(uid: string, version: number) {
     this.logger.debug(`disableUser: ${uid}`);
     const disableResult = await this.prisma.user.update({
@@ -277,7 +330,7 @@ export class UserService {
 
   async changeUserPassword(uid: string, changePasswordDto: ChangePasswordDto) {
     this.logger.debug(`changeUserPassword`);
-    const { newPassword, confirmPassword } = changePasswordDto;
+    const { newPassword, confirmPassword, version } = changePasswordDto;
     if (newPassword !== confirmPassword) {
       throw new BadRequestException('密碼不一致');
     }
@@ -285,7 +338,7 @@ export class UserService {
     const hashedPassword = await this.bcryptService.hash(newPassword);
     // 更新密碼，並調整帳號為已初始化
     const changeResult = await this.prisma.user.update({
-      where: { uid },
+      where: { uid, version, NOT: { uid: 'root' } },
       data: {
         password: hashedPassword,
         isInit: true,
@@ -303,10 +356,11 @@ export class UserService {
     return changeResult;
   }
 
-  async changeUserName(uid: string, name: string) {
+  async changeUserName(uid: string, changeUserNameDto: ChangeUserNameDto) {
     this.logger.debug(`changeUserName`);
+    const { name, version } = changeUserNameDto;
     const changeResult = await this.prisma.user.update({
-      where: { uid },
+      where: { uid, version, NOT: { uid: 'root' } },
       data: { name, version: { increment: 1 } },
       omit: { password: true },
     });

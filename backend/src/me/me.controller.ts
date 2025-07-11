@@ -47,11 +47,9 @@ export class MeController {
   }
 
   @Patch('change-name')
-  async changeUserName(
-    @Body(new ValidationPipe()) changeUserNameDto: ChangeUserNameDto,
-  ) {
+  async changeUserName(@Body(new ValidationPipe()) dto: ChangeUserNameDto) {
     const uid = this.cls.get('user').uid as string;
-    return this.userService.changeUserName(uid, changeUserNameDto.name);
+    return this.userService.changeUserName(uid, dto);
   }
 
   @Patch('change-password')
