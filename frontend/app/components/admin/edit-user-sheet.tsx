@@ -36,8 +36,9 @@ import { useEffect, useState } from 'react';
 import RoleClient from '~/api/roles';
 import DepartmentClient from '~/api/departments';
 import { Separator } from '../ui/separator';
+import { useTranslation } from 'react-i18next';
 
-export type User  = {
+export type User = {
   id: string;
   uid: string;
   name: string;
@@ -83,12 +84,13 @@ const formSchema = z.object({
   }),
 });
 
-export function EditUserSheet(props: { 
-    isEditOpen: boolean; 
-    setIsEditOpen: React.Dispatch<React.SetStateAction<boolean>>; 
-    selectedUser: User | null 
+export function EditUserSheet(props: {
+  isEditOpen: boolean;
+  setIsEditOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedUser: User | null;
 }) {
   const { isEditOpen, setIsEditOpen, selectedUser } = props;
+  const { t } = useTranslation();
 
   const FORM_ID = 'edit-user-form';
   const queryClient = useQueryClient();
@@ -167,14 +169,14 @@ export function EditUserSheet(props: {
     setIsEditOpen(status);
   }
 
-  if(!selectedUser) return null;
+  if (!selectedUser) return null;
 
   return (
     <>
       <Sheet open={isEditOpen} onOpenChange={openChangeHandler}>
         <SheetContent>
           <SheetHeader>
-            <SheetTitle>Create New User</SheetTitle>
+            <SheetTitle>{t('admin.editUser')}</SheetTitle>
           </SheetHeader>
           <SheetDescription></SheetDescription>
           <Form {...form}>
@@ -188,9 +190,14 @@ export function EditUserSheet(props: {
                 name="uid"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Uid</FormLabel>
+                    <FormLabel>{t('admin.uid')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Uid" autoComplete="off" {...field} disabled />
+                      <Input
+                        placeholder="Uid"
+                        autoComplete="off"
+                        {...field}
+                        disabled
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -201,7 +208,7 @@ export function EditUserSheet(props: {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>User Name</FormLabel>
+                    <FormLabel>{t('admin.name')}</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="User Name"
@@ -220,10 +227,13 @@ export function EditUserSheet(props: {
                   name="roleId"
                   render={({ field }) => (
                     <FormItem className="basis-1/2">
-                      <Select onValueChange={field.onChange} value={field.value.toString()}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value.toString()}
+                      >
                         <FormControl>
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a role" />
+                            <SelectValue placeholder={t('admin.selectRole')} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -250,10 +260,13 @@ export function EditUserSheet(props: {
                   name="departmentId"
                   render={({ field }) => (
                     <FormItem className="basis-1/2">
-                      <Select onValueChange={field.onChange} value={field.value.toString()}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value.toString()}
+                      >
                         <FormControl>
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Department" />
+                            <SelectValue placeholder={t('admin.department')} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -280,7 +293,7 @@ export function EditUserSheet(props: {
                         <Input {...field} />
                       </FormControl>
                       <FormMessage />
-                    </FormItem> 
+                    </FormItem>
                   )}
                 />
               </div>

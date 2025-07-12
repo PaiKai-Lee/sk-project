@@ -24,6 +24,7 @@ import { Text } from '~/components/ui/typography';
 import { DataTable } from '~/components/admin/data-table';
 import { CreateUserSheet } from '~/components/admin/create-user-sheet';
 import { EditUserSheet } from '~/components/admin/edit-user-sheet';
+import { useTranslation } from 'react-i18next';
 
 export type User = {
   id: string;
@@ -43,11 +44,12 @@ export type User = {
   version: number;
 };
 
-export function meta({ }: Route.MetaArgs) {
+export function meta({}: Route.MetaArgs) {
   return [{ title: 'admin' }, { name: 'description', content: 'admin page' }];
 }
 
 export default function AdminPage() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -85,11 +87,11 @@ export default function AdminPage() {
       await queryClient.invalidateQueries({
         queryKey: ['users'],
       });
-      toast.success('切換成功');
+      toast.success(t('admin.switchSuccess'));
     },
     onError: (error) => {
       console.error(error);
-      toast.error('切換失敗');
+      toast.error(t('admin.switchFailed'));
     },
   });
 
@@ -109,12 +111,13 @@ export default function AdminPage() {
         header: ({ column }) => {
           return (
             <Button
+              className="cursor-pointer"
               variant="ghost"
               onClick={() =>
                 column.toggleSorting(column.getIsSorted() === 'asc')
               }
             >
-              Uid
+              {t('admin.uid')}
               <ArrowUpDown className="h-4 w-4" />
             </Button>
           );
@@ -126,12 +129,13 @@ export default function AdminPage() {
         header: ({ column }) => {
           return (
             <Button
+              className="cursor-pointer"
               variant="ghost"
               onClick={() =>
                 column.toggleSorting(column.getIsSorted() === 'asc')
               }
             >
-              Name
+              {t('admin.name')}
               <ArrowUpDown className="h-4 w-4" />
             </Button>
           );
@@ -143,12 +147,13 @@ export default function AdminPage() {
         header: ({ column }) => {
           return (
             <Button
+              className="cursor-pointer"
               variant="ghost"
               onClick={() =>
                 column.toggleSorting(column.getIsSorted() === 'asc')
               }
             >
-              Balance
+              {t('admin.balance')}
               <ArrowUpDown className="h-4 w-4" />
             </Button>
           );
@@ -167,12 +172,13 @@ export default function AdminPage() {
         header: ({ column }) => {
           return (
             <Button
+              className="cursor-pointer"
               variant="ghost"
               onClick={() =>
                 column.toggleSorting(column.getIsSorted() === 'asc')
               }
             >
-              Department
+              {t('admin.department')}
               <ArrowUpDown className="h-4 w-4" />
             </Button>
           );
@@ -183,7 +189,7 @@ export default function AdminPage() {
       },
       {
         id: 'role',
-        header: 'Role',
+        header: () => t('admin.role'),
         accessorKey: 'role.name',
         cell: ({ row }) => (
           <Badge variant="outline">{row.original.role.name}</Badge>
@@ -191,7 +197,7 @@ export default function AdminPage() {
       },
       {
         id: 'isInit',
-        header: 'Init Status',
+        header: () => t('admin.initStatus'),
         accessorKey: 'isInit',
         cell: ({ row }) => (
           <Badge variant="outline">
@@ -206,7 +212,7 @@ export default function AdminPage() {
       },
       {
         id: 'isDisable',
-        header: 'Disable Status',
+        header: () => t('admin.disableStatus'),
         accessorKey: 'isDisable',
         cell: ({ row }) => (
           <Switch
@@ -223,29 +229,40 @@ export default function AdminPage() {
         id: 'action',
         cell: ({ row }) => (
           <Button
-            className='cursor-pointer hover:bg-accent hover:text-accent-foreground' 
-            variant="outline" 
+            className="cursor-pointer hover:bg-accent hover:text-accent-foreground"
+            variant="outline"
             onClick={(value) => {
-            setSelectedUser(row.original);
-            setIsEditOpen(true);
-          }}>Edit</Button>
+              setSelectedUser(row.original);
+              setIsEditOpen(true);
+            }}
+          >
+            {t('admin.edit')}
+          </Button>
         ),
-      }
+      },
     ];
   }, []);
 
   return (
     <div className="flex flex-col gap-4">
       <CreateUserSheet />
-      <EditUserSheet isEditOpen={isEditOpen} setIsEditOpen={setIsEditOpen} selectedUser={selectedUser} />
+      <EditUserSheet
+        isEditOpen={isEditOpen}
+        setIsEditOpen={setIsEditOpen}
+        selectedUser={selectedUser}
+      />
       <DataTable columns={columns} data={userQuery?.data || []} />
       <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t('admin.areYouAbsolutelySure')}?
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This action will disable uid “{selectedUser?.uid}” , name “
-              {selectedUser?.name}”
+              {t('admin.thisActionWillDisable', {
+                uid: selectedUser?.uid,
+                name: selectedUser?.name,
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

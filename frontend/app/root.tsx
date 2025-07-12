@@ -11,12 +11,13 @@ import type { Route } from './+types/root';
 import './app.css';
 
 import { Toaster } from '~/components/ui/sonner';
-import { ThemeProvider } from './components/theme-toggle';
+import { PreferenceProvider } from './context/preference';
 import { AuthProvider } from './context/auth';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { QueryClient } from '@tanstack/react-query';
 import { LoaderPinwheel } from 'lucide-react';
+import './lib/i18n';
 const queryClient = new QueryClient();
 
 export const links: Route.LinksFunction = () => [
@@ -57,14 +58,14 @@ export function HydrateFallback() {
 
 export default function App() {
   return (
-    <ThemeProvider>
+    <PreferenceProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <Outlet />
         </AuthProvider>
         {/* <ReactQueryDevtools initialIsOpen={true} /> */}
       </QueryClientProvider>
-    </ThemeProvider>
+    </PreferenceProvider>
   );
 }
 

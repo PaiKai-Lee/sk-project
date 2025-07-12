@@ -10,17 +10,19 @@ import {
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { Form } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
+  const { t } = useTranslation();
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">登入</CardTitle>
-          <CardDescription>使用工號登入，不需要修改密碼</CardDescription>
+          <CardTitle className="text-2xl">{t('auth.login')}</CardTitle>
+          <CardDescription>{t('auth.loginDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form method="post">

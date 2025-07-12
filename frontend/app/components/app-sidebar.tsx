@@ -1,5 +1,4 @@
 import {
-  Home,
   CirclePlus,
   ChartNoAxesCombined,
   Bell,
@@ -21,48 +20,50 @@ import {
 import { NavSetting } from '~/components/nav-setting';
 import { Link } from 'react-router';
 import { useAuth } from '~/context/auth';
+import { useTranslation } from 'react-i18next';
 
 // Menu items.
 export const routeItems = [
   {
-    title: 'Overview',
+    title: 'overview',
     url: '/overview',
     icon: ChartNoAxesCombined,
   },
   {
-    title: 'Transaction',
+    title: 'transaction',
     url: '/transaction',
     icon: SquarePlus,
   },
   {
-    title: 'Transaction Records',
+    title: 'transaction_records',
     url: '/transaction-records',
     icon: DatabaseBackup,
   },
   {
-    title: 'Notification',
+    title: 'notification',
     url: '/notification',
     icon: Bell,
   },
   {
-    title: 'Admin',
+    title: 'admin',
     url: '/admin',
     icon: ShieldUser,
   },
   {
-    title: 'Demo',
+    title: 'demo',
     url: '/demo',
     icon: CirclePlus,
   },
 ];
 
 export function AppSidebar() {
+  const { t } = useTranslation();
   const auth = useAuth();
   return (
     <Sidebar variant="floating" collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('title.app')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {routeItems.map((item) => {
@@ -73,7 +74,7 @@ export function AppSidebar() {
                     <SidebarMenuButton asChild>
                       <Link to={item.url}>
                         {item.icon && <item.icon />}
-                        <span>{item.title}</span>
+                        <span>{t(`title.${item.title}`)}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

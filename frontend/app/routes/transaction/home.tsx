@@ -18,6 +18,7 @@ import { Text } from '~/components/ui/typography';
 import { useOutletContext } from 'react-router';
 import type { UseQueryResult } from '@tanstack/react-query';
 import type { IResponseData, IUserResponse } from '~/api/types';
+import { useTranslation } from 'react-i18next';
 
 const amountInputSchema = z
   .number({ message: 'must be a number' })
@@ -35,6 +36,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function TransactionPage() {
+  const { t } = useTranslation();
   const [errors, setErrors] = useState({});
   const {
     transactionItems,
@@ -124,12 +126,12 @@ export default function TransactionPage() {
       <Table className="basis-3/5">
         <TableHeader>
           <TableRow>
-            <TableHead>User</TableHead>
-            <TableHead>Balance</TableHead>
-            <TableHead>Deposit</TableHead>
-            <TableHead>Deposit Detail</TableHead>
-            <TableHead>Withdraw</TableHead>
-            <TableHead>Withdraw Detail</TableHead>
+            <TableHead>{t('transaction.user')}</TableHead>
+            <TableHead>{t('transaction.balance')}</TableHead>
+            <TableHead>{t('transaction.deposit')}</TableHead>
+            <TableHead>{t('transaction.depositDetails')}</TableHead>
+            <TableHead>{t('transaction.withdraw')}</TableHead>
+            <TableHead>{t('transaction.withdrawDetails')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

@@ -24,7 +24,12 @@ class UserClient {
 
   static async editUser(
     uid: string,
-    data: { name: string; roleId: number; departmentId: number, version: number },
+    data: {
+      name: string;
+      roleId: number;
+      departmentId: number;
+      version: number;
+    },
     options?: AxiosRequestConfig
   ): Promise<IApiResponse<IUserResponse>> {
     return httpClient.put(`users/${uid}`, data, options);

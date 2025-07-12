@@ -1,6 +1,5 @@
 import { Button } from '~/components/ui/button';
 import type { Route } from './+types/demo';
-import { useTheme } from '~/components/theme-toggle';
 import { toast } from 'sonner';
 import {
   Dialog,
@@ -14,6 +13,7 @@ import {
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Table } from 'lucide-react';
+import { usePreference } from '~/context/preference';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -27,7 +27,7 @@ export async function clientLoader({}: Route.ClientLoaderArgs) {
 }
 
 export default function Demo({ loaderData }: Route.ComponentProps) {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme } = usePreference();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectNumber, setSelectNumber] = useState<number | null>(null);
   function handleToggleTheme() {

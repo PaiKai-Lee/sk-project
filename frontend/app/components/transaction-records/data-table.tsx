@@ -1,6 +1,7 @@
 import type { Table as TanStackTable } from '@tanstack/react-table';
 
 import { flexRender } from '@tanstack/react-table';
+import { useTranslation } from 'react-i18next';
 
 import {
   Table,
@@ -16,6 +17,7 @@ interface ServerDataTableProps<TData> {
 }
 
 export function ServerDataTable<TData>({ table }: ServerDataTableProps<TData>) {
+  const { t } = useTranslation();
   return (
     <>
       <Table>

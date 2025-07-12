@@ -30,6 +30,7 @@ import { toast } from 'sonner';
 import { Text } from '../ui/typography';
 import { Label } from '../ui/label';
 import { Switch } from '../ui/switch';
+import { useTranslation } from 'react-i18next';
 
 const formSchema = z.object({
   remark: z.string().max(30, { message: 'must be less than 30 character' }),
@@ -43,6 +44,7 @@ const formSchema = z.object({
 });
 
 export function Cart() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { cart, totalDeposit, totalWithdraw, isCartChecked, setIsCartChecked } =
     useTransaction();
@@ -91,18 +93,24 @@ export function Cart() {
   return (
     <Card className="p-4 lg:basis-2/5 lg:self-start lg:sticky lg:top-4">
       <div className="flex flex-col gap-4 rounded-xl ">
-        <CartTitle cartItemsQuantity={cart.length} />
+        <CartTitle
+          cartItemsQuantity={cart.length}
+          text={t('transaction.cartTitle')}
+        />
         {cart.length === 0 ? (
-          <CartEmpty icon={<FileStack className="w-10 h-10" />} />
+          <CartEmpty
+            icon={<FileStack className="w-10 h-10" />}
+            text={t('transaction.cartEmpty')}
+          />
         ) : (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>User</TableHead>
-                    <TableHead>Value</TableHead>
-                    <TableHead>Details</TableHead>
+                    <TableHead>{t('transaction.user')}</TableHead>
+                    <TableHead>{t('transaction.value')}</TableHead>
+                    <TableHead>{t('transaction.details')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -151,10 +159,10 @@ export function Cart() {
                     <TableCell colSpan={3}>
                       <div className="w-full flex">
                         <Text className="basis-1/2 max-w-1/2 truncate">
-                          deposit: {totalDeposit}
+                          {t('transaction.deposit')}: {totalDeposit}
                         </Text>
                         <Text className="basis-1/2 max-w-1/2 text-red-400 truncate">
-                          withdraw: {totalWithdraw}
+                          {t('transaction.withdraw')}: {totalWithdraw}
                         </Text>
                       </div>
                     </TableCell>
@@ -166,7 +174,7 @@ export function Cart() {
                 name="remark"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Remark</FormLabel>
+                    <FormLabel>{t('transaction.remark')}</FormLabel>
                     <FormControl>
                       <Input placeholder="remark" {...field} />
                     </FormControl>
@@ -181,7 +189,7 @@ export function Cart() {
                   checked={isCartChecked}
                   onCheckedChange={setIsCartChecked}
                 />
-                <Label htmlFor="check">Confirm Transaction</Label>
+                <Label htmlFor="check">{t('transaction.confirm')}</Label>
               </div>
               <Button
                 type="submit"
@@ -198,19 +206,31 @@ export function Cart() {
   );
 }
 
-function CartTitle({ cartItemsQuantity }: { cartItemsQuantity: number }) {
+function CartTitle({
+  cartItemsQuantity,
+  text,
+}: {
+  cartItemsQuantity: number;
+  text: string;
+}) {
   return (
     <h1 className="text-2xl font-bold text-custom-red">
-      Transaction Items ({cartItemsQuantity})
+      {text} ({cartItemsQuantity})
     </h1>
   );
 }
 
-export function CartEmpty({ icon }: { icon: React.ReactNode }) {
+export function CartEmpty({
+  icon,
+  text,
+}: {
+  icon: React.ReactNode;
+  text: string;
+}) {
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       {icon}
-      <p className="text-custom-rose-900">Your added items will appear here</p>
+      <p className="text-custom-rose-900">{text}</p>
     </div>
   );
 }

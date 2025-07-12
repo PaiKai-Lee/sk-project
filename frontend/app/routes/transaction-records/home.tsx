@@ -34,8 +34,9 @@ import {
 import { Text } from '~/components/ui/typography';
 import { Skeleton } from '~/components/ui/skeleton';
 import { toast } from 'sonner';
-import { Loader, LoaderCircle } from 'lucide-react';
+import { Loader } from 'lucide-react';
 import { useLocation } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -55,6 +56,7 @@ export type Transaction = {
 };
 
 export default function TransactionRecordsHome() {
+  const { t } = useTranslation();
   const location = useLocation();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [transactionId, setTransactionId] = useState<string | null>(null);
@@ -140,15 +142,15 @@ export default function TransactionRecordsHome() {
     () => [
       {
         accessorKey: 'transactionId',
-        header: 'Transaction ID',
+        header: () => t('transaction.transactionId'),
       },
       {
         accessorKey: 'remark',
-        header: 'Remark',
+        header: () => t('transaction.remark'),
       },
       {
         id: 'createdBy',
-        header: 'Created By',
+        header: () => t('transaction.createdBy'),
         cell: (info) => (
           <>
             <Text>{info.row.original.createdByUser.name}</Text>
@@ -160,7 +162,7 @@ export default function TransactionRecordsHome() {
       },
       {
         accessorKey: 'createdAt',
-        header: 'Created At',
+        header: () => t('transaction.createdAt'),
         cell: (info) =>
           DateFormatter.format(new Date(info.getValue() as string)),
       },
@@ -176,7 +178,7 @@ export default function TransactionRecordsHome() {
             data-transaction-id={info.row.original.transactionId}
             onClick={clickDetailHandler}
           >
-            Details
+            {t('transaction.details')}
           </Button>
         ),
       },
@@ -206,7 +208,7 @@ export default function TransactionRecordsHome() {
     <>
       <div className="flex items-center gap-4">
         <Input
-          placeholder="Filter by name…"
+          placeholder={`${t('transaction.filterByName')}…`}
           value={
             (table.getColumn('createdBy')?.getFilterValue() as string) ?? ''
           }
@@ -216,7 +218,7 @@ export default function TransactionRecordsHome() {
           className="max-w-sm"
         />
         <Input
-          placeholder="Filter by transaction ID…"
+          placeholder={`${t('transaction.filterByTransactionId')}…`}
           className="max-w-sm"
           value={
             (table.getColumn('transactionId')?.getFilterValue() as string) ?? ''
@@ -236,14 +238,14 @@ export default function TransactionRecordsHome() {
         {specificTransactionQuery.isSuccess && (
           <DialogContent className="md:max-w-2xl lg:max-w-3xl">
             <DialogHeader>
-              <DialogTitle>Transaction Details</DialogTitle>
+              <DialogTitle>{t('transaction.transactionDetails')}</DialogTitle>
               <DialogDescription className="flex flex-col gap-1 lg:flex-row ">
                 <Text className="md:basis-1/2">
-                  <strong>Transaction ID:</strong>{' '}
+                  <strong>{t('transaction.transactionId')}:</strong>{' '}
                   {specificTransactionQuery.data.data?.transactionId}
                 </Text>
                 <Text className="md:basis-1/2">
-                  <strong>Remark:</strong>{' '}
+                  <strong>{t('transaction.remark')}:</strong>{' '}
                   {specificTransactionQuery.data.data?.remark}
                 </Text>
               </DialogDescription>
@@ -251,10 +253,18 @@ export default function TransactionRecordsHome() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-2/10">User</TableHead>
-                  <TableHead className="w-1/10">Value</TableHead>
-                  <TableHead className="w-full">Details</TableHead>
-                  <TableHead className="w-2/10">Created At</TableHead>
+                  <TableHead className="w-2/10">
+                    {t('transaction.user')}
+                  </TableHead>
+                  <TableHead className="w-1/10">
+                    {t('transaction.value')}
+                  </TableHead>
+                  <TableHead className="w-full">
+                    {t('transaction.details')}
+                  </TableHead>
+                  <TableHead className="w-2/10">
+                    {t('transaction.createdAt')}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

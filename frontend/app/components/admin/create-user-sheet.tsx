@@ -12,7 +12,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -38,6 +37,7 @@ import { useState } from 'react';
 import RoleClient from '~/api/roles';
 import DepartmentClient from '~/api/departments';
 import { Separator } from '../ui/separator';
+import { useTranslation } from 'react-i18next';
 
 const formSchema = z.object({
   uid: z.string({
@@ -65,6 +65,7 @@ const formSchema = z.object({
 });
 
 export function CreateUserSheet() {
+  const { t } = useTranslation();
   const FORM_ID = 'create-user-form';
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -131,11 +132,13 @@ export function CreateUserSheet() {
     <>
       <Sheet open={open} onOpenChange={openChangeHandler}>
         <SheetTrigger asChild>
-          <Button className="max-w-min cursor-pointer">Create New User</Button>
+          <Button className="max-w-min cursor-pointer">
+            {t('admin.createUser')}
+          </Button>
         </SheetTrigger>
         <SheetContent>
           <SheetHeader>
-            <SheetTitle>Create New User</SheetTitle>
+            <SheetTitle>{t('admin.createUser')}</SheetTitle>
           </SheetHeader>
           <SheetDescription></SheetDescription>
           <Form {...form}>
@@ -149,7 +152,7 @@ export function CreateUserSheet() {
                 name="uid"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Uid</FormLabel>
+                    <FormLabel>{t('admin.uid')}</FormLabel>
                     <FormControl>
                       <Input placeholder="Uid" autoComplete="off" {...field} />
                     </FormControl>
@@ -162,7 +165,7 @@ export function CreateUserSheet() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>User Name</FormLabel>
+                    <FormLabel>{t('admin.name')}</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="User Name"
@@ -184,7 +187,7 @@ export function CreateUserSheet() {
                       <Select onValueChange={field.onChange}>
                         <FormControl>
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a role" />
+                            <SelectValue placeholder={t('admin.selectRole')} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -214,7 +217,7 @@ export function CreateUserSheet() {
                       <Select onValueChange={field.onChange}>
                         <FormControl>
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Department" />
+                            <SelectValue placeholder={t('admin.department')} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>

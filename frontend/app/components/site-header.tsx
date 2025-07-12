@@ -7,7 +7,9 @@ import { useAuth } from '~/context/auth';
 import { Heading1, Text } from '~/components/ui/typography';
 import { CircleUser } from 'lucide-react';
 import { GitHubIcon } from './ui/icons';
+import { useTranslation } from 'react-i18next';
 export function SiteHeader() {
+  const { t } = useTranslation();
   const location = useLocation();
   const routeItem = routeItems.find((item) => item.url === location.pathname);
   const title = routeItem?.title;
@@ -20,7 +22,7 @@ export function SiteHeader() {
           orientation="vertical"
           className="mx-2 data-[orientation=vertical]:h-4"
         />
-        <Heading1 className="text-lg">{title}</Heading1>
+        <Heading1 className="text-lg">{t(`title.${title}`)}</Heading1>
         <div className="ml-auto flex items-center gap-4">
           <div className="flex items-center gap-1">
             <CircleUser className="size-5" />

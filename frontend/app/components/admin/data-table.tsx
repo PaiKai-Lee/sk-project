@@ -18,6 +18,7 @@ import {
   TableRow,
 } from '../ui/table';
 import { Input } from '../ui/input';
+import { useTranslation } from 'react-i18next';
 
 export type User = {
   id: string;
@@ -41,6 +42,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const { t } = useTranslation();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
@@ -61,7 +63,7 @@ export function DataTable<TData, TValue>({
     <>
       <div className="flex flex-col gap-2 md:flex-row">
         <Input
-          placeholder="Filter by uid…"
+          placeholder={`${t('admin.filterByUid')}…`}
           value={(table.getColumn('uid')?.getFilterValue() as string) || ''}
           onChange={(event) =>
             table.getColumn('uid')?.setFilterValue(event.target.value)
@@ -69,7 +71,7 @@ export function DataTable<TData, TValue>({
           className="md:max-w-sm"
         />
         <Input
-          placeholder="Filter by name…"
+          placeholder={`${t('admin.filterByName')}…`}
           value={(table.getColumn('name')?.getFilterValue() as string) || ''}
           onChange={(event) =>
             table.getColumn('name')?.setFilterValue(event.target.value)
@@ -77,7 +79,7 @@ export function DataTable<TData, TValue>({
           className="md:max-w-sm"
         />
         <Input
-          placeholder="Filter by department…"
+          placeholder={`${t('admin.filterByDepartment')}…`}
           value={
             (table.getColumn('department')?.getFilterValue() as string) || ''
           }

@@ -14,6 +14,7 @@ import OverviewClient from '~/api/overview';
 import { Loader2Icon } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { Button } from '~/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -23,6 +24,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function OverviewPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const overviewQuery = useQuery({
     queryKey: ['overview'],
@@ -42,7 +44,7 @@ export default function OverviewPage() {
   return (
     <>
       <Card className="px-4">
-        <CardTitle>Total Balance</CardTitle>
+        <CardTitle>{t('overview.totalBalance')}</CardTitle>
         <CardContent>
           <Text className="text-2xl font-bold">
             {overviewQuery?.data &&
@@ -59,14 +61,16 @@ export default function OverviewPage() {
         <CardTitle>Maybe Announcements...</CardTitle>
       </Card>
       <Card className="col-span-2 px-4 max-h-[400px]">
-        <CardTitle>Recent Transactions</CardTitle>
+        <CardTitle>{t('overview.recentTransactions')}</CardTitle>
         {overviewQuery.isLoading && <Loader2Icon className="animate-spin" />}
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">Transaction ID</TableHead>
-              <TableHead>Remark</TableHead>
-              <TableHead>CreatedBy</TableHead>
+              <TableHead className="w-[100px]">
+                {t('overview.transactionId')}
+              </TableHead>
+              <TableHead>{t('overview.remark')}</TableHead>
+              <TableHead>{t('overview.createdBy')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -95,12 +99,12 @@ export default function OverviewPage() {
         </Table>
       </Card>
       <Card className="col-span-2 px-4 max-h-[400px]">
-        <CardTitle>Overdraw Users</CardTitle>
+        <CardTitle>{t('overview.overdrawUsers')}</CardTitle>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Balance</TableHead>
+              <TableHead>{t('overview.user')}</TableHead>
+              <TableHead>{t('overview.balance')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
