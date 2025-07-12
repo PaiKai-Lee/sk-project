@@ -3,13 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"cd backend && npm run start:dev\" \"cd frontend && npm run dev\""
+    "dev:client": "cd frontend && npm run dev",
+    "dev:server": "cd backend && npm run start:dev"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["transaction", "web", "app"],
+  "author": "KaiLee",
   "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "concurrently": "^9.1.2"
-  }
+  "description": "transaction web app for internal use"
 }

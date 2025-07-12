@@ -4,9 +4,7 @@ import { AppClsStore } from 'src/common';
 
 @Injectable()
 export class CanUpdateSelfGuard implements CanActivate {
-  constructor(
-    private cls: ClsService<AppClsStore>,
-  ) {}
+  constructor(private cls: ClsService<AppClsStore>) {}
 
   canActivate(context: ExecutionContext): boolean {
     // params 對象不能是自己

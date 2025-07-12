@@ -14,7 +14,7 @@ import { IsUid } from 'src/common/validators/is-uid.decorator';
 import { SortArrayValid } from 'src/common/validators/sort-array-valid.decorator';
 import { ArrayContainsOneOf } from 'src/common/validators/array-contain-one-of.decorator';
 import { Transform } from 'class-transformer';
-import { OmitType, PartialType } from '@nestjs/mapped-types'
+import { OmitType, PartialType } from '@nestjs/mapped-types';
 
 export class CreateUserDto {
   @IsNotEmpty({ message: 'uid不得為空' })
@@ -72,10 +72,8 @@ export class ChangePasswordDto {
 export class EditUserDto extends PartialType(OmitType(CreateUserDto, ['uid'])) {
   @IsNotEmpty({ message: '版本戳不得為空' })
   @IsNumber()
-  version: number
+  version: number;
 }
-
-
 
 const ALLOWED_FIELDS = [
   'id',

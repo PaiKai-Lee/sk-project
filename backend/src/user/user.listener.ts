@@ -72,7 +72,7 @@ export class UserListener {
           uid: context.user.uid,
         },
       },
-    })
+    });
   }
 
   @OnEvent('user.enabled')

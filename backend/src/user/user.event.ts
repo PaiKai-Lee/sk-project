@@ -65,7 +65,15 @@ export class UserEditedEvent {
   uid: string;
   editData: Record<string, any>;
   context: AppClsStore;
-  constructor({ uid, editData, context }: { uid: string; editData: Record<string, any>; context: AppClsStore }) {
+  constructor({
+    uid,
+    editData,
+    context,
+  }: {
+    uid: string;
+    editData: Record<string, any>;
+    context: AppClsStore;
+  }) {
     this.uid = uid;
     this.editData = editData;
     this.context = context;

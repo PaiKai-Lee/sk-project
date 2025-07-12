@@ -21,7 +21,7 @@ import { CanUpdateSelfGuard } from 'src/guards/can-update-self.guard';
 @UseGuards(AuthGuard)
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
   @Get()
   async getUsers(
@@ -87,7 +87,7 @@ export class UserController {
   @Put(':uid')
   async editUser(
     @Param('uid') uid: string,
-    @Body(new ValidationPipe()) editUserDto: EditUserDto
+    @Body(new ValidationPipe()) editUserDto: EditUserDto,
   ) {
     return this.userService.editUser(uid, editUserDto);
   }
