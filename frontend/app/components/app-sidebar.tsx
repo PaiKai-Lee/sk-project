@@ -67,7 +67,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {routeItems.map((item) => {
-                if (item.title === 'Admin' && !auth.isAdmin) return null;
+                if (item.title === 'admin' && !auth.isAdmin) return null;
 
                 return (
                   <SidebarMenuItem key={item.title}>
