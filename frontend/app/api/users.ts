@@ -32,16 +32,18 @@ class UserClient {
 
   static async enableUser(
     uid: string,
+    version: number,
     options?: AxiosRequestConfig
   ): Promise<IApiResponse<IUserResponse>> {
-    return httpClient.patch(`users/${uid}/enable`, options);
+    return httpClient.patch(`users/${uid}/enable`, { version }, options);
   }
 
   static async disableUser(
     uid: string,
+    version: number,
     options?: AxiosRequestConfig
   ): Promise<IApiResponse<IUserResponse>> {
-    return httpClient.patch(`users/${uid}/disable`, options);
+    return httpClient.patch(`users/${uid}/disable`, { version }, options);
   }
 }
 

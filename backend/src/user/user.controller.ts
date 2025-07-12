@@ -11,7 +11,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto, EditUserDto, GetUsersQueryDto } from './dtos';
+import { CreateUserDto, EditUserDto, GetUsersQueryDto, SwitchStatusDto } from './dtos';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RoleGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
@@ -21,7 +21,7 @@ import { CanUpdateSelfGuard } from 'src/guards/can-update-self.guard';
 @UseGuards(AuthGuard)
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Get()
   async getUsers(
@@ -97,9 +97,9 @@ export class UserController {
   @Patch(':uid/disable')
   async disableUser(
     @Param('uid') uid: string,
-    @Body('version') version: number,
+    @Body(new ValidationPipe()) data: SwitchStatusDto,
   ) {
-    return this.userService.disableUser(uid, version);
+    return this.userService.disableUser(uid, data.version);
   }
 
   @UseGuards(RoleGuard, CanUpdateSelfGuard)
@@ -107,9 +107,9 @@ export class UserController {
   @Patch(':uid/enable')
   async enableUser(
     @Param('uid') uid: string,
-    @Param('version') version: number,
+    @Body(new ValidationPipe()) data: SwitchStatusDto,
   ) {
-    return this.userService.enableUser(uid, version);
+    return this.userService.enableUser(uid, data.version);
   }
 
   @UseGuards(RoleGuard)
@@ -117,9 +117,9 @@ export class UserController {
   @Patch(':uid/password')
   async resetUserPassword(
     @Param('uid') uid: string,
-    @Body('version') version: number,
+    @Body(new ValidationPipe()) data: SwitchStatusDto,
   ) {
-    return this.userService.resetUserPassword(uid, version);
+    return this.userService.resetUserPassword(uid, data.version);
   }
 
   @Get(':uid/transactions-items')

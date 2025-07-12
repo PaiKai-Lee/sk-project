@@ -75,11 +75,11 @@ export default function AdminPage() {
   });
 
   const userSwitchMutation = useMutation({
-    mutationFn: (value: { uid: string; isDisable: boolean }) => {
+    mutationFn: (value: { uid: string; version: number, isDisable: boolean }) => {
       const switchFunc = value.isDisable
         ? UserClient.enableUser
         : UserClient.disableUser;
-      return switchFunc(value.uid);
+      return switchFunc(value.uid, value.version);
     },
     onSuccess: async (data) => {
       await queryClient.invalidateQueries({
@@ -96,6 +96,7 @@ export default function AdminPage() {
   function handleConfirm() {
     userSwitchMutation.mutate({
       uid: selectedUser?.uid || '',
+      version: selectedUser?.version || 0,
       isDisable: selectedUser?.isDisable || false,
     });
   }

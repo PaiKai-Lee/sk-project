@@ -64,8 +64,8 @@ Content-Type: application/json
 
 ### Change Password
 PATCH http://{{host}}/api/me/change-password
+Content-Type: {{contentType}}
 Authorization: Bearer {{accessToken}}
-Content-Type: application/json
 
 {
   "newPassword": "666666",
@@ -81,20 +81,22 @@ GET http://{{host}}/api/transactions
     ?page=1
     &pageSize=10
     &sort=createdAt:asc
+Content-Type: {{contentType}}
 Authorization: Bearer {{accessToken}}
 
 ###
 
 ### Get One Transaction
 GET http://{{host}}/api/transactions/TRX-20250421-000311-01894
+Content-Type: {{contentType}}
 Authorization: Bearer {{accessToken}}
 
 ###
 
 ### Create Transaction
 POST http://{{host}}/api/transactions
+Content-Type: {{contentType}}
 Authorization: Bearer {{accessToken}}
-Content-Type: application/json
 
 {
   "remark":"不吃早餐",
@@ -123,6 +125,7 @@ GET http://{{host}}/api/users
   &fields=role
   &sort=balance:desc
   &sort=id:asc
+Content-Type: {{contentType}}
 Authorization: Bearer {{accessToken}}
 
 ###
@@ -132,14 +135,15 @@ GET http://{{host}}/api/users/ts-003
   ?fields=isInit,
   &fields=role,
   &fields=version
+Content-Type: {{contentType}}
 Authorization: Bearer {{accessToken}}
 
 ###
 
 ### Create User
 POST http://{{host}}/api/users
+Content-Type: {{contentType}}
 Authorization: Bearer {{accessToken}}
-Content-Type: application/json
 
 {
   "uid": "ts-002",
@@ -150,8 +154,8 @@ Content-Type: application/json
 
 ### Edit User
 PUT http://{{host}}/api/users/ts-003
+Content-Type: {{contentType}}
 Authorization: Bearer {{accessToken}}
-Content-Type: application/json
 
 {
   "roleId": 1,
@@ -162,30 +166,34 @@ Content-Type: application/json
 
 ### Disable User
 PATCH http://{{host}}/api/users/ts-002/disable
+Content-Type: {{contentType}}
 Authorization: Bearer {{accessToken}}
 
 ###
 
 ### Enable User
 PATCH http://{{host}}/api/users/ts-002/enable
+Content-Type: {{contentType}}
 Authorization: Bearer {{accessToken}}
 
 ###
 
 ### Reset User Password
 PATCH http://{{host}}/api/users/ts-002/reset-password
+Content-Type: {{contentType}}
 Authorization: Bearer {{accessToken}}
-
 ###
 
 ### Get User Transaction Items
 GET http://{{host}}/api/users/ts-001/transaction-items
+Content-Type: {{contentType}}
 Authorization: Bearer {{accessToken}}
 
 ###
 
 ### Get User Balance Logs
 GET http://{{host}}/api/users/ts-001/balance-logs
+Content-Type: {{contentType}}
 Authorization: Bearer {{accessToken}}
 
 ###
@@ -193,6 +201,7 @@ Authorization: Bearer {{accessToken}}
 ### Get Overview
 
 GET http://{{host}}/api/overview
+Content-Type: {{contentType}}
 Authorization: Bearer {{accessToken}}
 
 ###
@@ -201,6 +210,7 @@ Authorization: Bearer {{accessToken}}
 
 GET http://{{host}}/api/roles
   ?includePermissions=true
+Content-Type: {{contentType}}  
 Authorization: Bearer {{accessToken}}
 
 ###
@@ -208,4 +218,5 @@ Authorization: Bearer {{accessToken}}
 ### Get Departments
 
 GET http://{{host}}/api/departments
+Content-Type: {{contentType}}
 Authorization: Bearer {{accessToken}}

@@ -69,6 +69,12 @@ export class ChangePasswordDto {
   version: number;
 }
 
+export class SwitchStatusDto {
+  @IsNotEmpty({ message: '版本戳不得為空' })
+  @IsNumber()
+  version: number;
+}
+
 export class EditUserDto extends PartialType(OmitType(CreateUserDto, ['uid'])) {
   @IsNotEmpty({ message: '版本戳不得為空' })
   @IsNumber()
