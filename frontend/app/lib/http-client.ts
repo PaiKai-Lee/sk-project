@@ -11,6 +11,13 @@ const httpClient = axios.create({
   timeout: 30000,
 });
 
+async function forceLogout() {
+  console.log('force logout');
+  tokenManager.removeRefreshToken();
+  tokenManager.removeAccessToken();
+  await AuthClient.logout();
+}
+
 httpClient.interceptors.request.use((config) => {
   const token = tokenManager.getAccessToken();
   if (token) {
@@ -44,21 +51,15 @@ httpClient.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${axiosData.data.accessToken}`;
         return httpClient(originalRequest);
       } catch (refreshErr) {
-        await AuthClient.logout();
+        forceLogout();
         console.error(error);
         return Promise.reject(refreshErr);
       }
     }
 
     if (error.response?.status === 401) {
-      // 無 refreshToken，直接登出
-      tokenManager.removeRefreshToken();
-      tokenManager.removeAccessToken();
-      try {
-        await AuthClient.logout();
-      } catch (error) {
-        console.error(error);
-      }
+      forceLogout();
+      console.error(error);
     }
     return Promise.reject(error);
   }
