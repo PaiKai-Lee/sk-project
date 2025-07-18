@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   flexRender,
   getCoreRowModel,
@@ -19,6 +19,14 @@ import {
 } from '../ui/table';
 import { Input } from '../ui/input';
 import { useTranslation } from 'react-i18next';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
+import { cn } from '~/lib/utils';
 
 export type User = {
   id: string;
@@ -45,6 +53,7 @@ export function DataTable<TData, TValue>({
   const { t } = useTranslation();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [showDisabled, setShowDisabled] = useState('enabled');
 
   const table = useReactTable({
     data,
@@ -54,14 +63,49 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
+    filterFns: {
+      disableStatusFilter: (row, columnId, filterValue) => {
+        switch (filterValue) {
+          case 'all':
+            return true;
+          case 'enabled':
+            return !row.getValue(columnId);
+          case 'disabled':
+            return row.getValue(columnId);
+          default:
+            return true;
+        }
+      },
+    },
     state: {
       sorting,
       columnFilters,
     },
   });
+
+  useEffect(() => {
+    table.getColumn('isDisable')?.setFilterValue(showDisabled);
+  }, [showDisabled]);
+
   return (
     <>
-      <div className="flex flex-col gap-2 md:flex-row">
+      <div className="flex flex-col-reverse gap-2 md:flex-row">
+        <Select value={showDisabled} onValueChange={setShowDisabled}>
+          <SelectTrigger
+            className={cn(
+              'md:max-w-sm',
+              showDisabled === 'enabled' && 'text-primary',
+              showDisabled === 'disabled' && 'text-destructive'
+            )}
+          >
+            <SelectValue placeholder={t('admin.filterByDisableStatus')} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="enabled">{t('admin.showEnabled')}</SelectItem>
+            <SelectItem value="disabled">{t('admin.showDisabled')}</SelectItem>
+            <SelectItem value="all">{t('admin.showAll')}</SelectItem>
+          </SelectContent>
+        </Select>
         <Input
           placeholder={`${t('admin.filterByUid')}…`}
           value={(table.getColumn('uid')?.getFilterValue() as string) || ''}
@@ -105,9 +149,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   );
                 }
@@ -120,9 +164,9 @@ export function DataTable<TData, TValue>({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 );
               })}

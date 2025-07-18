@@ -224,6 +224,7 @@ export default function AdminPage() {
             }}
           />
         ),
+        filterFn:'disableStatusFilter',
       },
       {
         id: 'action',
