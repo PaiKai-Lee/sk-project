@@ -16,11 +16,14 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '~/components/ui/sidebar';
 import { NavSetting } from '~/components/nav-setting';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { useAuth } from '~/context/auth';
 import { useTranslation } from 'react-i18next';
+import { useIsMobile } from '~/hooks/use-mobile';
+import { useEffect } from 'react';
 
 // Menu items.
 export const routeItems = [
@@ -59,6 +62,16 @@ export const routeItems = [
 export function AppSidebar() {
   const { t } = useTranslation();
   const auth = useAuth();
+  const isMobile = useIsMobile();
+  const { setOpenMobile } = useSidebar();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  }, [location.pathname, isMobile, setOpenMobile]);
+
   return (
     <Sidebar variant="floating" collapsible="icon">
       <SidebarContent>
