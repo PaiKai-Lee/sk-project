@@ -129,6 +129,7 @@ export function EditUserSheet(props: {
         queryKey: ['users'],
       });
       toast.success('更新成功');
+      form.reset();
       setIsEditOpen(false);
     },
     onError: (error) => {
@@ -162,7 +163,6 @@ export function EditUserSheet(props: {
 
   function submitHandler(values: z.infer<typeof formSchema>) {
     userEditMutation.mutate(values);
-    form.reset();
   }
 
   function openChangeHandler(status: boolean) {

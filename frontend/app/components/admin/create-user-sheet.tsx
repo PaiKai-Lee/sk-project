@@ -98,6 +98,7 @@ export function CreateUserSheet() {
         queryKey: ['users'],
       });
       toast.success('新增成功');
+      form.reset();
       setOpen(false);
     },
     onError: (error) => {
@@ -118,7 +119,6 @@ export function CreateUserSheet() {
 
   function submitHandler(values: z.infer<typeof formSchema>) {
     userCreateMutation.mutate(values);
-    form.reset();
   }
 
   function openChangeHandler(status: boolean) {
