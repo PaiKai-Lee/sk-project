@@ -32,7 +32,7 @@ import path from 'path';
           cls.set('reqInfo', {
             method: req.method,
             path: req.path,
-            ip: req.ip || '',
+            ip: (req.ip || '').replace('::ffff:', ''),
             userAgent: req.headers['user-agent'] || '',
             traceId: randomUUID(),
           });
