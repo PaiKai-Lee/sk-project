@@ -67,7 +67,10 @@ cd sk_projects
     cp .env.example .env
     ```
 
-    接著，編輯 `.env` 檔案，特別是 `DATABASE_URL`，指向您的資料庫。
+    接著，編輯 `.env` 檔案，至少需要設定以下變數：
+    - `DATABASE_URL`: 指向您的資料庫。
+    - `APP_ROOT_USER_PASSWORD`: 設定 root 帳號的初始密碼。
+    - `APP_SALT_ROUNDS`: 密碼加密的 salt rounds，建議值為 10。
 
 4. **執行資料庫遷移**
 
@@ -77,13 +80,15 @@ cd sk_projects
     npx prisma migrate dev
     ```
 
-5. **(可選) 加入seed資料**
+5. **初始化資料庫 (Seeding)**
 
-    如果 `prisma/seed.ts` 中有定義，您可以執行此命令來填充初始資料。
+    此為 **必要** 步驟。該指令會建立預設的部門、角色、權限，並建立一個 `root` 超級管理員帳號。
 
     ```bash
     npx prisma db seed
     ```
+
+    > **注意**: `root` 帳號的預設帳號為 `root`，密碼為您在 `.env` 檔案中設定的 `APP_ROOT_USER_PASSWORD`。
 
 6. **啟動後端開發伺服器**
 

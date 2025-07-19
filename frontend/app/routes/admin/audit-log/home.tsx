@@ -8,7 +8,7 @@ import {
   type PaginationState,
   type SortingState,
 } from '@tanstack/react-table';
-import { ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown, Loader } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
@@ -22,7 +22,7 @@ import { Input } from '~/components/ui/input';
 import { DataTablePagination } from '~/components/transaction-records/data-table-pagination';
 import { toast } from 'sonner';
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: 'admin audit-log' },
     { name: 'description', content: 'admin audit-log page' },
@@ -179,17 +179,20 @@ export default function auditLogPage() {
   }
 
   return (
-    <div>
-      <Input
-        placeholder={`${t('admin.auditLog.filterByUid')}…`}
-        value={(table.getColumn('uid')?.getFilterValue() as string) ?? ''}
-        onChange={(e) =>
-          table?.getColumn('uid')?.setFilterValue(e.target.value)
-        }
-        className="max-w-sm"
-      />
+    <>
+      <div className="flex items-center gap-4">
+        <Input
+          placeholder={`${t('admin.auditLog.filterByUid')}…`}
+          value={(table.getColumn('uid')?.getFilterValue() as string) ?? ''}
+          onChange={(e) =>
+            table?.getColumn('uid')?.setFilterValue(e.target.value)
+          }
+          className="max-w-sm"
+        />
+        {auditLogQuery.isFetching && <Loader className="animate-spin" />}
+      </div>
       <ServerDataTable table={table} />
       <DataTablePagination table={table} />
-    </div>
+    </>
   );
 }
