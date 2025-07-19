@@ -89,7 +89,7 @@ export const resources = {
           ip: 'IP',
           createdAt: 'Created At',
           filterByUid: 'Filter By UId',
-        }
+        },
       },
     },
   },
@@ -172,13 +172,13 @@ export const resources = {
         showAll: '全部',
         showDisabled: '停用',
         showEnabled: '啟用',
-        auditLog:{
+        auditLog: {
           action: '操作',
           content: '內容',
           ip: 'IP',
           createdAt: '建立時間',
           filterByUid: '依工號篩選',
-        }
+        },
       },
     },
   },

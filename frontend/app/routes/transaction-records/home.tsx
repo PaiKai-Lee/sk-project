@@ -119,6 +119,7 @@ export default function TransactionRecordsHome() {
       });
       return data;
     },
+    select: (data) => data.data,
   });
 
   const specificTransactionQuery = useQuery({
@@ -130,6 +131,7 @@ export default function TransactionRecordsHome() {
       );
       return data;
     },
+    select: (data) => data.data,
   });
 
   function clickDetailHandler(e: React.MouseEvent<HTMLButtonElement>) {
@@ -187,7 +189,7 @@ export default function TransactionRecordsHome() {
   );
 
   const table = useReactTable({
-    data: transactionQuery.data?.data.rows || [],
+    data: transactionQuery?.data?.rows || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
@@ -197,7 +199,7 @@ export default function TransactionRecordsHome() {
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     state: { columnFilters, pagination, sorting },
-    rowCount: transactionQuery.data?.data.pagination.total,
+    rowCount: transactionQuery?.data?.pagination.total,
   });
 
   if (transactionQuery.isError) {
@@ -242,11 +244,11 @@ export default function TransactionRecordsHome() {
               <DialogDescription className="flex flex-col gap-1 lg:flex-row ">
                 <Text className="md:basis-1/2">
                   <strong>{t('transaction.transactionId')}:</strong>{' '}
-                  {specificTransactionQuery.data.data?.transactionId}
+                  {specificTransactionQuery.data?.transactionId}
                 </Text>
                 <Text className="md:basis-1/2">
                   <strong>{t('transaction.remark')}:</strong>{' '}
-                  {specificTransactionQuery.data.data?.remark}
+                  {specificTransactionQuery.data?.remark}
                 </Text>
               </DialogDescription>
             </DialogHeader>
@@ -268,34 +270,35 @@ export default function TransactionRecordsHome() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {specificTransactionQuery.data.data?.transactionsItems.map(
-                  (item) => (
-                    <TableRow
-                      key={item.id}
-                      className={`${
-                        item.value > 0
-                          ? 'bg-green-100 dark:bg-green-900'
-                          : 'bg-red-100 dark:bg-red-900'
-                      }`}
-                    >
-                      <TableCell className="font-medium">
-                        <Text>{item.user.name}</Text>
-                        <Text className="text-xs font-light">
-                          {item.user.uid}
-                        </Text>
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {item.value}
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {item.details}
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {DateFormatter.format(new Date(item.createdAt))}
-                      </TableCell>
-                    </TableRow>
-                  )
-                )}
+                {specificTransactionQuery.data?.transactionsItems &&
+                  specificTransactionQuery.data?.transactionsItems.map(
+                    (item) => (
+                      <TableRow
+                        key={item.id}
+                        className={`${
+                          item.value > 0
+                            ? 'bg-green-100 dark:bg-green-900'
+                            : 'bg-red-100 dark:bg-red-900'
+                        }`}
+                      >
+                        <TableCell className="font-medium">
+                          <Text>{item.user.name}</Text>
+                          <Text className="text-xs font-light">
+                            {item.user.uid}
+                          </Text>
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {item.value}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {item.details}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {DateFormatter.format(new Date(item.createdAt))}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  )}
               </TableBody>
             </Table>
           </DialogContent>

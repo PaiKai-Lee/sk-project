@@ -9,7 +9,7 @@ import type {
 class TransactionsClient {
   static async getTransactions(
     options?: AxiosRequestConfig
-  ): Promise<IApiResponse<ITransactionsResponse[]>> {
+  ): Promise<IApiResponse<ITransactionsResponse>> {
     return httpClient.get('/transactions', options);
   }
 

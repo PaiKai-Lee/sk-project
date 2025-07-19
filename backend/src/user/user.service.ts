@@ -39,7 +39,7 @@ export class UserService {
     private readonly prisma: PrismaService,
     private readonly bcryptService: BcryptService,
     private readonly eventEmitter: EventEmitter2,
-  ) { }
+  ) {}
 
   async getUsers(getUsersQueryDto: GetUsersQueryDto) {
     this.logger.debug('getUsers');

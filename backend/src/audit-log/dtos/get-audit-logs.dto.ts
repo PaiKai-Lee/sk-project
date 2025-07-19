@@ -1,5 +1,11 @@
 import { Transform, Type } from 'class-transformer';
-import { ArrayNotEmpty, IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { SortArrayValid } from 'src/common/validators/sort-array-valid.decorator';
 
 const ALLOWED_SORTS = ['id', 'uid', 'createdAt'];

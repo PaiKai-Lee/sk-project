@@ -5,7 +5,7 @@ import {
   DatabaseBackup,
   SquarePlus,
   ShieldUser,
-  Logs
+  Logs,
 } from 'lucide-react';
 import {
   Sidebar,

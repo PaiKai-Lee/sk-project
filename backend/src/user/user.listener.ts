@@ -61,7 +61,7 @@ export class UserListener {
     const contentString = Object.entries(editData)
       .map(([key, value]) => `${key}: ${value}`)
       .join(', ');
-    console.log(contentString);
+
     await this.auditLogService.createAuditLog({
       userAgent: context.reqInfo.userAgent,
       ip: context.reqInfo.ip,

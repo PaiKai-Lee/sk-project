@@ -6,7 +6,7 @@ import { GetAuditLogsDto } from './dtos/get-audit-logs.dto';
 @Injectable()
 export class AuditLogService {
   private readonly logger = new Logger(AuditLogService.name);
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async createAuditLog(data: Prisma.AuditLogCreateInput) {
     this.logger.debug('createAuditLog ' + JSON.stringify(data));
@@ -17,7 +17,7 @@ export class AuditLogService {
     this.logger.debug('getAuditLogs');
 
     const { page = 1, pageSize = 10, sort = ['id:desc'], uid, ip } = dto;
-    const where: Prisma.AuditLogWhereInput = {}
+    const where: Prisma.AuditLogWhereInput = {};
     const skip = (page - 1) * pageSize;
     const take = pageSize;
 
@@ -56,6 +56,5 @@ export class AuditLogService {
       },
       rows: logsResult,
     };
-
   }
 }
