@@ -10,7 +10,9 @@ export default [
   layout('routes/layout.tsx', [
     index('routes/home.tsx'),
     ...prefix('admin', [
-      layout('routes/admin/layout.tsx', [index('routes/admin/home.tsx')]),
+      layout('routes/admin/layout.tsx', [
+        route('user', 'routes/admin/user/home.tsx'),
+      ]),
     ]),
     ...prefix('overview', [
       layout('routes/overview/layout.tsx', [index('routes/overview/home.tsx')]),

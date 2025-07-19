@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { Route } from '../admin/+types/home';
+import type { Route } from '../user/+types/home';
 import UserClient from '~/api/users';
 import { useMemo, useState } from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
@@ -45,7 +45,10 @@ export type User = {
 };
 
 export function meta({}: Route.MetaArgs) {
-  return [{ title: 'admin' }, { name: 'description', content: 'admin page' }];
+  return [
+    { title: 'admin user' },
+    { name: 'description', content: 'admin user page' },
+  ];
 }
 
 export default function AdminPage() {
@@ -77,7 +80,11 @@ export default function AdminPage() {
   });
 
   const userSwitchMutation = useMutation({
-    mutationFn: (value: { uid: string; version: number, isDisable: boolean }) => {
+    mutationFn: (value: {
+      uid: string;
+      version: number;
+      isDisable: boolean;
+    }) => {
       const switchFunc = value.isDisable
         ? UserClient.enableUser
         : UserClient.disableUser;
@@ -224,7 +231,7 @@ export default function AdminPage() {
             }}
           />
         ),
-        filterFn:'disableStatusFilter',
+        filterFn: 'disableStatusFilter',
       },
       {
         id: 'action',

@@ -5,6 +5,7 @@ import {
   DatabaseBackup,
   SquarePlus,
   ShieldUser,
+  Logs
 } from 'lucide-react';
 import {
   Sidebar,
@@ -25,6 +26,7 @@ import { useTranslation } from 'react-i18next';
 import { useIsMobile } from '~/hooks/use-mobile';
 import { useEffect } from 'react';
 
+// TODO 後續群組處理 管理頁面,交易頁面
 // Menu items.
 export const routeItems = [
   {
@@ -48,9 +50,14 @@ export const routeItems = [
     icon: Bell,
   },
   {
-    title: 'admin',
-    url: '/admin',
+    title: 'user_management',
+    url: '/admin/user',
     icon: ShieldUser,
+  },
+  {
+    title: 'audit_logs',
+    url: '/admin/audit-logs',
+    icon: Logs,
   },
   {
     title: 'demo',
@@ -80,7 +87,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {routeItems.map((item) => {
-                if (item.title === 'admin' && !auth.isAdmin) return null;
+                if (item.url.startsWith('/admin') && !auth.isAdmin) return null;
 
                 return (
                   <SidebarMenuItem key={item.title}>
