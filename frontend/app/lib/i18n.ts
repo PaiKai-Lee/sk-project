@@ -1,6 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
+// TODO: 後續整理重複的翻譯
 export const resources = {
   en: {
     translation: {
@@ -24,7 +25,8 @@ export const resources = {
         transaction: 'Transaction',
         transaction_records: 'Transaction Records',
         notification: 'Notification',
-        admin: 'Admin',
+        user_management: 'User Management',
+        audit_logs: 'Audit Logs',
         demo: 'Demo',
       },
       overview: {
@@ -81,6 +83,13 @@ export const resources = {
         showAll: 'All',
         showDisabled: 'Disable',
         showEnabled: 'Enable',
+        auditLog: {
+          action: 'Action',
+          content: 'Content',
+          ip: 'IP',
+          createdAt: 'Created At',
+          filterByUid: 'Filter By UId',
+        }
       },
     },
   },
@@ -106,7 +115,8 @@ export const resources = {
         transaction: '交易',
         transaction_records: '交易記錄',
         notification: '通知',
-        admin: '管理',
+        user_management: '用戶管理',
+        audit_logs: '監視紀錄',
         demo: '範例演示',
       },
       overview: {
@@ -162,6 +172,13 @@ export const resources = {
         showAll: '全部',
         showDisabled: '停用',
         showEnabled: '啟用',
+        auditLog:{
+          action: '操作',
+          content: '內容',
+          ip: 'IP',
+          createdAt: '建立時間',
+          filterByUid: '依工號篩選',
+        }
       },
     },
   },

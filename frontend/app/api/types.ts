@@ -131,3 +131,21 @@ export interface IDepartmentResponse {
   id: number;
   name: string;
 }
+
+// Audit Log
+
+export interface IOneAuditLogResponse {
+  id: number;
+  uid: string;
+  action: string;
+  content: string;
+  meta: string;
+  ip: string;
+  userAgent: string;
+  createdAt: string;
+}
+
+export interface IAuditLogResponse {
+  pagination: Pagination;
+  rows: IOneAuditLogResponse[];
+}
