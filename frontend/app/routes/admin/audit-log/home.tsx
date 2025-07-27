@@ -12,7 +12,7 @@ import { ArrowUpDown, Loader } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
-import { ServerDataTable } from '~/components/transaction-records/data-table';
+import { ServerDataTable } from '~/components/admin/audit-log-server-data-table';
 import { Button } from '~/components/ui/button';
 import { Text } from '~/components/ui/typography';
 import AuditLogClient from '~/api/audit-logs';
@@ -22,7 +22,7 @@ import { Input } from '~/components/ui/input';
 import { DataTablePagination } from '~/components/transaction-records/data-table-pagination';
 import { toast } from 'sonner';
 
-export function meta({ }: Route.MetaArgs) {
+export function meta({}: Route.MetaArgs) {
   return [
     { title: 'admin audit-log' },
     { name: 'description', content: 'admin audit-log page' },
@@ -63,54 +63,38 @@ export default function auditLogPage() {
       {
         accessorKey: 'uid',
         header: () => {
-          return (
-            <Text className="font-semibold md:w-[50px]">{t('admin.uid')}</Text>
-          );
+          return <Text className="font-semibold">{t('admin.uid')}</Text>;
         },
-        cell: ({ row }) => {
-          return <Text className="md:w-[50px]">{row.original.uid}</Text>;
-        },
+        cell: ({ row }) => <Text>{row.original.uid}</Text>,
       },
       {
         accessorKey: 'action',
         header: () => (
-          <Text className="font-semibold md:w-[100px]">
-            {t('admin.auditLog.action')}
-          </Text>
+          <Text className="font-semibold">{t('admin.auditLog.action')}</Text>
         ),
         cell: ({ row }) => {
-          return <Text className="md:w-[100px]">{row.original.action}</Text>;
+          return <Text>{row.original.action}</Text>;
         },
       },
       {
         accessorKey: 'content',
         header: () => (
-          <Text className="font-semibold md:w-[200px]">
-            {t('admin.auditLog.content')}
-          </Text>
+          <Text className="font-semibold">{t('admin.auditLog.content')}</Text>
         ),
-        cell: ({ row }) => {
-          return (
-            <Text className="md:max-w-[200px] ">{row.original.content}</Text>
-          );
-        },
+        cell: ({ row }) => <Text>{row.original.content}</Text>,
       },
       {
         accessorKey: 'ip',
         header: () => (
-          <Text className="font-semibold md:w-[100px]">
-            {t('admin.auditLog.ip')}
-          </Text>
+          <Text className="font-semibold">{t('admin.auditLog.ip')}</Text>
         ),
-        cell: ({ row }) => {
-          return <Text className="md:w-[100px]">{row.original.ip}</Text>;
-        },
+        cell: ({ row }) => <Text>{row.original.ip}</Text>,
       },
       {
         accessorKey: 'createdAt',
         header: ({ column }) => (
           <Button
-            className="cursor-pointer font-semibold md:w-[100px]"
+            className="cursor-pointer font-semibold"
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
@@ -119,9 +103,7 @@ export default function auditLogPage() {
           </Button>
         ),
         cell: ({ row }) => (
-          <Text className="md:w-[100px]">
-            {DateFormatter.format(new Date(row.original.createdAt))}
-          </Text>
+          <Text>{DateFormatter.format(new Date(row.original.createdAt))}</Text>
         ),
       },
     ],
