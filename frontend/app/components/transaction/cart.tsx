@@ -33,10 +33,10 @@ import { Switch } from '../ui/switch';
 import { useTranslation } from 'react-i18next';
 
 const formSchema = z.object({
-  remark: z.string().max(30, { message: 'must be less than 30 character' }),
+  remark: z.string().max(30, { message: '備註長度不能超過 30 字' }),
   items: z.array(
     z.object({
-      uid: z.string().min(1, { message: 'uid is required' }),
+      uid: z.string().min(1, { message: 'uid不得為空' }),
       value: z.number(),
       details: z.string().optional(),
     })

@@ -40,28 +40,14 @@ import { Separator } from '../ui/separator';
 import { useTranslation } from 'react-i18next';
 
 const formSchema = z.object({
-  uid: z.string({
-    required_error: 'uid不得為空',
-  }),
-
+  uid: z.string({ message: '格式錯誤' }).min(1, { message: 'uid不得為空' }),
   name: z
-    .string()
+    .string({ message: '格式錯誤' })
     .min(1, { message: '名稱不得為空' })
     .max(10, { message: '長度需為 1 至 10 字' })
-    .regex(/^[\u4e00-\u9fa5a-zA-Z0-9]+$/, {
-      message: '只能包含中文、英文與數字',
-    })
     .optional(),
-
-  roleId: z.coerce.number({
-    required_error: 'roleId不得為空',
-    invalid_type_error: 'roleId不正確',
-  }),
-
-  departmentId: z.coerce.number({
-    required_error: 'departmentId不得為空',
-    invalid_type_error: 'departmentId不正確',
-  }),
+  roleId: z.coerce.number().positive({ message: 'roleId不得為空' }),
+  departmentId: z.coerce.number().positive({ message: 'departmentId不得為空' }),
 });
 
 export function CreateUserSheet() {

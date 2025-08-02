@@ -23,9 +23,6 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsNotEmpty({ message: '名稱不得為空' })
-  @Matches(/^[\u4e00-\u9fa5a-zA-Z0-9]+$/, {
-    message: '只能包含中文、英文與數字',
-  })
   @Length(1, 10, { message: '長度需為 1 至 10 字' })
   name: string;
 
@@ -40,9 +37,6 @@ export class CreateUserDto {
 
 export class ChangeUserNameDto {
   @IsNotEmpty({ message: '名稱不得為空' })
-  @Matches(/^[\u4e00-\u9fa5a-zA-Z0-9]+$/, {
-    message: '只能包含中文、英文與數字',
-  })
   @Length(1, 10, { message: '長度需為 1 至 10 字' })
   name: string;
 

@@ -57,31 +57,14 @@ export type User = {
 };
 
 const formSchema = z.object({
-  uid: z.string({
-    required_error: 'uid不得為空',
-  }),
+  uid: z.string({ message: '格式錯誤' }).min(1, { message: 'uid不得為空' }),
   name: z
     .string()
     .min(1, { message: '名稱不得為空' })
-    .max(10, { message: '長度需為 1 至 10 字' })
-    .regex(/^[\u4e00-\u9fa5a-zA-Z0-9]+$/, {
-      message: '只能包含中文、英文與數字',
-    }),
-
-  roleId: z.coerce.number({
-    required_error: 'roleId不得為空',
-    invalid_type_error: 'roleId必須為數字',
-  }),
-
-  departmentId: z.coerce.number({
-    required_error: 'departmentId不得為空',
-    invalid_type_error: 'departmentId必須為數字',
-  }),
-
-  version: z.coerce.number({
-    required_error: '版本戳不得為空',
-    invalid_type_error: '版本戳必須為數字',
-  }),
+    .max(10, { message: '長度需為 1 至 10 字' }),
+  roleId: z.coerce.number().positive({ message: 'roleId不得為空' }),
+  departmentId: z.coerce.number().positive({ message: 'departmentId不得為空' }),
+  version: z.coerce.number().nonnegative({ message: '版本戳不得為空' }),
 });
 
 export function EditUserSheet(props: {
