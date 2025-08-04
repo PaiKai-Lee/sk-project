@@ -238,7 +238,7 @@ export default function TransactionRecordsHome() {
           <Skeleton className="h-[300px] w-full" />
         )}
         {specificTransactionQuery.isSuccess && (
-          <DialogContent className="md:max-w-2xl lg:max-w-3xl">
+          <DialogContent className="max-h-[90vh] overflow-y-auto md:max-w-2xl lg:max-w-3xl">
             <DialogHeader>
               <DialogTitle>{t('transaction.transactionDetails')}</DialogTitle>
               <DialogDescription className="flex flex-col gap-1 lg:flex-row ">
@@ -252,7 +252,8 @@ export default function TransactionRecordsHome() {
                 </Text>
               </DialogDescription>
             </DialogHeader>
-            <Table className="max-h-[80vh] overflow-y-auto">
+            {/* 如果資料頻繁過大，可以考慮分頁 */}
+            <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-2/10">
