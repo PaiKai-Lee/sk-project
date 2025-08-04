@@ -261,7 +261,7 @@ export class UserService {
     });
 
     this.eventEmitter.emit(
-      'user.update',
+      'user.updated',
       new UserEditedEvent({
         uid,
         editData: editUserDto,
