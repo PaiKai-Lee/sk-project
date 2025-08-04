@@ -252,7 +252,7 @@ export default function TransactionRecordsHome() {
                 </Text>
               </DialogDescription>
             </DialogHeader>
-            <Table>
+            <Table className="max-h-[80vh] overflow-y-auto">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-2/10">
