@@ -28,7 +28,7 @@ const detailInputSchema = z
   .string({ message: 'must be a string' })
   .max(30, { message: 'must be less than 30 character' });
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: 'transaction' },
     { name: 'description', content: 'transaction page' },
@@ -128,10 +128,10 @@ export default function TransactionPage() {
           <TableRow>
             <TableHead>{t('transaction.user')}</TableHead>
             <TableHead>{t('transaction.balance')}</TableHead>
-            <TableHead>{t('transaction.deposit')}</TableHead>
-            <TableHead>{t('transaction.depositDetails')}</TableHead>
             <TableHead>{t('transaction.withdraw')}</TableHead>
             <TableHead>{t('transaction.withdrawDetails')}</TableHead>
+            <TableHead>{t('transaction.deposit')}</TableHead>
+            <TableHead>{t('transaction.depositDetails')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -146,34 +146,6 @@ export default function TransactionPage() {
                   <Text className={item.balance < 0 ? 'text-red-500' : ''}>
                     {item.balance}
                   </Text>
-                </TableCell>
-                <TableCell className="w-[100px]">
-                  <Input
-                    type="text"
-                    data-uid={item.uid}
-                    data-type="deposit"
-                    value={item.deposit}
-                    onChange={amountChangeHandler}
-                  />
-                  {errors[item.uid]?.deposit && (
-                    <Text className="text-red-500">
-                      {errors[item.uid]?.deposit}
-                    </Text>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <Input
-                    type="text"
-                    data-uid={item.uid}
-                    data-type="depositDetails"
-                    value={item.depositDetails}
-                    onChange={detailChangeHandler}
-                  />
-                  {errors[item.uid]?.depositDetails && (
-                    <Text className="text-red-500">
-                      {errors[item.uid]?.depositDetails}
-                    </Text>
-                  )}
                 </TableCell>
                 <TableCell className="w-[100px]">
                   <Input
@@ -200,6 +172,34 @@ export default function TransactionPage() {
                   {errors[item.uid]?.withdrawDetails && (
                     <Text className="text-red-500">
                       {errors[item.uid]?.withdrawDetails}
+                    </Text>
+                  )}
+                </TableCell>
+                <TableCell className="w-[100px]">
+                  <Input
+                    type="text"
+                    data-uid={item.uid}
+                    data-type="deposit"
+                    value={item.deposit}
+                    onChange={amountChangeHandler}
+                  />
+                  {errors[item.uid]?.deposit && (
+                    <Text className="text-red-500">
+                      {errors[item.uid]?.deposit}
+                    </Text>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <Input
+                    type="text"
+                    data-uid={item.uid}
+                    data-type="depositDetails"
+                    value={item.depositDetails}
+                    onChange={detailChangeHandler}
+                  />
+                  {errors[item.uid]?.depositDetails && (
+                    <Text className="text-red-500">
+                      {errors[item.uid]?.depositDetails}
                     </Text>
                   )}
                 </TableCell>
