@@ -17,31 +17,31 @@ datasource db {
 
 model User {
   /// User 流水號 id
-  id           Int        @id @default(autoincrement())
+  id            Int        @id @default(autoincrement())
   /// 使用者id
-  uid          String     @unique
+  uid           String     @unique
   /// 密碼
-  password     String
+  password      String
   /// 姓名
-  name         String     @default("InitAccount")
+  name          String     @default("InitAccount")
   /// 使用者金額
-  balance      Int        @default(0)
+  balance       Int        @default(0)
   /// 角色權限
-  role         Role       @relation(fields: [roleId], references: [id])
-  roleId       Int        @default(2) @map("role_id")
+  role          Role       @relation(fields: [roleId], references: [id])
+  roleId        Int        @default(2) @map("role_id")
   /// 部門
-  department   Department @relation(fields: [departmentId], references: [id])
-  departmentId Int        @default(1) @map("department_id")
+  department    Department @relation(fields: [departmentId], references: [id])
+  departmentId  Int        @default(1) @map("department_id")
   /// 是否已經初始化
-  isInit       Boolean    @default(false) @map("is_init")
+  isInit        Boolean    @default(false) @map("is_init")
   /// 軟刪除使用者
-  isDisable    Boolean    @default(false) @map("is_disable")
+  isDisable     Boolean    @default(false) @map("is_disable")
   /// 版本戳，避免不同裝置或操作者同時操作
-  version      Int        @default(0)
+  version       Int        @default(0)
   /// 建立者使用者uid
-  createdBy String?       @map("created_by")
-  createdByUser User?     @relation("UserCreatedBy", fields: [createdBy], references: [uid])
-  createdUsers User[]     @relation("UserCreatedBy")
+  createdBy     String?    @map("created_by")
+  createdByUser User?      @relation("UserCreatedBy", fields: [createdBy], references: [uid])
+  createdUsers  User[]     @relation("UserCreatedBy")
 
   /// 建立時間
   createdAt DateTime @default(now()) @map("created_at")
@@ -49,15 +49,16 @@ model User {
   updatedAt DateTime @updatedAt @map("update_at")
 
   /// 現有的 refreshToken
-  refreshTokens    UserRefreshToken[]
+  refreshTokens     UserRefreshToken[]
   /// 建立的記帳清單
-  transactions     Transaction[]
+  transactions      Transaction[]
   /// 擁有的記帳清單項目
-  transactionItems TransactionItem[]
+  transactionItems  TransactionItem[]
   /// 金額異動紀錄
-  userBalanceLogs  UserBalanceLog[]
+  userBalanceLogs   UserBalanceLog[]
   /// 使用者操作紀錄
-  auditLogs        AuditLog[]
+  auditLogs         AuditLog[]
+  userNotifications UserNotification[]
 
   @@map("users")
 }
@@ -212,4 +213,47 @@ model AuditLog {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("audit_logs")
+}
+
+model Notification {
+  /// Notification 流水號 id
+  id                Int                @id @default(autoincrement())
+  /// 通知標題
+  title             String
+  /// 通知內容，如果需要個別使用者的通知內容，可以在 UserNotification 中定義 payload，使用 {{key}} 方式替換
+  content           String             @db.Text
+  /// 通知建立來源，例如: "system", "admin"
+  sourceType        String             @map("source_type")
+  /// 建立時間
+  createdAt         DateTime           @default(now()) @map("created_at")
+  /// 關聯的使用者通知
+  userNotifications UserNotification[]
+
+  @@map("notifications")
+}
+
+model UserNotification {
+  /// UserNotification 流水號 id
+  id             Int          @id @default(autoincrement())
+  /// 屬於那一個通知
+  notificationId Int          @map("notification_id")
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  /// 屬於那一個使用者
+  userUid        String       @map("user_uid")
+  user           User         @relation(fields: [userUid], references: [uid], onDelete: Cascade)
+  /// 通知的特定 payload，例如: {"orderId": "12345", "status": "shipped"}
+  payload        Json?
+  /// 是否已讀
+  isRead         Boolean      @default(false) @map("is_read")
+  /// 已讀時間
+  readAt         DateTime?    @map("read_at")
+  /// 通知建立時間
+  createdAt      DateTime     @default(now()) @map("created_at")
+  /// 通知過期時間
+  expiredAt      DateTime     @map("expired_at")
+
+  @@unique([userUid, notificationId], name: "uniq_user_notification")
+  @@index([userUid, createdAt(sort: Desc)], name: "idx_user_uid_created_at")
+  @@index([userUid, isRead, createdAt(sort: Desc)], name: "idx_user_uid_isread_created")
+  @@map("user_notifications")
 }

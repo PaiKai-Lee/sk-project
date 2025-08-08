@@ -194,7 +194,7 @@ export class TransactionService {
 
         return {
           transactionId,
-          users: createTransactionItemsDto.map((item) => item.uid),
+          userBalanceLog,
         };
       },
     );
@@ -203,7 +203,7 @@ export class TransactionService {
       'transaction.created',
       new TransactionCreatedEvent({
         transactionId: createTransactionResult.transactionId,
-        users: createTransactionResult.users,
+        userBalanceLog: createTransactionResult.userBalanceLog,
         context: this.cls.get(),
       }),
     );

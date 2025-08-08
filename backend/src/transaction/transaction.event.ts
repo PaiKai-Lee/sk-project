@@ -1,19 +1,29 @@
 import { AppClsStore } from 'src/common';
+
+interface UserBalanceLog {
+  uid: string;
+  value: number;
+  currentBalance: number;
+}
+
 export class TransactionCreatedEvent {
+  /** transactionId */
   transactionId: string;
-  users: string[];
+  /** user balance log */
+  userBalanceLog: UserBalanceLog[];
+  /** user context */
   context: AppClsStore;
   constructor({
     transactionId,
-    users,
+    userBalanceLog,
     context,
   }: {
     transactionId: string;
-    users: string[];
+    userBalanceLog: UserBalanceLog[];
     context: AppClsStore;
   }) {
     this.transactionId = transactionId;
-    this.users = users;
+    this.userBalanceLog = userBalanceLog;
     this.context = context;
   }
 }
