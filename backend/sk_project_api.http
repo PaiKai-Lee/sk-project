@@ -146,8 +146,10 @@ Content-Type: {{contentType}}
 Authorization: Bearer {{accessToken}}
 
 {
-  "uid": "ts-002",
-  "roleId": 2
+  "uid":"ts-02",
+  "name":"test02",
+  "roleId":1,
+  "departmentId":1
 }
 
 ###
@@ -257,8 +259,8 @@ Authorization: Bearer {{accessToken}}
 ### Get User Notifications
 GET http://{{host}}/api/user-notifications
   ?status=all
-  &page=1
-  &pageSize=10
+  &limit=10
+  # &cursor=
 Content-Type: {{contentType}}
 Authorization: Bearer {{accessToken}}
 

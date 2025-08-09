@@ -12,11 +12,7 @@ export class UserNotificationService {
   async findAll(uid: string, query: GetUserNotificationsQueryDto) {
     this.logger.debug('findAll user notifications: ' + JSON.stringify(query));
 
-    const {
-      status,
-      page = null,
-      pageSize = null,
-    } = query;
+    const { status, cursor, limit } = query;
 
     const where: Prisma.UserNotificationWhereInput = {
       userUid: uid,
@@ -26,21 +22,24 @@ export class UserNotificationService {
     };
 
     if (status === 'unread') {
-      where['is_read'] = false;
+      where.isRead = false;
     }
 
-    // 查總筆數（不受 skip/take 影響）
     const findManyArgs: Prisma.UserNotificationFindManyArgs = {
       where,
       orderBy: {
-        createdAt: 'desc',
-      }
+        id: 'desc',
+      },
     };
 
-    if (page && pageSize) {
-      const skip = (page - 1) * pageSize;
-      findManyArgs.skip = skip;
-      findManyArgs.take = pageSize;
+    if (limit) {
+      findManyArgs.take = limit + 1;
+      if (cursor) {
+        findManyArgs.cursor = {
+          id: cursor,
+        };
+        findManyArgs.skip = 1; // Skip the cursor item
+      }
     }
 
     const [notifications, total] = await Promise.all([
@@ -48,13 +47,22 @@ export class UserNotificationService {
       this.prisma.userNotification.count({ where }),
     ]);
 
+    let items = notifications;
+    let nextCursor: number | null = null;
+
+    if (limit) {
+      const hasNextPage = notifications.length > limit;
+      items = hasNextPage ? notifications.slice(0, limit) : notifications;
+      nextCursor = hasNextPage ? items[items.length - 1]?.id ?? null : null;
+    }
+
     return {
-      pagination: {
-        page: page,
-        pageSize: pageSize,
+      cursorPagination: {
+        nextCursor,
+        limit: limit ?? null,
         total,
       },
-      rows: notifications,
+      rows: items,
     };
   }
 

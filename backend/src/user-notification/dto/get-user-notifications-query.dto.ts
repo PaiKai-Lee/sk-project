@@ -6,13 +6,14 @@ export class GetUserNotificationsQueryDto {
   @IsIn(['all', 'unread'])
   status?: 'all' | 'unread' = 'all';
 
+  
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  page?: number;
+  limit?: number;
 
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  pageSize?: number;
+  cursor?: number;
 }
