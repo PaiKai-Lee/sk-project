@@ -10,4 +10,4 @@ import { AuditLogModule } from 'src/audit-log';
   controllers: [UserNotificationController],
   providers: [UserNotificationService, UserNotificationHelper],
 })
-export class UserNotificationModule { }
+export class UserNotificationModule {}

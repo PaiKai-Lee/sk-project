@@ -9,7 +9,9 @@ describe('UserNotificationController', () => {
       controllers: [UserNotificationController],
     }).compile();
 
-    controller = module.get<UserNotificationController>(UserNotificationController);
+    controller = module.get<UserNotificationController>(
+      UserNotificationController,
+    );
   });
 
   it('should be defined', () => {

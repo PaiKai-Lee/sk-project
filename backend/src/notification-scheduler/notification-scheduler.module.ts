@@ -4,6 +4,6 @@ import { CommonModule } from 'src/common';
 
 @Module({
   imports: [CommonModule],
-  providers: [NotificationSchedulerService]
+  providers: [NotificationSchedulerService],
 })
 export class NotificationSchedulerModule {}

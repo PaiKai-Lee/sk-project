@@ -10,4 +10,4 @@ import { AuditLogModule } from 'src/audit-log';
   providers: [NotificationService],
   exports: [NotificationService],
 })
-export class NotificationModule { }
+export class NotificationModule {}

@@ -9,7 +9,12 @@ import { AuditLogModule } from 'src/audit-log';
 import { NotificationModule } from 'src/notification/notification.module';
 
 @Module({
-  imports: [CommonModule, AuditLogModule, NotificationModule, forwardRef(() => UserModule)],
+  imports: [
+    CommonModule,
+    AuditLogModule,
+    NotificationModule,
+    forwardRef(() => UserModule),
+  ],
   controllers: [TransactionController],
   providers: [TransactionService, TransactionListener, TransactionHelper],
   exports: [TransactionService],

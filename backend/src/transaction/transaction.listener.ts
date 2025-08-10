@@ -9,8 +9,8 @@ import { NOTIFICATION_SOURCE_TYPE } from 'src/common/constants';
 export class TransactionListener {
   constructor(
     private readonly auditLogService: AuditLogService,
-    private readonly notificationService: NotificationService
-  ) { }
+    private readonly notificationService: NotificationService,
+  ) {}
 
   @OnEvent('transaction.created')
   logTransactionCreatedEvent(event: TransactionCreatedEvent) {
@@ -32,16 +32,17 @@ export class TransactionListener {
   notifyTransactionCreated(event: TransactionCreatedEvent) {
     const { context, userBalanceLog } = event;
     const notificationContent = `${context.user.name} 建立了一筆交易: ${event.transactionId}，你參與的交易金額: {{value}}。`;
-    this.notificationService.create({
-      title: '交易通知',
-      content: notificationContent,
-      targets: userBalanceLog.map(log => log.uid),
-    },
+    this.notificationService.create(
+      {
+        title: '交易通知',
+        content: notificationContent,
+        targets: userBalanceLog.map((log) => log.uid),
+      },
       NOTIFICATION_SOURCE_TYPE.SYSTEM,
       userBalanceLog.reduce((acc, log) => {
-        acc[log.uid] = { value: log.value } // Payload for each user
+        acc[log.uid] = { value: log.value }; // Payload for each user
         return acc;
-      }, {})
+      }, {}),
     );
   }
 

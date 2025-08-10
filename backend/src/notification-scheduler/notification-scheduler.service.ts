@@ -5,7 +5,7 @@ import { PrismaService } from 'src/common/prisma/prisma.service';
 @Injectable()
 export class NotificationSchedulerService {
   private readonly logger = new Logger(NotificationSchedulerService.name);
-  
+
   constructor(private readonly prisma: PrismaService) {}
 
   @Cron('0 0 * * *')

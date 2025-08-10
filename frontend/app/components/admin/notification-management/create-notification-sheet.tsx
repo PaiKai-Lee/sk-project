@@ -72,7 +72,9 @@ export function CreateNotificationSheet() {
       <SheetContent>
         <SheetHeader>
           <SheetTitle>{t('notification.create')}</SheetTitle>
-          <SheetDescription>{t('notification.createDescription')}</SheetDescription>
+          <SheetDescription>
+            {t('notification.createDescription')}
+          </SheetDescription>
         </SheetHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -120,7 +122,10 @@ export function CreateNotificationSheet() {
                               checked={field.value?.includes(user.uid)}
                               onCheckedChange={(checked) => {
                                 return checked
-                                  ? field.onChange([...(field.value || []), user.uid])
+                                  ? field.onChange([
+                                      ...(field.value || []),
+                                      user.uid,
+                                    ])
                                   : field.onChange(
                                       field.value?.filter(
                                         (value: string) => value !== user.uid

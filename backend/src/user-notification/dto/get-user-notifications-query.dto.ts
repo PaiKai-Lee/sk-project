@@ -6,7 +6,6 @@ export class GetUserNotificationsQueryDto {
   @IsIn(['all', 'unread'])
   status?: 'all' | 'unread' = 'all';
 
-  
   @IsOptional()
   @Type(() => Number)
   @IsNumber()

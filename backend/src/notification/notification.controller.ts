@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/auth/enums/role.enum';
 import { RoleGuard } from 'src/guards/roles.guard';
@@ -14,7 +22,10 @@ export class NotificationController {
 
   @Post()
   create(@Body() createNotificationDto: CreateNotificationDto) {
-    return this.notificationService.create(createNotificationDto, NOTIFICATION_SOURCE_TYPE.ADMIN);
+    return this.notificationService.create(
+      createNotificationDto,
+      NOTIFICATION_SOURCE_TYPE.ADMIN,
+    );
   }
 
   @Get()

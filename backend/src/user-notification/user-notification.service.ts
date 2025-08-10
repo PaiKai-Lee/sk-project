@@ -11,7 +11,7 @@ export class UserNotificationService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly userNotificationHelper: UserNotificationHelper,
-  ) { }
+  ) {}
 
   async findAll(uid: string, query: GetUserNotificationsQueryDto) {
     this.logger.debug('findAll user notifications: ' + JSON.stringify(query));
@@ -29,7 +29,6 @@ export class UserNotificationService {
       where.isRead = false;
     }
 
-
     let takeArg: number | undefined;
     let cursorArg: Prisma.UserNotificationWhereUniqueInput | undefined;
     let skipArg: number | undefined;
@@ -42,21 +41,19 @@ export class UserNotificationService {
       }
     }
 
-    const findManyArgs = Prisma.validator<Prisma.UserNotificationFindManyArgs>()({
-      where,
-      orderBy: { id: 'desc' as const },
-      include: {
-        notification: true, 
-      },
-      take: takeArg,
-      cursor: cursorArg,
-      skip: skipArg,
-    });
+    const findManyArgs =
+      Prisma.validator<Prisma.UserNotificationFindManyArgs>()({
+        where,
+        orderBy: { id: 'desc' as const },
+        include: {
+          notification: true,
+        },
+        take: takeArg,
+        cursor: cursorArg,
+        skip: skipArg,
+      });
 
-    const [
-      userNotifications,
-      total
-    ] = await Promise.all([
+    const [userNotifications, total] = await Promise.all([
       this.prisma.userNotification.findMany(findManyArgs),
       this.prisma.userNotification.count({ where }),
     ]);
@@ -66,8 +63,10 @@ export class UserNotificationService {
 
     if (limit) {
       const hasNextPage = userNotifications.length > limit;
-      items = hasNextPage ? userNotifications.slice(0, limit) : userNotifications;
-      nextCursor = hasNextPage ? items[items.length - 1]?.id ?? null : null;
+      items = hasNextPage
+        ? userNotifications.slice(0, limit)
+        : userNotifications;
+      nextCursor = hasNextPage ? (items[items.length - 1]?.id ?? null) : null;
     }
 
     // 處理返回資料，payload & content
@@ -76,10 +75,11 @@ export class UserNotificationService {
 
       // 格式化內容模板
       if (notification.content && userNotification.payload) {
-        const formattedContent = this.userNotificationHelper.renderContentTemplate(
-          notification.content,
-          userNotification.payload as Record<string, any>
-        );
+        const formattedContent =
+          this.userNotificationHelper.renderContentTemplate(
+            notification.content,
+            userNotification.payload as Record<string, any>,
+          );
         notification.content = formattedContent;
       }
 
@@ -87,7 +87,7 @@ export class UserNotificationService {
         ...userNotification,
         notification,
       };
-    })
+    });
 
     return {
       cursorPagination: {

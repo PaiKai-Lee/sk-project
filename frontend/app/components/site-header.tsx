@@ -5,7 +5,7 @@ import { SidebarTrigger } from '~/components/ui/sidebar';
 import { routeItems } from './app-sidebar';
 import { useAuth } from '~/context/auth';
 import { Heading1, Text } from '~/components/ui/typography';
-import {  CircleUser } from 'lucide-react';
+import { CircleUser } from 'lucide-react';
 import { GitHubIcon } from './ui/icons';
 import { useTranslation } from 'react-i18next';
 import { NotificationPopover } from './notification-popover';
@@ -30,7 +30,9 @@ export function SiteHeader() {
           <NotificationPopover />
           <div className="flex items-center gap-1">
             <CircleUser className="size-5" />
-            <Text><strong>{auth.profile?.uid}</strong> / {auth.profile?.name}</Text>
+            <Text>
+              <strong>{auth.profile?.uid}</strong> / {auth.profile?.name}
+            </Text>
           </div>
           <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
             <div className="flex items-center gap-1">

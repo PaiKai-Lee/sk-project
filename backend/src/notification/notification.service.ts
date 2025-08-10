@@ -13,12 +13,12 @@ export class NotificationService {
     private readonly prisma: PrismaService,
     private readonly eventEmitter: EventEmitter2,
     private readonly cls: ClsService<AppClsStore>,
-  ) { }
+  ) {}
 
   async create(
     createNotificationDto: CreateNotificationDto,
-    sourceType: typeof NOTIFICATION_SOURCE_TYPE[keyof typeof NOTIFICATION_SOURCE_TYPE],
-    targetsPayloads?: Record<string, any>
+    sourceType: (typeof NOTIFICATION_SOURCE_TYPE)[keyof typeof NOTIFICATION_SOURCE_TYPE],
+    targetsPayloads?: Record<string, any>,
   ) {
     const authUser = this.cls.get('user');
     const { title, content, targets } = createNotificationDto;
@@ -52,7 +52,7 @@ export class NotificationService {
         notificationId: notification.id,
         title,
         context: this.cls.get<AppClsStore>(),
-      })
+      }),
     );
 
     return notification;
