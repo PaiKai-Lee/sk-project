@@ -31,7 +31,7 @@ export class TransactionListener {
   @OnEvent('transaction.created')
   notifyTransactionCreated(event: TransactionCreatedEvent) {
     const { context, userBalanceLog } = event;
-    const notificationContent = `${context.user.name} 建立了一筆交易: ${event.transactionId}，與你相關的議定金額為: {{value}}。`;
+    const notificationContent = `${context.user.name} 建立了一筆交易: ${event.transactionId}，你參與的交易金額: {{value}}。`;
     this.notificationService.create({
       title: '交易通知',
       content: notificationContent,

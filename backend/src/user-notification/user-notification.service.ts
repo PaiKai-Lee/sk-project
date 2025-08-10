@@ -2,12 +2,16 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { GetUserNotificationsQueryDto } from './dto/get-user-notifications-query.dto';
 import { Prisma } from '@prisma/client';
+import { UserNotificationHelper } from './user-notification.helper';
 
 @Injectable()
 export class UserNotificationService {
   private readonly logger = new Logger(UserNotificationService.name);
 
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly userNotificationHelper: UserNotificationHelper,
+  ) { }
 
   async findAll(uid: string, query: GetUserNotificationsQueryDto) {
     this.logger.debug('findAll user notifications: ' + JSON.stringify(query));
@@ -25,36 +29,65 @@ export class UserNotificationService {
       where.isRead = false;
     }
 
-    const findManyArgs: Prisma.UserNotificationFindManyArgs = {
-      where,
-      orderBy: {
-        id: 'desc',
-      },
-    };
+
+    let takeArg: number | undefined;
+    let cursorArg: Prisma.UserNotificationWhereUniqueInput | undefined;
+    let skipArg: number | undefined;
 
     if (limit) {
-      findManyArgs.take = limit + 1;
+      takeArg = limit + 1;
       if (cursor) {
-        findManyArgs.cursor = {
-          id: cursor,
-        };
-        findManyArgs.skip = 1; // Skip the cursor item
+        cursorArg = { id: cursor };
+        skipArg = 1; // Skip the cursor item
       }
     }
 
-    const [notifications, total] = await Promise.all([
+    const findManyArgs = Prisma.validator<Prisma.UserNotificationFindManyArgs>()({
+      where,
+      orderBy: { id: 'desc' as const },
+      include: {
+        notification: true, 
+      },
+      take: takeArg,
+      cursor: cursorArg,
+      skip: skipArg,
+    });
+
+    const [
+      userNotifications,
+      total
+    ] = await Promise.all([
       this.prisma.userNotification.findMany(findManyArgs),
       this.prisma.userNotification.count({ where }),
     ]);
 
-    let items = notifications;
+    let items = userNotifications;
     let nextCursor: number | null = null;
 
     if (limit) {
-      const hasNextPage = notifications.length > limit;
-      items = hasNextPage ? notifications.slice(0, limit) : notifications;
+      const hasNextPage = userNotifications.length > limit;
+      items = hasNextPage ? userNotifications.slice(0, limit) : userNotifications;
       nextCursor = hasNextPage ? items[items.length - 1]?.id ?? null : null;
     }
+
+    // 處理返回資料，payload & content
+    items = items.map((userNotification) => {
+      const notification = userNotification.notification;
+
+      // 格式化內容模板
+      if (notification.content && userNotification.payload) {
+        const formattedContent = this.userNotificationHelper.renderContentTemplate(
+          notification.content,
+          userNotification.payload as Record<string, any>
+        );
+        notification.content = formattedContent;
+      }
+
+      return {
+        ...userNotification,
+        notification,
+      };
+    })
 
     return {
       cursorPagination: {

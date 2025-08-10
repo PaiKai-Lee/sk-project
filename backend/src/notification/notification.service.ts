@@ -20,6 +20,7 @@ export class NotificationService {
     sourceType: typeof NOTIFICATION_SOURCE_TYPE[keyof typeof NOTIFICATION_SOURCE_TYPE],
     targetsPayloads?: Record<string, any>
   ) {
+    const authUser = this.cls.get('user');
     const { title, content, targets } = createNotificationDto;
     const notification = await this.prisma.notification.create({
       data: {
@@ -36,6 +37,7 @@ export class NotificationService {
         notificationId: notification.id,
         userUid: uid,
         payload: targetsPayloads ? targetsPayloads[uid] : undefined,
+        isRead: uid === authUser.uid, // 如果是建立者，標示為已讀
         expiredAt: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000), // 45 days
       };
     });
