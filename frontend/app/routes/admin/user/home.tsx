@@ -21,9 +21,9 @@ import {
 } from '~/components/ui/alert-dialog';
 import { Text } from '~/components/ui/typography';
 
-import { DataTable } from '~/components/admin/data-table';
-import { CreateUserSheet } from '~/components/admin/create-user-sheet';
-import { EditUserSheet } from '~/components/admin/edit-user-sheet';
+import { DataTable } from '~/components/admin/user-management/data-table';
+import { CreateUserSheet } from '~/components/admin/user-management/create-user-sheet';
+import { EditUserSheet } from '~/components/admin/user-management/edit-user-sheet';
 import { useTranslation } from 'react-i18next';
 
 export type User = {

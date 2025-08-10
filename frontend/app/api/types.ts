@@ -13,6 +13,12 @@ export interface Pagination {
   total: number;
 }
 
+export interface CursorPagination {
+  nextCursor: number | string | null;
+  limit: number | null;
+  total: number;
+}
+
 // Auth
 
 export interface ILoginResponse {
@@ -148,4 +154,32 @@ export interface IOneAuditLogResponse {
 export interface IAuditLogResponse {
   pagination: Pagination;
   rows: IOneAuditLogResponse[];
+}
+
+// Notification
+
+export interface INotificationResponse {
+  id: number;
+  title: string;
+  content: string;
+  sourceType: string;
+  createdAt: string;
+  users?: { uid: string; name: string }[];
+}
+
+export interface IUserNotificationsResponse {
+  cursorPagination: CursorPagination;
+  rows: IUserNotification[];
+}
+
+export interface IUserNotification {
+  id: number;
+  notificationId: number;
+  userUid: string;
+  payload: any;
+  isRead: boolean;
+  readAt: string | null;
+  createdAt: string;
+  expiredAt: string;
+  notification: INotificationResponse;
 }

@@ -16,8 +16,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../ui/table';
-import { Input } from '../ui/input';
+} from '~/components/ui/table';
+import { Input } from '~/components/ui/input';
 import { useTranslation } from 'react-i18next';
 import {
   Select,
@@ -25,7 +25,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
+} from '~/components/ui/select';
 import { cn } from '~/lib/utils';
 
 export type User = {
