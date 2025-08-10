@@ -45,11 +45,6 @@ export const routeItems = [
     icon: DatabaseBackup,
   },
   {
-    title: 'notification',
-    url: '/notification',
-    icon: Bell,
-  },
-  {
     title: 'user_management',
     url: '/admin/user',
     icon: ShieldUser,

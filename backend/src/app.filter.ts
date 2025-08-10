@@ -4,14 +4,12 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
-  Inject,
   Logger,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { Prisma } from '@prisma/client';
 import { ClsService } from 'nestjs-cls';
 import { AppClsStore } from './common';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 // import { Logger } from 'winston';
 
 @Catch()

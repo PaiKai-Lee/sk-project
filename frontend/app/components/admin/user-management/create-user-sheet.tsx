@@ -28,15 +28,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
+import { Button } from '~/components/ui/button';
+import { Input } from '~/components/ui/input';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import UserClient from '~/api/users';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import RoleClient from '~/api/roles';
 import DepartmentClient from '~/api/departments';
-import { Separator } from '../ui/separator';
+import { Separator } from '~/components/ui/separator';
 import { useTranslation } from 'react-i18next';
 
 const formSchema = z.object({

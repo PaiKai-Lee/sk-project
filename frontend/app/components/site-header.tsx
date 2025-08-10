@@ -8,12 +8,15 @@ import { Heading1, Text } from '~/components/ui/typography';
 import { CircleUser } from 'lucide-react';
 import { GitHubIcon } from './ui/icons';
 import { useTranslation } from 'react-i18next';
+import { NotificationPopover } from './notification-popover';
+
 export function SiteHeader() {
   const { t } = useTranslation();
   const location = useLocation();
   const routeItem = routeItems.find((item) => item.url === location.pathname);
   const title = routeItem?.title;
   const auth = useAuth();
+
   return (
     <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
       <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-2">
@@ -23,10 +26,13 @@ export function SiteHeader() {
           className="mx-2 data-[orientation=vertical]:h-4"
         />
         <Heading1 className="text-lg">{t(`title.${title}`)}</Heading1>
-        <div className="ml-auto flex items-center gap-4">
+        <div className="ml-auto flex items-center gap-2 md:gap-4">
+          <NotificationPopover />
           <div className="flex items-center gap-1">
             <CircleUser className="size-5" />
-            <Text><strong>{auth.profile?.uid}</strong> / {auth.profile?.name}</Text>
+            <Text>
+              <strong>{auth.profile?.uid}</strong> / {auth.profile?.name}
+            </Text>
           </div>
           <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
             <div className="flex items-center gap-1">

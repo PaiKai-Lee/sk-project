@@ -1,9 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma';
-import {
-  CreateTransactionDto,
-  CreateTransactionItemDto,
-} from './dtos/create-transaction.dto';
+import { CreateTransactionDto } from './dtos/create-transaction.dto';
 import { TransactionHelper } from './transaction.helper';
 import { Prisma } from '@prisma/client';
 import { ClsService } from 'nestjs-cls';
@@ -194,7 +191,7 @@ export class TransactionService {
 
         return {
           transactionId,
-          users: createTransactionItemsDto.map((item) => item.uid),
+          userBalanceLog,
         };
       },
     );
@@ -203,7 +200,7 @@ export class TransactionService {
       'transaction.created',
       new TransactionCreatedEvent({
         transactionId: createTransactionResult.transactionId,
-        users: createTransactionResult.users,
+        userBalanceLog: createTransactionResult.userBalanceLog,
         context: this.cls.get(),
       }),
     );

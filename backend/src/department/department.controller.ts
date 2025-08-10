@@ -1,4 +1,4 @@
-import { Controller, Get, Logger, Query, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Logger } from '@nestjs/common';
 import { DepartmentService } from './department.service';
 
 @Controller('departments')

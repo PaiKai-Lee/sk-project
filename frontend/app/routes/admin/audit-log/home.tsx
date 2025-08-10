@@ -12,7 +12,7 @@ import { ArrowUpDown, Loader } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
-import { ServerDataTable } from '~/components/admin/audit-log-server-data-table';
+import { ServerDataTable } from '~/components/admin/audit-log/server-data-table';
 import { Button } from '~/components/ui/button';
 import { Text } from '~/components/ui/typography';
 import AuditLogClient from '~/api/audit-logs';

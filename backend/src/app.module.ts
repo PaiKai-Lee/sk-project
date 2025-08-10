@@ -13,9 +13,14 @@ import { AuthenticationMiddleware } from './auth/auth.middleware';
 import { OverviewModule } from './overview/overview.module';
 import { RoleModule } from './role/role.module';
 import { DepartmentModule } from './department/department.module';
+import { NotificationModule } from './notification/notification.module';
+import { UserNotificationModule } from './user-notification/user-notification.module';
+import { NotificationSchedulerModule } from './notification-scheduler/notification-scheduler.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     CommonModule,
     AuthModule,
     UserModule,
@@ -24,6 +29,9 @@ import { DepartmentModule } from './department/department.module';
     OverviewModule,
     RoleModule,
     DepartmentModule,
+    NotificationModule,
+    UserNotificationModule,
+    NotificationSchedulerModule,
   ],
   controllers: [AppController],
   providers: [

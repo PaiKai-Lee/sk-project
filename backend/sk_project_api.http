@@ -11,8 +11,8 @@ POST http://{{host}}/api/auth/login
 Content-Type: {{contentType}}
 
 {
-  "uid": "ts-001",
-  "password": "66666666"
+  "uid": "root",
+  "password": "abcd1234"
 }
 
 ###
@@ -107,7 +107,7 @@ Authorization: Bearer {{accessToken}}
       "details":"早餐代墊"
     },
     {
-      "uid":"ts-001",
+      "uid":"ts-01",
       "value":100,
       "details":"早餐"
     }
@@ -146,8 +146,10 @@ Content-Type: {{contentType}}
 Authorization: Bearer {{accessToken}}
 
 {
-  "uid": "ts-002",
-  "roleId": 2
+  "uid":"ts-02",
+  "name":"test02",
+  "roleId":1,
+  "departmentId":1
 }
 
 ###
@@ -218,5 +220,67 @@ Authorization: Bearer {{accessToken}}
 ### Get Departments
 
 GET http://{{host}}/api/departments
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Notifications (Admin)
+
+### Get Notifications
+GET http://{{host}}/api/notifications
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Create Notification
+POST http://{{host}}/api/notifications
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "title": "Test Notification",
+  "content": "This is a test notification",
+  "targets": ["ts-01", "ts-02"]
+}
+
+###
+
+### Delete Notification
+DELETE http://{{host}}/api/notifications/1
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### User Notifications
+
+### Get User Notifications
+GET http://{{host}}/api/user-notifications
+  ?status=all
+  &limit=3
+  &cursor=5
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get User Unread Notification Count
+GET http://{{host}}/api/user-notifications/unread-count
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Mark All User Notifications as Read
+PATCH http://{{host}}/api/user-notifications/mark-all-read
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Mark User Notification as Read
+PATCH http://{{host}}/api/user-notifications/1/mark-read
 Content-Type: {{contentType}}
 Authorization: Bearer {{accessToken}}

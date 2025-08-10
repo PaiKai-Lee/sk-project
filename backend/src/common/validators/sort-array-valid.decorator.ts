@@ -8,7 +8,7 @@ export function SortArrayValid(
   allowedFields: string[],
   validationOptions?: ValidationOptions,
 ) {
-  return function (object: Object, propertyName: string) {
+  return function (object: object, propertyName: string) {
     registerDecorator({
       name: 'sortArrayValid',
       target: object.constructor,
