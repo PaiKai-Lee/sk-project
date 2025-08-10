@@ -1,7 +1,6 @@
 // src/auth/middleware/authentication.middleware.ts
 import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { randomUUID } from 'crypto';
 import { Request, Response, NextFunction } from 'express';
 import { ClsService } from 'nestjs-cls';
 import { AppClsStore } from 'src/common';
