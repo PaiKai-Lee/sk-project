@@ -12,6 +12,7 @@ export default [
     ...prefix('admin', [
       layout('routes/admin/layout.tsx', [
         route('user', 'routes/admin/user/home.tsx'),
+        route('notification', 'routes/admin/notification/home.tsx'),
         route('audit-logs', 'routes/admin/audit-log/home.tsx'),
       ]),
     ]),
@@ -28,7 +29,6 @@ export default [
         index('routes/transaction-records/home.tsx'),
       ]),
     ]),
-    route('notification', 'routes/notification.tsx'),
     route('demo', 'routes/demo.tsx'),
   ]),
   ...prefix('login', [
