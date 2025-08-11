@@ -76,8 +76,20 @@ cd sk_projects
 
     這將根據 `prisma/schema.prisma` 的定義來更新您的資料庫結構。
 
+   - 本機開發環境
+
     ```bash
+    # 建立並執行 migration，並自動產生最新的 Prisma Client
     npx prisma migrate dev
+    ```
+
+   - 正式環境
+
+    ```bash
+    # 套用既有 migration 到正式資料庫
+    npx prisma migrate deploy
+    # 產生最新的 prisma client
+    npx prisma generate
     ```
 
 5. **初始化資料庫 (Seeding)**
