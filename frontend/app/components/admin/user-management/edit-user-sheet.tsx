@@ -30,31 +30,14 @@ import {
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import UserClient from '~/api/users';
 import { toast } from 'sonner';
-import { useEffect, useState } from 'react';
-import RoleClient from '~/api/roles';
-import DepartmentClient from '~/api/departments';
+import { useEffect } from 'react';
 import { Separator } from '~/components/ui/separator';
 import { useTranslation } from 'react-i18next';
-
-export type User = {
-  id: string;
-  uid: string;
-  name: string;
-  balance: number;
-  role: {
-    id: number;
-    name: string;
-  };
-  department: {
-    id: number;
-    name: string;
-  };
-  isInit: boolean;
-  isDisable: boolean;
-  version: number;
-};
+import { RoleClient, roleQueryKeys } from '~/features/roles';
+import { DepartmentClient, departmentQueryKeys } from '~/features/departments';
+import { UserClient, userQueryKeys } from '~/features/users';
+import type { IUser } from '~/features/users';
 
 const formSchema = z.object({
   uid: z.string({ message: '格式錯誤' }).min(1, { message: 'uid不得為空' }),
@@ -70,7 +53,7 @@ const formSchema = z.object({
 export function EditUserSheet(props: {
   isEditOpen: boolean;
   setIsEditOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedUser: User | null;
+  selectedUser: IUser | null;
 }) {
   const { isEditOpen, setIsEditOpen, selectedUser } = props;
   const { t } = useTranslation();
@@ -79,14 +62,14 @@ export function EditUserSheet(props: {
   const queryClient = useQueryClient();
 
   const roleQuery = useQuery({
-    queryKey: ['roles'],
+    queryKey: roleQueryKeys.getRoles(),
     queryFn: () => RoleClient.getRoles(),
     select: (data) => data.data.data,
     staleTime: 60 * 1000 * 60,
   });
 
   const departmentQuery = useQuery({
-    queryKey: ['departments'],
+    queryKey: departmentQueryKeys.getDepartments(),
     queryFn: () => DepartmentClient.getDepartments(),
     select: (data) => data.data.data,
     staleTime: 60 * 1000 * 60,
@@ -109,7 +92,7 @@ export function EditUserSheet(props: {
     },
     onSuccess: async (data) => {
       await queryClient.invalidateQueries({
-        queryKey: ['users'],
+        queryKey: userQueryKeys.all,
       });
       toast.success('更新成功');
       form.reset();
@@ -126,8 +109,8 @@ export function EditUserSheet(props: {
     defaultValues: {
       uid: selectedUser?.uid || '',
       name: selectedUser?.name || '',
-      roleId: selectedUser?.role.id,
-      departmentId: selectedUser?.department.id,
+      roleId: selectedUser?.role?.id,
+      departmentId: selectedUser?.department?.id,
       version: selectedUser?.version,
     },
   });
@@ -137,8 +120,8 @@ export function EditUserSheet(props: {
       form.reset({
         uid: selectedUser.uid,
         name: selectedUser.name,
-        roleId: selectedUser.role.id,
-        departmentId: selectedUser.department.id,
+        roleId: selectedUser.role?.id,
+        departmentId: selectedUser.department?.id,
         version: selectedUser.version,
       });
     }

@@ -21,10 +21,13 @@ import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import NotificationClient from '~/api/notifications';
-import UserClient from '~/api/users';
 import { Checkbox } from '~/components/ui/checkbox';
-import type { IUserResponse } from '~/api/types';
+import {
+  NotificationClient,
+  notificationQueryKeys,
+} from '~/features/notifications';
+import { UserClient, userQueryKeys } from '~/features/users';
+import type { IUser } from '~/features/users';
 
 export function CreateNotificationSheet() {
   const { t } = useTranslation();
@@ -32,7 +35,7 @@ export function CreateNotificationSheet() {
   const form = useForm();
 
   const usersQuery = useQuery({
-    queryKey: ['users'],
+    queryKey: userQueryKeys.getUsers(),
     queryFn: async () => {
       const { data } = await UserClient.getUsers();
       return data.data;
@@ -49,7 +52,7 @@ export function CreateNotificationSheet() {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['notifications'],
+        queryKey: notificationQueryKeys.all,
       });
       toast.success(t('notification.createSuccess'));
       form.reset();
@@ -110,7 +113,7 @@ export function CreateNotificationSheet() {
               render={() => (
                 <FormItem>
                   <FormLabel>{t('notification.targets')}</FormLabel>
-                  {usersQuery.data?.map((user: IUserResponse) => (
+                  {usersQuery.data?.map((user: IUser) => (
                     <FormField
                       key={user.uid}
                       control={form.control}

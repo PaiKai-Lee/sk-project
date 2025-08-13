@@ -14,13 +14,14 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-import NotificationClient from '~/api/notifications';
 import { Fragment, useState } from 'react';
 import DateFormatter from '~/lib/date-formatter';
+import { UserNotificationClient } from '~/features/user-notifications';
 import type {
   IUserNotification,
   IUserNotificationsResponse,
-} from '~/api/types';
+} from '~/features/user-notifications';
+import { userNotificationQueryKeys } from '~/features/user-notifications';
 import type { AxiosError } from 'axios';
 import { Bell } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -32,11 +33,10 @@ export function NotificationPopover() {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const userNotificationQuery = useInfiniteQuery<
-    IUserNotificationsResponse,
+    IUserNotificationsResponse['data']['data'],
     AxiosError
   >({
-    queryKey: ['user-notifications'],
-
+    queryKey: userNotificationQueryKeys.getUserNotifications(),
     queryFn: async ({ pageParam }) => {
       const params = new URLSearchParams();
       params.append('limit', '5'); // Set a default limit for pagination
@@ -44,7 +44,7 @@ export function NotificationPopover() {
         params.append('cursor', String(pageParam));
       }
 
-      const { data } = await NotificationClient.getUserNotifications({
+      const { data } = await UserNotificationClient.getUserNotifications({
         params,
       });
       return data.data;
@@ -54,25 +54,30 @@ export function NotificationPopover() {
   });
 
   const { data: unReadCount } = useQuery({
-    queryKey: ['user-notifications-unread-count'],
+    queryKey: userNotificationQueryKeys.getUnreadNotificationsCount(),
     queryFn: async () => {
-      const { data } = await NotificationClient.getUnreadNotificationsCount();
+      const { data } =
+        await UserNotificationClient.getUnreadNotificationsCount();
       return data.data;
     },
     refetchInterval: 60 * 1000, // Refresh every minute
   });
 
   const markAllAsReadMutation = useMutation({
-    mutationFn: () => NotificationClient.markAllNotificationsAsRead(),
+    mutationFn: () => UserNotificationClient.markAllNotificationsAsRead(),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['user-notifications-unread-count'],
+        queryKey: userNotificationQueryKeys.getUnreadNotificationsCount(),
       });
-      queryClient.invalidateQueries({ queryKey: ['user-notifications'] });
     },
   });
 
   const handleOpenChange = (open: boolean) => {
+    if(open) {
+      queryClient.invalidateQueries({
+        queryKey: userNotificationQueryKeys.getUserNotifications(),
+      });
+    }
     if (open && unReadCount && unReadCount > 0) {
       markAllAsReadMutation.mutate();
     }

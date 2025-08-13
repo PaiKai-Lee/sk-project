@@ -1,7 +1,7 @@
 // httpClient.ts
 import axios from 'axios';
 import { tokenManager } from '~/lib/token-manager';
-import AuthClient from '~/api/auth';
+import { AuthClient } from '~/features/auth';
 
 const httpClient = axios.create({
   baseURL: '/api',

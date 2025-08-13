@@ -5,9 +5,9 @@ import {
   useCallback,
   useMemo,
 } from 'react';
-import AuthClient from '~/api/auth';
+import { AuthClient } from '~/features/auth';
+import type { ILoginResponse } from '~/features/auth';
 import { tokenManager } from '~/lib/token-manager';
-import type { ILoginResponse } from '~/api/types';
 type AuthProviderProps = {
   children: React.ReactNode;
 };
@@ -36,7 +36,10 @@ type AuthProviderState = {
     | undefined;
   isAdmin: boolean;
   setProfile: (profile: any) => void;
-  login: (email: string, password: string) => AsyncResult<ILoginResponse>;
+  login: (
+    email: string,
+    password: string
+  ) => AsyncResult<ILoginResponse['data']['data']>;
   logout: () => AsyncResult<null>;
 };
 
@@ -65,7 +68,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [AuthClient]);
 
   const login = useCallback(
-    async (uid: string, password: string): AsyncResult<ILoginResponse> => {
+    async (
+      uid: string,
+      password: string
+    ): AsyncResult<ILoginResponse['data']['data']> => {
       try {
         const { data: axiosData } = await AuthClient.login({ uid, password });
         setProfile(axiosData.data.profile);

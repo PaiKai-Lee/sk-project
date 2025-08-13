@@ -1,18 +1,17 @@
 import httpClient from '~/lib/http-client';
 import type { AxiosRequestConfig } from 'axios';
 import type {
-  IResponseData,
   IProfileResponse,
   ILoginResponse,
   IRefreshTokenResponse,
-  IApiResponse,
+  ILogoutResponse,
 } from './types';
 
-class AuthClient {
+export class AuthClient {
   static login(
     { uid, password }: { uid: string; password: string },
     options?: AxiosRequestConfig
-  ): Promise<IApiResponse<ILoginResponse>> {
+  ): Promise<ILoginResponse> {
     return httpClient.post(
       '/auth/login',
       {
@@ -23,14 +22,14 @@ class AuthClient {
     );
   }
 
-  static logout(): Promise<IApiResponse<null>> {
+  static logout(): Promise<ILogoutResponse> {
     return httpClient.post('/auth/logout');
   }
 
   static refreshToken(
     { refreshToken }: { refreshToken: string },
     options?: AxiosRequestConfig
-  ): Promise<IApiResponse<IRefreshTokenResponse>> {
+  ): Promise<IRefreshTokenResponse> {
     return httpClient.post(
       '/auth/refresh-token',
       {
@@ -40,11 +39,7 @@ class AuthClient {
     );
   }
 
-  static getProfile(
-    options?: AxiosRequestConfig
-  ): Promise<IApiResponse<IProfileResponse>> {
+  static getProfile(options?: AxiosRequestConfig): Promise<IProfileResponse> {
     return httpClient.get('/auth/profile', options);
   }
 }
-
-export default AuthClient;

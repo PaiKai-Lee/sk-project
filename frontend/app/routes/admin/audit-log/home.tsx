@@ -15,7 +15,8 @@ import { useLocation } from 'react-router';
 import { ServerDataTable } from '~/components/admin/audit-log/server-data-table';
 import { Button } from '~/components/ui/button';
 import { Text } from '~/components/ui/typography';
-import AuditLogClient from '~/api/audit-logs';
+import { auditLogQueryKeys, AuditLogClient } from '~/features/audit-logs';
+import type { IOneAudit } from '~/features/audit-logs';
 import useDebounce from '~/hooks/use-debounce';
 import DateFormatter from '~/lib/date-formatter';
 import { Input } from '~/components/ui/input';
@@ -58,7 +59,7 @@ export default function auditLogPage() {
     1000
   ) as ColumnFiltersState;
 
-  const columns = useMemo<ColumnDef<AuditLogs>[]>(
+  const columns = useMemo<ColumnDef<IOneAudit>[]>(
     () => [
       {
         accessorKey: 'uid',
@@ -111,15 +112,12 @@ export default function auditLogPage() {
   );
 
   const auditLogQuery = useQuery({
-    queryKey: [
-      'auditLog',
-      {
-        page: pagination.pageIndex + 1,
-        pageSize: pagination.pageSize,
-        sorting: JSON.stringify(sorting),
-        filters: JSON.stringify(debounceFilters),
-      },
-    ],
+    queryKey: auditLogQueryKeys.getAuditLogs({
+      page: pagination.pageIndex + 1,
+      pageSize: pagination.pageSize,
+      sorting: JSON.stringify(sorting),
+      filters: JSON.stringify(debounceFilters),
+    }),
     queryFn: async () => {
       const apiParams = new URLSearchParams();
       apiParams.append('page', (pagination.pageIndex + 1).toString());

@@ -31,6 +31,8 @@ import { Text } from '../ui/typography';
 import { Label } from '../ui/label';
 import { Switch } from '../ui/switch';
 import { useTranslation } from 'react-i18next';
+import { overviewQueryKeys } from '~/features/overview';
+import { userQueryKeys } from '~/features/users';
 
 const formSchema = z.object({
   remark: z.string().max(30, { message: '備註長度不能超過 30 字' }),
@@ -66,10 +68,10 @@ export function Cart() {
       toast.success('交易提交成功');
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: ['users', { showDisable: 'false' }],
+          queryKey: userQueryKeys.getUsers({ showDisable: 'false' }),
         }),
         queryClient.invalidateQueries({
-          queryKey: ['overview'],
+          queryKey: overviewQueryKeys.all,
         }),
       ]);
       form.reset();

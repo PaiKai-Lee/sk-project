@@ -1,28 +1,24 @@
 import httpClient from '~/lib/http-client';
-import type { IApiResponse, IUserResponse } from './types';
 import type { AxiosRequestConfig } from 'axios';
+import type { IUsersResponse, IUserResponse } from './types';
 
-class UserClient {
-  static async getUsers(
-    options?: AxiosRequestConfig
-  ): Promise<IApiResponse<IUserResponse[]>> {
+export class UserClient {
+  static getUsers(options?: AxiosRequestConfig): Promise<IUsersResponse> {
     return httpClient.get('users', options);
   }
 
-  static async getOneUser(
-    options?: AxiosRequestConfig
-  ): Promise<IApiResponse<IUserResponse>> {
+  static getOneUser(options?: AxiosRequestConfig): Promise<IUserResponse> {
     return httpClient.get('users', options);
   }
 
-  static async createUser(
+  static createUser(
     data: { uid: string; name?: string; password?: string; roleId: number },
     options?: AxiosRequestConfig
-  ): Promise<IApiResponse<IUserResponse>> {
+  ): Promise<IUserResponse> {
     return httpClient.post('users', data, options);
   }
 
-  static async editUser(
+  static editUser(
     uid: string,
     data: {
       name: string;
@@ -31,25 +27,23 @@ class UserClient {
       version: number;
     },
     options?: AxiosRequestConfig
-  ): Promise<IApiResponse<IUserResponse>> {
+  ): Promise<IUserResponse> {
     return httpClient.put(`users/${uid}`, data, options);
   }
 
-  static async enableUser(
+  static enableUser(
     uid: string,
     version: number,
     options?: AxiosRequestConfig
-  ): Promise<IApiResponse<IUserResponse>> {
+  ): Promise<IUserResponse> {
     return httpClient.patch(`users/${uid}/enable`, { version }, options);
   }
 
-  static async disableUser(
+  static disableUser(
     uid: string,
     version: number,
     options?: AxiosRequestConfig
-  ): Promise<IApiResponse<IUserResponse>> {
+  ): Promise<IUserResponse> {
     return httpClient.patch(`users/${uid}/disable`, { version }, options);
   }
 }
-
-export default UserClient;

@@ -2,7 +2,7 @@ import { SidebarInset, SidebarProvider } from '~/components/ui/sidebar';
 import { AppSidebar } from '~/components/app-sidebar';
 import { Navigate, Outlet } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
-import AuthClient from '~/api/auth';
+import { AuthClient, authQueryKeys } from '~/features/auth';
 import { useEffect } from 'react';
 import { SiteHeader } from '~/components/site-header';
 import { useAuth } from '~/context/auth';
@@ -10,7 +10,7 @@ import { Skeleton } from '~/components/ui/skeleton';
 export default function Layout() {
   const auth = useAuth();
   const profileQuery = useQuery({
-    queryKey: ['auth', 'profile'],
+    queryKey: authQueryKeys.getProfile(),
     queryFn: async () => {
       const { data } = await AuthClient.getProfile();
       return data;

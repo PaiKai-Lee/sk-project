@@ -1,13 +1,11 @@
 import httpClient from '~/lib/http-client';
 import type { AxiosRequestConfig } from 'axios';
-import type { IApiResponse, IAuditLogResponse } from './types';
+import type { IAuditLogResponse } from './types';
 
-class AuditLogClient {
+export class AuditLogClient {
   static async getAuditLogs(
     options?: AxiosRequestConfig
-  ): Promise<IApiResponse<IAuditLogResponse>> {
+  ): Promise<IAuditLogResponse> {
     return httpClient.get('audit-log', options);
   }
 }
-
-export default AuditLogClient;

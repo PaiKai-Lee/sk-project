@@ -10,12 +10,11 @@ import {
 } from '~/components/ui/table';
 import { Text } from '~/components/ui/typography';
 import { useQuery } from '@tanstack/react-query';
-import OverviewClient from '~/api/overview';
 import { Loader2Icon } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { Button } from '~/components/ui/button';
 import { useTranslation } from 'react-i18next';
-
+import { OverviewClient, overviewQueryKeys } from '~/features/overview';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'overview' },
@@ -27,7 +26,7 @@ export default function OverviewPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const overviewQuery = useQuery({
-    queryKey: ['overview'],
+    queryKey: overviewQueryKeys.getOverview(),
     queryFn: () => OverviewClient.getOverview(),
     select: (rowData) => rowData?.data?.data,
     staleTime: 60 * 1000 * 5,

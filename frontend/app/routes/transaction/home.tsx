@@ -17,8 +17,9 @@ import { Cart } from '~/components/transaction/cart';
 import { Text } from '~/components/ui/typography';
 import { useOutletContext } from 'react-router';
 import type { UseQueryResult } from '@tanstack/react-query';
-import type { IResponseData, IUserResponse } from '~/api/types';
 import { useTranslation } from 'react-i18next';
+import type { IUser } from '~/features/users';
+import type { IResponseData } from '~/features/types';
 
 const amountInputSchema = z
   .number({ message: 'must be a number' })
@@ -28,7 +29,7 @@ const detailInputSchema = z
   .string({ message: 'must be a string' })
   .max(30, { message: 'must be less than 30 character' });
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: 'transaction' },
     { name: 'description', content: 'transaction page' },
@@ -45,7 +46,7 @@ export default function TransactionPage() {
     setIsCartChecked,
   } = useTransaction();
   const { usersQuery } = useOutletContext<{
-    usersQuery: UseQueryResult<IResponseData<IUserResponse[]>, Error>;
+    usersQuery: UseQueryResult<IResponseData<IUser[]>, Error>;
   }>();
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Route } from '../user/+types/home';
-import UserClient from '~/api/users';
+import { UserClient, userQueryKeys } from '~/features/users';
 import { useMemo, useState } from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
 
@@ -25,26 +25,26 @@ import { DataTable } from '~/components/admin/user-management/data-table';
 import { CreateUserSheet } from '~/components/admin/user-management/create-user-sheet';
 import { EditUserSheet } from '~/components/admin/user-management/edit-user-sheet';
 import { useTranslation } from 'react-i18next';
+import type { IUser } from '~/features/users/types';
+// export type User = {
+//   id: string;
+//   uid: string;
+//   name: string;
+//   balance: number;
+//   role: {
+//     id: number;
+//     name: string;
+//   };
+//   department: {
+//     id: number;
+//     name: string;
+//   };
+//   isInit: boolean;
+//   isDisable: boolean;
+//   version: number;
+// };
 
-export type User = {
-  id: string;
-  uid: string;
-  name: string;
-  balance: number;
-  role: {
-    id: number;
-    name: string;
-  };
-  department: {
-    id: number;
-    name: string;
-  };
-  isInit: boolean;
-  isDisable: boolean;
-  version: number;
-};
-
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: 'admin user' },
     { name: 'description', content: 'admin user page' },
@@ -57,14 +57,17 @@ export default function AdminPage() {
 
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
 
   const selectedFields = useMemo(
     () => ['balance', 'department', 'role', 'isInit', 'isDisable', 'version'],
     []
   );
   const userQuery = useQuery({
-    queryKey: ['users', { showDisable: true, fields: selectedFields }],
+    queryKey: userQueryKeys.getUsers({
+      showDisable: true,
+      fields: selectedFields,
+    }),
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append('showDisable', 'true');
@@ -76,7 +79,7 @@ export default function AdminPage() {
       });
       return data;
     },
-    select: (data) => data.data as User[],
+    select: (data) => data.data as IUser[],
   });
 
   const userSwitchMutation = useMutation({
@@ -85,6 +88,7 @@ export default function AdminPage() {
       version: number;
       isDisable: boolean;
     }) => {
+      console.log(value);
       const switchFunc = value.isDisable
         ? UserClient.enableUser
         : UserClient.disableUser;
@@ -92,7 +96,7 @@ export default function AdminPage() {
     },
     onSuccess: async (data) => {
       await queryClient.invalidateQueries({
-        queryKey: ['users'],
+        queryKey: userQueryKeys.all,
       });
       toast.success(t('admin.switchSuccess'));
     },
@@ -110,7 +114,7 @@ export default function AdminPage() {
     });
   }
 
-  const columns = useMemo<ColumnDef<User>[]>(() => {
+  const columns = useMemo<ColumnDef<IUser>[]>(() => {
     return [
       {
         id: 'uid',
@@ -166,7 +170,7 @@ export default function AdminPage() {
           );
         },
         cell: ({ row }) => {
-          if (row.original.balance < 0) {
+          if (row.original.balance && row.original.balance < 0) {
             return <Text className="text-red-500">{row.original.balance}</Text>;
           } else {
             return <Text>{row.original.balance}</Text>;
@@ -191,7 +195,7 @@ export default function AdminPage() {
           );
         },
         cell: ({ row }) => (
-          <Badge variant="outline">{row.original.department.name}</Badge>
+          <Badge variant="outline">{row.original.department?.name}</Badge>
         ),
       },
       {
@@ -199,7 +203,7 @@ export default function AdminPage() {
         header: () => t('admin.role'),
         accessorKey: 'role.name',
         cell: ({ row }) => (
-          <Badge variant="outline">{row.original.role.name}</Badge>
+          <Badge variant="outline">{row.original.role?.name}</Badge>
         ),
       },
       {

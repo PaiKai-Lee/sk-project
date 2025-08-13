@@ -1,7 +1,7 @@
 import type { Route } from '../transaction-records/+types/home';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
-import TransactionsClient from '~/api/transactions';
+import { TransactionsClient, transactionQueryKeys } from '~/features/transactions';
 import { ServerDataTable } from '~/components/transaction-records/data-table';
 import { DataTablePagination } from '~/components/transaction-records/data-table-pagination';
 import {
@@ -123,7 +123,7 @@ export default function TransactionRecordsHome() {
   });
 
   const specificTransactionQuery = useQuery({
-    queryKey: ['transactions', transactionId],
+    queryKey: transactionQueryKeys.getOneTransaction(transactionId as string),
     enabled: !!transactionId,
     queryFn: async () => {
       const { data } = await TransactionsClient.getOneTransaction(

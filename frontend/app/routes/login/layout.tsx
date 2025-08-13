@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useNavigate } from 'react-router';
-import AuthClient from '~/api/auth';
+import { AuthClient, authQueryKeys } from '~/features/auth';
 import { useAuth } from '~/context/auth';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 export default function LoginLayout() {
   const auth = useAuth();
   const profileQuery = useQuery({
-    queryKey: ['auth', 'profile'],
+    queryKey: authQueryKeys.getProfile(),
     queryFn: async () => {
       const { data } = await AuthClient.getProfile();
       return data;

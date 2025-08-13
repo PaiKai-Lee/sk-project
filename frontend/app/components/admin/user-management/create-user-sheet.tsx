@@ -31,13 +31,13 @@ import {
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import UserClient from '~/api/users';
 import { toast } from 'sonner';
 import { useState } from 'react';
-import RoleClient from '~/api/roles';
-import DepartmentClient from '~/api/departments';
 import { Separator } from '~/components/ui/separator';
 import { useTranslation } from 'react-i18next';
+import { RoleClient, roleQueryKeys } from '~/features/roles';
+import { DepartmentClient, departmentQueryKeys } from '~/features/departments';
+import { UserClient, userQueryKeys } from '~/features/users';
 
 const formSchema = z.object({
   uid: z.string({ message: '格式錯誤' }).min(1, { message: 'uid不得為空' }),
@@ -57,14 +57,14 @@ export function CreateUserSheet() {
   const [open, setOpen] = useState(false);
 
   const roleQuery = useQuery({
-    queryKey: ['roles'],
+    queryKey: roleQueryKeys.getRoles(),
     queryFn: () => RoleClient.getRoles(),
     select: (data) => data.data.data,
     staleTime: 60 * 1000 * 60,
   });
 
   const departmentQuery = useQuery({
-    queryKey: ['departments'],
+    queryKey: departmentQueryKeys.getDepartments(),
     queryFn: () => DepartmentClient.getDepartments(),
     select: (data) => data.data.data,
     staleTime: 60 * 1000 * 60,
@@ -81,7 +81,7 @@ export function CreateUserSheet() {
     },
     onSuccess: async (data) => {
       await queryClient.invalidateQueries({
-        queryKey: ['users'],
+        queryKey: userQueryKeys.all,
       });
       toast.success('新增成功');
       form.reset();
