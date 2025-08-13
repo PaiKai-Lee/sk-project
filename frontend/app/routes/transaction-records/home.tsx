@@ -241,15 +241,17 @@ export default function TransactionRecordsHome() {
           <DialogContent className="max-h-[90vh] overflow-y-auto md:max-w-2xl lg:max-w-3xl">
             <DialogHeader>
               <DialogTitle>{t('transaction.transactionDetails')}</DialogTitle>
-              <DialogDescription className="flex flex-col gap-1 lg:flex-row ">
-                <Text className="md:basis-1/2">
-                  <strong>{t('transaction.transactionId')}:</strong>{' '}
-                  {specificTransactionQuery.data?.transactionId}
-                </Text>
-                <Text className="md:basis-1/2">
-                  <strong>{t('transaction.remark')}:</strong>{' '}
-                  {specificTransactionQuery.data?.remark}
-                </Text>
+              <DialogDescription asChild>
+                <div className="flex flex-col gap-1 lg:flex-row">
+                  <Text className="md:basis-1/2">
+                    <strong>{t('transaction.transactionId')}:</strong>{' '}
+                    {specificTransactionQuery.data?.transactionId}
+                  </Text>
+                  <Text className="md:basis-1/2">
+                    <strong>{t('transaction.remark')}:</strong>{' '}
+                    {specificTransactionQuery.data?.remark}
+                  </Text>
+                </div>
               </DialogDescription>
             </DialogHeader>
             {/* 如果資料頻繁過大，可以考慮分頁 */}
@@ -276,11 +278,10 @@ export default function TransactionRecordsHome() {
                     (item) => (
                       <TableRow
                         key={item.id}
-                        className={`${
-                          item.value > 0
-                            ? 'bg-green-100 dark:bg-green-900'
-                            : 'bg-red-100 dark:bg-red-900'
-                        }`}
+                        className={`${item.value > 0
+                          ? 'bg-green-100 dark:bg-green-900'
+                          : 'bg-red-100 dark:bg-red-900'
+                          }`}
                       >
                         <TableCell className="font-medium">
                           <Text>{item.user.name}</Text>
