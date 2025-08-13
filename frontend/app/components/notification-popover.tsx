@@ -73,7 +73,7 @@ export function NotificationPopover() {
   });
 
   const handleOpenChange = (open: boolean) => {
-    if(open) {
+    if (open) {
       queryClient.invalidateQueries({
         queryKey: userNotificationQueryKeys.getUserNotifications(),
       });

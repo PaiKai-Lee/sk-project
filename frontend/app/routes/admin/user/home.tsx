@@ -44,7 +44,7 @@ import type { IUser } from '~/features/users/types';
 //   version: number;
 // };
 
-export function meta({ }: Route.MetaArgs) {
+export function meta({}: Route.MetaArgs) {
   return [
     { title: 'admin user' },
     { name: 'description', content: 'admin user page' },

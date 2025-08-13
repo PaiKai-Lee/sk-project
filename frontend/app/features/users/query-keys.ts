@@ -1,4 +1,4 @@
-import { all } from "axios";
+import { all } from 'axios';
 
 const FEATURE_NAME = 'users';
 

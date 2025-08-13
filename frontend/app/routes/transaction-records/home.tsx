@@ -1,7 +1,10 @@
 import type { Route } from '../transaction-records/+types/home';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
-import { TransactionsClient, transactionQueryKeys } from '~/features/transactions';
+import {
+  TransactionsClient,
+  transactionQueryKeys,
+} from '~/features/transactions';
 import { ServerDataTable } from '~/components/transaction-records/data-table';
 import { DataTablePagination } from '~/components/transaction-records/data-table-pagination';
 import {
@@ -16,27 +19,12 @@ import useDebounce from '~/hooks/use-debounce';
 import { Input } from '~/components/ui/input';
 import DateFormatter from '~/lib/date-formatter';
 import { Button } from '~/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '~/components/ui/dialog';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '~/components/ui/table';
 import { Text } from '~/components/ui/typography';
-import { Skeleton } from '~/components/ui/skeleton';
 import { toast } from 'sonner';
 import { Loader } from 'lucide-react';
 import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { SpecificTransactionDialog } from '~/components/transaction-records/specificTransaction-dialog';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -233,79 +221,11 @@ export default function TransactionRecordsHome() {
       </div>
       {transactionQuery.isSuccess && <ServerDataTable table={table} />}
       <DataTablePagination table={table} />
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        {specificTransactionQuery.isLoading && (
-          <Skeleton className="h-[300px] w-full" />
-        )}
-        {specificTransactionQuery.isSuccess && (
-          <DialogContent className="max-h-[90vh] overflow-y-auto md:max-w-2xl lg:max-w-3xl">
-            <DialogHeader>
-              <DialogTitle>{t('transaction.transactionDetails')}</DialogTitle>
-              <DialogDescription asChild>
-                <div className="flex flex-col gap-1 lg:flex-row">
-                  <Text className="md:basis-1/2">
-                    <strong>{t('transaction.transactionId')}:</strong>{' '}
-                    {specificTransactionQuery.data?.transactionId}
-                  </Text>
-                  <Text className="md:basis-1/2">
-                    <strong>{t('transaction.remark')}:</strong>{' '}
-                    {specificTransactionQuery.data?.remark}
-                  </Text>
-                </div>
-              </DialogDescription>
-            </DialogHeader>
-            {/* 如果資料頻繁過大，可以考慮分頁 */}
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-2/10">
-                    {t('transaction.user')}
-                  </TableHead>
-                  <TableHead className="w-1/10">
-                    {t('transaction.value')}
-                  </TableHead>
-                  <TableHead className="w-full">
-                    {t('transaction.details')}
-                  </TableHead>
-                  <TableHead className="w-2/10">
-                    {t('transaction.createdAt')}
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {specificTransactionQuery.data?.transactionsItems &&
-                  specificTransactionQuery.data?.transactionsItems.map(
-                    (item) => (
-                      <TableRow
-                        key={item.id}
-                        className={`${item.value > 0
-                          ? 'bg-green-100 dark:bg-green-900'
-                          : 'bg-red-100 dark:bg-red-900'
-                          }`}
-                      >
-                        <TableCell className="font-medium">
-                          <Text>{item.user.name}</Text>
-                          <Text className="text-xs font-light">
-                            {item.user.uid}
-                          </Text>
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          {item.value}
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          {item.details}
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          {DateFormatter.format(new Date(item.createdAt))}
-                        </TableCell>
-                      </TableRow>
-                    )
-                  )}
-              </TableBody>
-            </Table>
-          </DialogContent>
-        )}
-      </Dialog>
+      <SpecificTransactionDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        specificTransactionData={specificTransactionQuery.data}
+      />
     </>
   );
 }
