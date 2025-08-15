@@ -27,8 +27,8 @@ import {
   TransactionsClient,
 } from '~/features/transactions';
 import { Link } from 'react-router';
-import DateFormatter from '~/lib/date-formatter';
-export function meta({}: Route.MetaArgs) {
+import { RelativeTimeFormatter } from '~/lib/time-formatter';
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: 'overview' },
     { name: 'description', content: 'overview page' },
@@ -36,7 +36,8 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function OverviewPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [transactionId, setTransactionId] = useState<string | null>(null);
 
@@ -82,12 +83,7 @@ export default function OverviewPage() {
           </Text>
         </CardContent>
       </Card>
-      <Card className="col-span-3">
-        <CardHeader>
-          <CardTitle>Maybe Announcements...</CardTitle>
-        </CardHeader>
-      </Card>
-      <Card className="col-span-2">
+      <Card className="md:col-span-3 md:row-start-2 col-span-full">
         <CardHeader>
           <CardTitle>{t('overview.recentTransactions')}</CardTitle>
           <CardAction>
@@ -102,6 +98,7 @@ export default function OverviewPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>{t('overview.transactionId')}</TableHead>
+                <TableHead>{t('overview.remark')}</TableHead>
                 <TableHead>{t('overview.createdAt')}</TableHead>
                 <TableHead>{t('overview.createdBy')}</TableHead>
               </TableRow>
@@ -111,6 +108,7 @@ export default function OverviewPage() {
                 overviewQuery.data.recentTransactions.map((transaction) => (
                   <TableRow key={transaction.transactionId}>
                     <TableCell
+                      className='w-1/5'
                       onClick={() =>
                         handleTransactionClick(transaction.transactionId)
                       }
@@ -119,10 +117,11 @@ export default function OverviewPage() {
                         {transaction.transactionId}
                       </Button>
                     </TableCell>
-                    <TableCell>
-                      {DateFormatter.format(new Date(transaction.createdAt))}
+                    <TableCell className='w-2/5'>{transaction.remark}</TableCell>
+                    <TableCell className="w-1/5 max-w-[100px]">
+                      {RelativeTimeFormatter.timeAgo(new Date(transaction.createdAt), currentLanguage)}
                     </TableCell>
-                    <TableCell className="max-w-[200px]">
+                    <TableCell className="w-1/5 max-w-[200px]">
                       <Text>{transaction.createdByUser.name}</Text>
                       <Text className="text-xs font-light">
                         {transaction.createdByUser.uid}
@@ -134,7 +133,7 @@ export default function OverviewPage() {
           </Table>
         </CardContent>
       </Card>
-      <Card className="col-span-2">
+      <Card className="md:col-span-1 md:row-start-2 col-span-full">
         <CardHeader>
           <CardTitle>{t('overview.overdrawUsers')}</CardTitle>
         </CardHeader>

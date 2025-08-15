@@ -18,12 +18,12 @@ import { Text } from '~/components/ui/typography';
 import { auditLogQueryKeys, AuditLogClient } from '~/features/audit-logs';
 import type { IOneAudit } from '~/features/audit-logs';
 import useDebounce from '~/hooks/use-debounce';
-import DateFormatter from '~/lib/date-formatter';
+import { DateFormatter } from '~/lib/time-formatter';
 import { Input } from '~/components/ui/input';
 import { DataTablePagination } from '~/components/transaction-records/data-table-pagination';
 import { toast } from 'sonner';
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: 'admin audit-log' },
     { name: 'description', content: 'admin audit-log page' },

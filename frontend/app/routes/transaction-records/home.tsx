@@ -17,7 +17,7 @@ import {
 } from '@tanstack/react-table';
 import useDebounce from '~/hooks/use-debounce';
 import { Input } from '~/components/ui/input';
-import DateFormatter from '~/lib/date-formatter';
+import { DateFormatter } from '~/lib/time-formatter';
 import { Button } from '~/components/ui/button';
 import { Text } from '~/components/ui/typography';
 import { toast } from 'sonner';
@@ -26,7 +26,7 @@ import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { SpecificTransactionDialog } from '~/components/transaction-records/specificTransaction-dialog';
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: 'transaction-records' },
     { name: 'description', content: 'transaction-records page' },

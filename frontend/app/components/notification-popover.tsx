@@ -15,7 +15,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { Fragment, useState } from 'react';
-import DateFormatter from '~/lib/date-formatter';
+import { DateFormatter } from '~/lib/time-formatter';
 import { UserNotificationClient } from '~/features/user-notifications';
 import type {
   IUserNotification,
