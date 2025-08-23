@@ -14,6 +14,7 @@ import { AuthLoginEvent, AuthLogoutEvent } from './auth.event';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { BcryptService } from 'src/common/utils';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -31,7 +32,9 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     this.logger.debug(`login: ${JSON.stringify(loginDto)}`);
     const { uid, password } = loginDto;
-    const foundUser = await this.userService.getUserByUid(uid, {
+
+    // 把 select 寫成常數，並用 Prisma.validator 套型別
+    const userSelect = Prisma.validator<Prisma.UserSelect>()({
       id: true,
       uid: true,
       password: true,
@@ -53,6 +56,14 @@ export class AuthService {
         },
       },
     });
+
+    type FoundUser = Prisma.UserGetPayload<{ select: typeof userSelect }>;
+
+    const foundUser = (await this.userService.getUserByUid(
+      uid,
+      userSelect,
+    )) as FoundUser | null;
+
     if (!foundUser) {
       throw new UnauthorizedException('帳號或密碼錯誤');
     }
@@ -73,9 +84,7 @@ export class AuthService {
       name: foundUser.name,
       isDisable: foundUser.isDisable,
       isInit: foundUser.isInit,
-      // @ts-ignore Prisma nested selected 會有型別錯誤的問題
       role: foundUser.role.name,
-      // @ts-ignore
       permissions: foundUser.role.rolePermissions.map(
         (item) => item.permission.action,
       ),

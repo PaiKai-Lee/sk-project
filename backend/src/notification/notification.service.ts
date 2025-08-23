@@ -18,7 +18,7 @@ export class NotificationService {
   async create(
     createNotificationDto: CreateNotificationDto,
     sourceType: (typeof NOTIFICATION_SOURCE_TYPE)[keyof typeof NOTIFICATION_SOURCE_TYPE],
-    targetsPayloads?: Record<string, any>,
+    targetsPayloads?: Record<string, unknown>,
   ) {
     const authUser = this.cls.get('user');
     const { title, content, targets } = createNotificationDto;
@@ -36,7 +36,7 @@ export class NotificationService {
       return {
         notificationId: notification.id,
         userUid: uid,
-        payload: targetsPayloads ? targetsPayloads[uid] : undefined,
+        payload: targetsPayloads?.[uid] ?? undefined,
         isRead: uid === authUser.uid, // 如果是建立者，標示為已讀
         expiredAt: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000), // 45 days
       };

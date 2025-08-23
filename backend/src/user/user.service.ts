@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Prisma } from '@prisma/client';
+import { User, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/common/prisma';
 import { BcryptService } from 'src/common/utils';
 import {
@@ -163,7 +163,7 @@ export class UserService {
       throw new BadRequestException('不可以設定 root role');
     }
 
-    const defaultPassword = this.configService.getOrThrow(
+    const defaultPassword = this.configService.getOrThrow<string>(
       'app.defaultPassword',
     );
     // 加密密碼
@@ -308,7 +308,7 @@ export class UserService {
 
   async resetUserPassword(uid: string, version: number) {
     this.logger.debug(`resetUserPassword: ${uid}`);
-    const defaultPassword = this.configService.getOrThrow(
+    const defaultPassword = this.configService.getOrThrow<string>(
       'app.defaultPassword',
     );
     const hashedPassword = await this.bcryptService.hash(defaultPassword);
