@@ -12,10 +12,10 @@ export class TransactionListener {
     private readonly notificationService: NotificationService,
   ) {}
 
-  @OnEvent('transaction.created')
-  logTransactionCreatedEvent(event: TransactionCreatedEvent) {
+  @OnEvent(TransactionCreatedEvent.EVENT_NAME)
+  async logTransactionCreatedEvent(event: TransactionCreatedEvent) {
     const { context } = event;
-    this.auditLogService.createAuditLog({
+    await this.auditLogService.createAuditLog({
       userAgent: context.reqInfo.userAgent,
       ip: context.reqInfo.ip,
       action: 'transaction.created',
@@ -28,11 +28,11 @@ export class TransactionListener {
     });
   }
 
-  @OnEvent('transaction.created')
-  notifyTransactionCreated(event: TransactionCreatedEvent) {
+  @OnEvent(TransactionCreatedEvent.EVENT_NAME)
+  async notifyTransactionCreated(event: TransactionCreatedEvent) {
     const { context, userBalanceLog } = event;
     const notificationContent = `${context.user.name} 建立了一筆交易: ${event.transactionId}，你參與的交易金額: {{value}}。`;
-    this.notificationService.create(
+    await this.notificationService.create(
       {
         title: '交易通知',
         content: notificationContent,

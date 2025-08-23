@@ -17,7 +17,7 @@ export class UserListener {
 
   constructor(private readonly auditLogService: AuditLogService) {}
 
-  @OnEvent('user.created')
+  @OnEvent(UserCreatedEvent.EVENT_NAME)
   async logUserCreatedEvent(event: UserCreatedEvent) {
     const { context } = event;
     await this.auditLogService.createAuditLog({
@@ -33,13 +33,7 @@ export class UserListener {
     });
   }
 
-  @OnEvent('user.created')
-  handleUserCreatedEvent2(event: UserCreatedEvent) {
-    // TODO: 建立通知，通知其他使用者有心使用者加入，並使用websocket通知使用者刷新通知
-    this.logger.log(event);
-  }
-
-  @OnEvent('user.disabled')
+  @OnEvent(UserDisabledEvent.EVENT_NAME)
   async logUserDisabledEvent(event: UserDisabledEvent) {
     const { context } = event;
     await this.auditLogService.createAuditLog({
@@ -55,7 +49,7 @@ export class UserListener {
     });
   }
 
-  @OnEvent('user.updated')
+  @OnEvent(UserEditedEvent.EVENT_NAME)
   async handleUserEditedEvent(event: UserEditedEvent) {
     const { context, editData } = event;
     const contentString = Object.entries(editData)
@@ -75,7 +69,7 @@ export class UserListener {
     });
   }
 
-  @OnEvent('user.enabled')
+  @OnEvent(UserEnabledEvent.EVENT_NAME)
   async logUserEnabledEvent(event: UserEnabledEvent) {
     const { context } = event;
     await this.auditLogService.createAuditLog({
@@ -91,7 +85,7 @@ export class UserListener {
     });
   }
 
-  @OnEvent('user.passwordReset')
+  @OnEvent(UserPasswordResetEvent.EVENT_NAME)
   async logUserPasswordResetEvent(event: UserPasswordResetEvent) {
     const { context } = event;
     await this.auditLogService.createAuditLog({
@@ -107,7 +101,7 @@ export class UserListener {
     });
   }
 
-  @OnEvent('user.passwordChanged')
+  @OnEvent(UserPasswordChangedEvent.EVENT_NAME)
   async logUserPasswordChangedEvent(event: UserPasswordChangedEvent) {
     const { context } = event;
     await this.auditLogService.createAuditLog({
@@ -123,7 +117,7 @@ export class UserListener {
     });
   }
 
-  @OnEvent('user.nameChanged')
+  @OnEvent(UserNameChangedEvent.EVENT_NAME)
   async logUserNameChangedEvent(event: UserNameChangedEvent) {
     const { name, context } = event;
     await this.auditLogService.createAuditLog({

@@ -1,6 +1,7 @@
 import { AppClsStore } from 'src/common';
 
 export class NotificationCreatedEvent {
+  static EVENT_NAME = 'notification.created';
   notificationId: number;
   title: string;
   context: AppClsStore;

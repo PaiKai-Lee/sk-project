@@ -7,6 +7,7 @@ interface UserBalanceLog {
 }
 
 export class TransactionCreatedEvent {
+  static EVENT_NAME = 'transaction.created';
   /** transactionId */
   transactionId: string;
   /** user balance log */

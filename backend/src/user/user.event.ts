@@ -1,5 +1,6 @@
 import { AppClsStore } from 'src/common';
 export class UserCreatedEvent {
+  static EVENT_NAME = 'user.created';
   uid: string;
   name: string;
   context: AppClsStore;
@@ -19,6 +20,7 @@ export class UserCreatedEvent {
 }
 
 export class UserDisabledEvent {
+  static EVENT_NAME = 'user.disabled';
   uid: string;
   context: AppClsStore;
   constructor({ uid, context }: { uid: string; context: AppClsStore }) {
@@ -28,6 +30,7 @@ export class UserDisabledEvent {
 }
 
 export class UserEnabledEvent {
+  static EVENT_NAME = 'user.enabled';
   uid: string;
   context: AppClsStore;
   constructor({ uid, context }: { uid: string; context: AppClsStore }) {
@@ -37,6 +40,7 @@ export class UserEnabledEvent {
 }
 
 export class UserPasswordResetEvent {
+  static EVENT_NAME = 'user.passwordReset';
   uid: string;
   context: AppClsStore;
   constructor({ uid, context }: { uid: string; context: AppClsStore }) {
@@ -46,6 +50,7 @@ export class UserPasswordResetEvent {
 }
 
 export class UserPasswordChangedEvent {
+  static EVENT_NAME = 'user.passwordChanged';
   context: AppClsStore;
   constructor({ context }: { context: AppClsStore }) {
     this.context = context;
@@ -53,6 +58,7 @@ export class UserPasswordChangedEvent {
 }
 
 export class UserNameChangedEvent {
+  static EVENT_NAME = 'user.nameChanged';
   name: string;
   context: AppClsStore;
   constructor({ name, context }: { name: string; context: AppClsStore }) {
@@ -62,6 +68,7 @@ export class UserNameChangedEvent {
 }
 
 export class UserEditedEvent {
+  static EVENT_NAME = 'user.edited';
   uid: string;
   editData: Record<string, any>;
   context: AppClsStore;

@@ -1,20 +1,20 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { AuditLogService } from 'src/audit-log';
-import { AuthEvent } from './auth.event';
+import { AuthLoginEvent, AuthLogoutEvent } from './auth.event';
 
 @Injectable()
 export class AuthListener {
   private readonly logger = new Logger(AuthListener.name);
   constructor(private readonly auditLogService: AuditLogService) {}
-  @OnEvent('auth.login')
-  async UserLoginEvent(event: AuthEvent) {
+  @OnEvent(AuthLoginEvent.EVENT_NAME)
+  async UserLoginEvent(event: AuthLoginEvent) {
     const { context } = event;
     if (!event.context.user?.uid) {
       this.logger.error('uid not found');
       return;
     }
-    this.auditLogService.createAuditLog({
+    await this.auditLogService.createAuditLog({
       userAgent: context.reqInfo.userAgent,
       ip: context.reqInfo.ip,
       action: 'auth.login',
@@ -27,10 +27,10 @@ export class AuthListener {
     });
   }
 
-  @OnEvent('auth.logout')
-  async UserLogoutEvent(event: AuthEvent) {
+  @OnEvent(AuthLogoutEvent.EVENT_NAME)
+  async UserLogoutEvent(event: AuthLogoutEvent) {
     const { context } = event;
-    this.auditLogService.createAuditLog({
+    await this.auditLogService.createAuditLog({
       userAgent: context.reqInfo.userAgent,
       ip: context.reqInfo.ip,
       action: 'auth.logout',

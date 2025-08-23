@@ -47,7 +47,7 @@ export class NotificationService {
     });
 
     this.eventEmitter.emit(
-      'notification.created',
+      NotificationCreatedEvent.EVENT_NAME,
       new NotificationCreatedEvent({
         notificationId: notification.id,
         title,

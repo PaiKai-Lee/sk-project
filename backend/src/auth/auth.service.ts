@@ -10,7 +10,7 @@ import { AppClsStore } from 'src/common';
 import { PrismaService } from 'src/common/prisma';
 import { UserService } from 'src/user';
 import { LoginDto } from './dtos/login.dto';
-import { AuthEvent, UserLogoutEvent } from './auth.event';
+import { AuthLoginEvent, AuthLogoutEvent } from './auth.event';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { BcryptService } from 'src/common/utils';
@@ -104,8 +104,8 @@ export class AuthService {
     userCtx.uid = foundUser.uid;
     userCtx.role = profile.role;
 
-    const userLoginEvent = new AuthEvent(this.cls.get());
-    this.eventEmitter.emit('auth.login', userLoginEvent);
+    const userLoginEvent = new AuthLoginEvent(this.cls.get());
+    this.eventEmitter.emit(AuthLoginEvent.EVENT_NAME, userLoginEvent);
 
     return {
       accessToken,
@@ -127,8 +127,8 @@ export class AuthService {
       where: { uid },
     });
 
-    const userLogoutEvent = new UserLogoutEvent(this.cls.get());
-    this.eventEmitter.emit('auth.logout', userLogoutEvent);
+    const userLogoutEvent = new AuthLogoutEvent(this.cls.get());
+    this.eventEmitter.emit(AuthLogoutEvent.EVENT_NAME, userLogoutEvent);
     return;
   }
 
@@ -142,7 +142,15 @@ export class AuthService {
     });
 
     // TODO: 固定好jwtPayload後調整型別
-    let payload: any;
+    let payload: {
+      uid: string;
+      name: string;
+      isDisable: boolean;
+      isInit: boolean;
+      role: string;
+      permissions: string[];
+    };
+
     try {
       payload = this.jwtService.verify(refreshToken);
     } catch (err) {
@@ -191,7 +199,7 @@ export class AuthService {
     };
   }
 
-  async getProfile() {
+  getProfile() {
     this.logger.debug('getProfile');
     const userProfile = this.cls.get('user');
     return userProfile;

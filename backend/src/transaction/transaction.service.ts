@@ -197,7 +197,7 @@ export class TransactionService {
     );
 
     this.eventEmitter.emit(
-      'transaction.created',
+      TransactionCreatedEvent.EVENT_NAME,
       new TransactionCreatedEvent({
         transactionId: createTransactionResult.transactionId,
         userBalanceLog: createTransactionResult.userBalanceLog,

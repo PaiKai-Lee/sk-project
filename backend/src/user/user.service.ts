@@ -85,14 +85,14 @@ export class UserService {
     return this.prisma.user.findMany({ select, where, orderBy });
   }
 
-  async getUserByUid(
+  async getUserByUid<T extends Prisma.UserSelect>(
     uid: string,
-    select?: Prisma.UserSelect,
+    select?: T,
     where?: Prisma.UserWhereUniqueInput,
-  ) {
+  ): Promise<Prisma.UserGetPayload<{ select: T }> | User | null> {
     this.logger.debug(`getUserByUid: ${uid}`);
     where = where ? { uid, ...where } : { uid };
-    return this.prisma.user.findUnique({
+    return await this.prisma.user.findUnique({
       where,
       select,
     });
@@ -200,7 +200,7 @@ export class UserService {
     });
 
     this.eventEmitter.emit(
-      'user.created',
+      UserCreatedEvent.EVENT_NAME,
       new UserCreatedEvent({
         uid,
         name: createdUser.name,
@@ -261,7 +261,7 @@ export class UserService {
     });
 
     this.eventEmitter.emit(
-      'user.updated',
+      UserEditedEvent.EVENT_NAME,
       new UserEditedEvent({
         uid,
         editData: editUserDto,
@@ -283,7 +283,7 @@ export class UserService {
     });
 
     this.eventEmitter.emit(
-      'user.disabled',
+      UserDisabledEvent.EVENT_NAME,
       new UserDisabledEvent({ uid, context: this.cls.get() }),
     );
     return disableResult;
@@ -300,7 +300,7 @@ export class UserService {
     });
 
     this.eventEmitter.emit(
-      'user.enabled',
+      UserEnabledEvent.EVENT_NAME,
       new UserEnabledEvent({ uid, context: this.cls.get() }),
     );
     return enableResult;
@@ -319,7 +319,7 @@ export class UserService {
     });
 
     this.eventEmitter.emit(
-      'user.passwordReset',
+      UserPasswordResetEvent.EVENT_NAME,
       new UserPasswordResetEvent({
         uid,
         context: this.cls.get(),
@@ -348,7 +348,7 @@ export class UserService {
     });
 
     this.eventEmitter.emit(
-      'user.passwordChanged',
+      UserPasswordChangedEvent.EVENT_NAME,
       new UserPasswordChangedEvent({
         context: this.cls.get(),
       }),
@@ -365,7 +365,7 @@ export class UserService {
       omit: { password: true },
     });
     this.eventEmitter.emit(
-      'user.nameChanged',
+      UserNameChangedEvent.EVENT_NAME,
       new UserNameChangedEvent({
         name,
         context: this.cls.get(),

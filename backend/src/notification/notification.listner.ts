@@ -7,10 +7,10 @@ import { NotificationCreatedEvent } from './notification.event';
 export class TransactionListener {
   constructor(private readonly auditLogService: AuditLogService) {}
 
-  @OnEvent('notification.created')
-  logTransactionCreatedEvent(event: NotificationCreatedEvent) {
+  @OnEvent(NotificationCreatedEvent.EVENT_NAME)
+  async logTransactionCreatedEvent(event: NotificationCreatedEvent) {
     const { context, notificationId, title } = event;
-    this.auditLogService.createAuditLog({
+    await this.auditLogService.createAuditLog({
       userAgent: context.reqInfo.userAgent,
       ip: context.reqInfo.ip,
       action: 'notification.created',
