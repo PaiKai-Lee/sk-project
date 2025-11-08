@@ -5,6 +5,15 @@ import { AuditLogService } from 'src/audit-log';
 import { NotificationService } from 'src/notification/notification.service';
 import { NOTIFICATION_SOURCE_TYPE } from 'src/common/constants';
 
+interface TargetsPayload {
+  [key: string]: { value: number };
+}
+
+interface AggregationResult {
+  targets: Set<string>;
+  targetsPayload: TargetsPayload;
+}
+
 @Injectable()
 export class TransactionListener {
   constructor(
@@ -32,17 +41,32 @@ export class TransactionListener {
   async notifyTransactionCreated(event: TransactionCreatedEvent) {
     const { context, userBalanceLog } = event;
     const notificationContent = `${context.user.name} 建立了一筆交易: ${event.transactionId}，你參與的交易金額: {{value}}。`;
+
+    const initialState: AggregationResult = {
+      targets: new Set<string>(),
+      targetsPayload: {},
+    };
+    // targets 不出現重複 uid & 將重複使用者的金額相加
+    const { targets, targetsPayload } = userBalanceLog.reduce((acc, log) => {
+      const { targets, targetsPayload } = acc;
+      const { uid, value } = log;
+      targets.add(uid);
+      if (targetsPayload[uid]) {
+        targetsPayload[uid].value += value;
+      } else {
+        targetsPayload[uid] = { value };
+      }
+      return acc;
+    }, initialState);
+
     await this.notificationService.create(
       {
         title: '交易通知',
         content: notificationContent,
-        targets: userBalanceLog.map((log) => log.uid),
+        targets: Array.from(targets),
       },
       NOTIFICATION_SOURCE_TYPE.SYSTEM,
-      userBalanceLog.reduce((acc, log) => {
-        acc[log.uid] = { value: log.value }; // Payload for each user
-        return acc;
-      }, {}),
+      targetsPayload,
     );
   }
 
