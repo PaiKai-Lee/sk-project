@@ -56,5 +56,9 @@ export class GetTransactionsDto {
 
   @IsOptional()
   @IsString()
+  createdBy?: string;
+
+  @IsOptional()
+  @IsString()
   transactionId?: string;
 }

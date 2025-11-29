@@ -30,6 +30,7 @@ export class TransactionService {
       startDate,
       endDate,
       userName,
+      createdBy,
       transactionId,
     } = getTransactionsDto;
 
@@ -48,7 +49,19 @@ export class TransactionService {
     }
 
     if (userName) {
-      where.createdByUser = { name: { equals: userName } };
+      where.transactionsItems = {
+        some: {
+          user: {
+            name: {
+              equals: userName,
+            },
+          },
+        },
+      };
+    }
+
+    if (createdBy) {
+      where.createdByUser = { name: { equals: createdBy } };
     }
 
     if (transactionId) {

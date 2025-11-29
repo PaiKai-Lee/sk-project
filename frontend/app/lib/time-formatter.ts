@@ -31,11 +31,12 @@ export class DateFormatter {
 }
 
 export class RelativeTimeFormatter {
-
   static timeAgo(date: Date, locale: Intl.LocalesArgument = 'zh-TW') {
     const now = new Date();
     const diff = (date.getTime() - now.getTime()) / 1000; // 秒數差距
-    const relativeTimeFormat = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+    const relativeTimeFormat = new Intl.RelativeTimeFormat(locale, {
+      numeric: 'auto',
+    });
 
     const units: { unit: Intl.RelativeTimeFormatUnit; seconds: number }[] = [
       { unit: 'year', seconds: 60 * 60 * 24 * 365 },

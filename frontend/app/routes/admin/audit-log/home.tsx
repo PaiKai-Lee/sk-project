@@ -23,7 +23,7 @@ import { Input } from '~/components/ui/input';
 import { DataTablePagination } from '~/components/transaction-records/data-table-pagination';
 import { toast } from 'sonner';
 
-export function meta({ }: Route.MetaArgs) {
+export function meta({}: Route.MetaArgs) {
   return [
     { title: 'admin audit-log' },
     { name: 'description', content: 'admin audit-log page' },

@@ -95,6 +95,9 @@ export default function TransactionRecordsHome() {
       if (debounceFilters.length > 0) {
         debounceFilters.forEach((item) => {
           if (item.id === 'createdBy') {
+            apiParams.append('createdBy', `${item.value}`);
+          }
+          if (item.id === 'userName') {
             apiParams.append('userName', `${item.value}`);
           }
           if (item.id === 'transactionId') {
@@ -198,12 +201,22 @@ export default function TransactionRecordsHome() {
     <>
       <div className="flex items-center gap-4">
         <Input
-          placeholder={`${t('transaction.filterByName')}…`}
+          placeholder={`${t('transaction.filterByCreatorName')}…`}
           value={
             (table.getColumn('createdBy')?.getFilterValue() as string) ?? ''
           }
           onChange={(e) =>
             table?.getColumn('createdBy')?.setFilterValue(e.target.value)
+          }
+          className="max-w-sm"
+        />
+        <Input
+          placeholder={`${t('transaction.filterByParticipantName')}…`}
+          value={
+            (table.getColumn('userName')?.getFilterValue() as string) ?? ''
+          }
+          onChange={(e) =>
+            table.getColumn('userName')?.setFilterValue(e.target.value)
           }
           className="max-w-sm"
         />
