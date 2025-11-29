@@ -108,7 +108,7 @@ export default function OverviewPage() {
                 overviewQuery.data.recentTransactions.map((transaction) => (
                   <TableRow key={transaction.transactionId}>
                     <TableCell
-                      className='w-1/5'
+                      className="w-1/5"
                       onClick={() =>
                         handleTransactionClick(transaction.transactionId)
                       }
@@ -117,9 +117,14 @@ export default function OverviewPage() {
                         {transaction.transactionId}
                       </Button>
                     </TableCell>
-                    <TableCell className='w-2/5'>{transaction.remark}</TableCell>
+                    <TableCell className="w-2/5">
+                      {transaction.remark}
+                    </TableCell>
                     <TableCell className="w-1/5 max-w-[100px]">
-                      {RelativeTimeFormatter.timeAgo(new Date(transaction.createdAt), currentLanguage)}
+                      {RelativeTimeFormatter.timeAgo(
+                        new Date(transaction.createdAt),
+                        currentLanguage
+                      )}
                     </TableCell>
                     <TableCell className="w-1/5 max-w-[200px]">
                       <Text>{transaction.createdByUser.name}</Text>

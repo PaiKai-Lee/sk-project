@@ -38,7 +38,9 @@ export function meta({ }: Route.MetaArgs) {
 
 export default function TransactionPage() {
   const { t } = useTranslation();
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<Record<string, Record<string, string>>>(
+    {}
+  );
   const {
     transactionItems,
     updateTransactionItems,

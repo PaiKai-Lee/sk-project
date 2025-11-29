@@ -78,10 +78,11 @@ function TransactionDetails({
           specificTransaction.transactionsItems.map((item) => (
             <TableRow
               key={item.id}
-              className={`${item.value > 0
+              className={`${
+                item.value > 0
                   ? 'bg-green-100 dark:bg-green-900'
                   : 'bg-red-100 dark:bg-red-900'
-                }`}
+              }`}
             >
               <TableCell className="font-medium">
                 <Text>{item.user.name}</Text>
