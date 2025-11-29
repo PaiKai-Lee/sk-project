@@ -14,6 +14,7 @@ import {
   type ColumnFiltersState,
   type PaginationState,
   type SortingState,
+  type VisibilityState,
 } from '@tanstack/react-table';
 import useDebounce from '~/hooks/use-debounce';
 import { Input } from '~/components/ui/input';
@@ -54,6 +55,9 @@ export default function TransactionRecordsHome() {
   });
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    userName: false,
+  });
   const debounceFilters = useDebounce(
     columnFilters,
     1000
@@ -154,6 +158,9 @@ export default function TransactionRecordsHome() {
         ),
       },
       {
+        id: 'userName',
+      },
+      {
         accessorKey: 'createdAt',
         header: () => t('transaction.createdAt'),
         cell: (info) =>
@@ -189,7 +196,8 @@ export default function TransactionRecordsHome() {
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
-    state: { columnFilters, pagination, sorting },
+    onColumnVisibilityChange: setColumnVisibility,
+    state: { columnFilters, pagination, sorting, columnVisibility },
     rowCount: transactionQuery?.data?.pagination.total,
   });
 
