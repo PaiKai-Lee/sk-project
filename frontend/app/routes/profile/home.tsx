@@ -55,7 +55,7 @@ export default function ProfilePage() {
     () => [
       {
         accessorKey: 'value',
-        header: () => t('profile.originalAmount'),
+        header: () => t('profile.balanceChanged'),
       },
       {
         accessorKey: 'currentBalance',
