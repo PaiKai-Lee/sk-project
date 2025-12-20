@@ -33,31 +33,43 @@ export const routeItems = [
     title: 'overview',
     url: '/overview',
     icon: ChartNoAxesCombined,
+    isShowInSidebar: true,
   },
   {
     title: 'transaction',
     url: '/transaction',
     icon: SquarePlus,
+    isShowInSidebar: true,
   },
   {
     title: 'transaction_records',
     url: '/transaction-records',
     icon: DatabaseBackup,
+    isShowInSidebar: true,
   },
   {
     title: 'user_management',
     url: '/admin/user',
     icon: ShieldUser,
+    isShowInSidebar: true,
   },
   {
     title: 'audit_logs',
     url: '/admin/audit-logs',
     icon: Logs,
+    isShowInSidebar: true,
+  },
+  {
+    title: 'profile',
+    url: '/profile',
+    icon: Bell,
+    isShowInSidebar: false,
   },
   {
     title: 'demo',
     url: '/demo',
     icon: CirclePlus,
+    isShowInSidebar: false,
   },
 ];
 
@@ -82,8 +94,8 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {routeItems.map((item) => {
+                if (!item.isShowInSidebar) return null;
                 if (item.url.startsWith('/admin') && !auth.isAdmin) return null;
-
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>

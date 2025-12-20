@@ -14,6 +14,9 @@ import { SortArrayValid } from 'src/common/validators/sort-array-valid.decorator
 import { ArrayContainsOneOf } from 'src/common/validators/array-contain-one-of.decorator';
 import { Transform } from 'class-transformer';
 import { OmitType, PartialType } from '@nestjs/mapped-types';
+import { GetBalanceLogsDto } from './get-balance-logs.dto';
+
+export { GetBalanceLogsDto };
 
 export class CreateUserDto {
   @IsNotEmpty({ message: 'uid不得為空' })

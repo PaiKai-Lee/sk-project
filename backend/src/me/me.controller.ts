@@ -1,14 +1,15 @@
 import {
+  Body,
   Controller,
   Get,
   Logger,
   Patch,
-  Body,
+  Query,
   ValidationPipe,
 } from '@nestjs/common';
 import { ClsService } from 'nestjs-cls';
 import { AppClsStore } from 'src/common';
-import { ChangePasswordDto, ChangeUserNameDto } from 'src/user/dtos';
+import { ChangePasswordDto, ChangeUserNameDto, GetBalanceLogsDto } from 'src/user/dtos';
 import { UserService } from 'src/user/user.service';
 
 @Controller('me')
@@ -58,5 +59,14 @@ export class MeController {
   ) {
     const uid = this.cls.get('user').uid as string;
     return this.userService.changeUserPassword(uid, changePasswordDto);
+  }
+
+  @Get('balance-logs')
+  async getMyBalanceLogs(
+    @Query(new ValidationPipe({ transform: true })) query: GetBalanceLogsDto,
+  ) {
+    this.logger.debug(`getMyBalanceLogs`);
+    const uid = this.cls.get('user').uid as string;
+    return this.userService.getUserBalanceLogs(uid, query);
   }
 }

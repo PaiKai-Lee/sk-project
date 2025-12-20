@@ -29,6 +29,9 @@ export default [
         index('routes/transaction-records/home.tsx'),
       ]),
     ]),
+    ...prefix('profile', [
+      layout('routes/profile/layout.tsx', [index('routes/profile/home.tsx')]),
+    ]),
     route('demo', 'routes/demo.tsx'),
   ]),
   ...prefix('login', [
