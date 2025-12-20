@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { useLocation } from 'react-router';
 import { Button } from '~/components/ui/button';
 import { Separator } from '~/components/ui/separator';
@@ -28,12 +29,14 @@ export function SiteHeader() {
         <Heading1 className="text-lg">{t(`title.${title}`)}</Heading1>
         <div className="ml-auto flex items-center gap-2 md:gap-4">
           <NotificationPopover />
-          <div className="flex items-center gap-1">
-            <CircleUser className="size-5" />
-            <Text>
-              <strong>{auth.profile?.uid}</strong> / {auth.profile?.name}
-            </Text>
-          </div>
+          <Link to="/profile">
+            <div className="flex items-center gap-1">
+              <CircleUser className="size-5" />
+              <Text>
+                <strong>{auth.profile?.uid}</strong> / {auth.profile?.name}
+              </Text>
+            </div>
+          </Link>
           <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
             <div className="flex items-center gap-1">
               <GitHubIcon className="size-5" />

@@ -63,7 +63,9 @@ export default function App() {
         <AuthProvider>
           <Outlet />
         </AuthProvider>
-        {/* <ReactQueryDevtools initialIsOpen={true} /> */}
+        {process.env.NODE_ENV !== 'production' && (
+          <ReactQueryDevtools initialIsOpen={false} />
+        )}
       </QueryClientProvider>
     </PreferenceProvider>
   );
