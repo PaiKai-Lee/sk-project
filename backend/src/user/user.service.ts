@@ -15,6 +15,7 @@ import {
   GetUsersQueryDto,
   ChangeUserNameDto,
   EditUserDto,
+  GetBalanceLogsDto,
 } from './dtos';
 import { ClsService } from 'nestjs-cls';
 import { AppClsStore } from 'src/common';
@@ -39,7 +40,7 @@ export class UserService {
     private readonly prisma: PrismaService,
     private readonly bcryptService: BcryptService,
     private readonly eventEmitter: EventEmitter2,
-  ) {}
+  ) { }
 
   async getUsers(getUsersQueryDto: GetUsersQueryDto) {
     this.logger.debug('getUsers');
@@ -372,5 +373,58 @@ export class UserService {
       }),
     );
     return changeResult;
+  }
+
+  async getUserBalanceLogs(uid: string, getBalanceLogsDto: GetBalanceLogsDto) {
+    this.logger.debug(`getUserBalanceLogs: ${uid}`);
+    const {
+      page = 1,
+      pageSize = 10,
+      all = false
+    } = getBalanceLogsDto;
+
+    const skip = all ? undefined : (page - 1) * pageSize;
+    const take = all ? undefined : pageSize;
+
+    const where = { uid };
+
+    const user = await this.prisma.user.findUnique({
+      where,
+      select: { id: true, uid: true, name: true },
+    });
+
+    if (!user) {
+      throw new NotFoundException('找不到使用者');
+    }
+
+    const balanceLogsWhere = { uid: user.uid };
+
+    const [total, logs] = await this.prisma.$transaction([
+      this.prisma.userBalanceLog.count({ where: balanceLogsWhere }),
+      this.prisma.userBalanceLog.findMany({
+        where: balanceLogsWhere,
+        orderBy: {
+          createdAt: 'desc',
+        },
+        skip,
+        take,
+        select: {
+          id: true,
+          value: true,
+          currentBalance: true,
+          createdAt: true,
+        },
+      }),
+    ]);
+
+    return {
+      ...user,
+      pagination: {
+        page: all ? null : page,
+        pageSize: all ? null : pageSize,
+        total,
+      },
+      balanceLogs: logs,
+    };
   }
 }

@@ -14,6 +14,7 @@ import { UserService } from './user.service';
 import {
   CreateUserDto,
   EditUserDto,
+  GetBalanceLogsDto,
   GetUsersQueryDto,
   SwitchStatusDto,
 } from './dtos';
@@ -145,18 +146,10 @@ export class UserController {
   }
 
   @Get(':uid/balance-logs')
-  async getUserBalanceLogs(@Param('uid') uid: string) {
-    return this.userService.getUserByUid(uid, {
-      id: true,
-      uid: true,
-      name: true,
-      userBalanceLogs: {
-        select: {
-          id: true,
-          value: true,
-          createdAt: true,
-        },
-      },
-    });
+  async getUserBalanceLogs(
+    @Param('uid') uid: string,
+    @Query(new ValidationPipe({ transform: true })) query: GetBalanceLogsDto,
+  ) {
+    return this.userService.getUserBalanceLogs(uid, query);
   }
 }
