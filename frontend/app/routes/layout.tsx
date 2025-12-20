@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { SiteHeader } from '~/components/site-header';
 import { useAuth } from '~/context/auth';
 import { Skeleton } from '~/components/ui/skeleton';
+import { AppVersion } from '~/components/app-version';
 export default function Layout() {
   const auth = useAuth();
   const profileQuery = useQuery({
@@ -48,6 +49,7 @@ export default function Layout() {
             <Outlet />
           </div>
         </SidebarInset>
+        <AppVersion />
       </SidebarProvider>
     );
   }
