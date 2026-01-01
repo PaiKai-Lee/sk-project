@@ -26,6 +26,10 @@ import { Loader } from 'lucide-react';
 import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { SpecificTransactionDialog } from '~/components/transaction-records/specificTransaction-dialog';
+import {
+  useTransactionDetailQuery,
+  useTransactionListQuery,
+} from '~/hooks/queries/use-transaction-query';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -63,6 +67,15 @@ export default function TransactionRecordsHome() {
     1000
   ) as ColumnFiltersState;
 
+  const specificTransactionQuery = useTransactionDetailQuery(
+    transactionId as string
+  );
+  const transactionQuery = useTransactionListQuery({
+    pagination,
+    sorting,
+    filters: debounceFilters,
+  });
+
   useEffect(() => {
     if (location.state) {
       setColumnFilters([
@@ -76,58 +89,6 @@ export default function TransactionRecordsHome() {
       setColumnFilters([]);
     };
   }, [location.state]);
-
-  const transactionQuery = useQuery({
-    queryKey: [
-      'transactions',
-      {
-        page: pagination.pageIndex + 1,
-        pageSize: pagination.pageSize,
-        sorting: JSON.stringify(sorting),
-        filters: JSON.stringify(debounceFilters),
-      },
-    ],
-    queryFn: async () => {
-      const apiParams = new URLSearchParams();
-      apiParams.append('page', (pagination.pageIndex + 1).toString());
-      apiParams.append('pageSize', pagination.pageSize.toString());
-      if (sorting.length > 0) {
-        sorting.forEach((item) => {
-          apiParams.append('sort', `${item.id}:${item.desc ? 'desc' : 'asc'}`);
-        });
-      }
-      if (debounceFilters.length > 0) {
-        debounceFilters.forEach((item) => {
-          if (item.id === 'createdBy') {
-            apiParams.append('createdBy', `${item.value}`);
-          }
-          if (item.id === 'userName') {
-            apiParams.append('userName', `${item.value}`);
-          }
-          if (item.id === 'transactionId') {
-            apiParams.append('transactionId', `${item.value}`);
-          }
-        });
-      }
-      const { data } = await TransactionsClient.getTransactions({
-        params: apiParams,
-      });
-      return data;
-    },
-    select: (data) => data.data,
-  });
-
-  const specificTransactionQuery = useQuery({
-    queryKey: transactionQueryKeys.getOneTransaction(transactionId as string),
-    enabled: !!transactionId,
-    queryFn: async () => {
-      const { data } = await TransactionsClient.getOneTransaction(
-        transactionId as string
-      );
-      return data;
-    },
-    select: (data) => data.data,
-  });
 
   function clickDetailHandler(e: React.MouseEvent<HTMLButtonElement>) {
     const transactionId = e.currentTarget.dataset.transactionId;
