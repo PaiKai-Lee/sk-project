@@ -26,23 +26,6 @@ import { CreateUserSheet } from '~/components/admin/user-management/create-user-
 import { EditUserSheet } from '~/components/admin/user-management/edit-user-sheet';
 import { useTranslation } from 'react-i18next';
 import type { IUser } from '~/features/users/types';
-// export type User = {
-//   id: string;
-//   uid: string;
-//   name: string;
-//   balance: number;
-//   role: {
-//     id: number;
-//     name: string;
-//   };
-//   department: {
-//     id: number;
-//     name: string;
-//   };
-//   isInit: boolean;
-//   isDisable: boolean;
-//   version: number;
-// };
 
 export function meta({}: Route.MetaArgs) {
   return [

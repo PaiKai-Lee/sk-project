@@ -30,16 +30,6 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-type AuditLogs = {
-  uid: string;
-  action: string;
-  content: string;
-  ip: string;
-  meta: string;
-  userAgent: string;
-  createdAt: string;
-};
-
 export default function auditLogPage() {
   const { t } = useTranslation();
   const location = useLocation();

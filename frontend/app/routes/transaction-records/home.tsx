@@ -1,10 +1,5 @@
 import type { Route } from '../transaction-records/+types/home';
-import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  TransactionsClient,
-  transactionQueryKeys,
-} from '~/features/transactions';
 import { ServerDataTable } from '~/components/transaction-records/data-table';
 import { DataTablePagination } from '~/components/transaction-records/data-table-pagination';
 import {
