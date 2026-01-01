@@ -12,7 +12,7 @@ import { Input } from '~/components/ui/input';
 
 import { z } from 'zod';
 import { useEffect, useState } from 'react';
-import { useTransaction } from '~/context/transaction';
+import { useTransaction } from '~/hooks';
 import { Cart } from '~/components/transaction/cart';
 import { Text } from '~/components/ui/typography';
 import { useOutletContext } from 'react-router';
@@ -29,7 +29,7 @@ const detailInputSchema = z
   .string({ message: 'must be a string' })
   .max(30, { message: 'must be less than 30 character' });
 
-export function meta({ }: Route.MetaArgs) {
+export function meta({}: Route.MetaArgs) {
   return [
     { title: 'transaction' },
     { name: 'description', content: 'transaction page' },

@@ -1,4 +1,4 @@
-import { usePreference } from '~/context/preference';
+import { usePreference } from '~/hooks';
 
 import { Moon, Sun } from 'lucide-react';
 import { SidebarMenuButton } from './ui/sidebar';

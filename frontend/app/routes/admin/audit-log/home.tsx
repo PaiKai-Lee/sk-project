@@ -17,7 +17,7 @@ import { Button } from '~/components/ui/button';
 import { Text } from '~/components/ui/typography';
 import { auditLogQueryKeys, AuditLogClient } from '~/features/audit-logs';
 import type { IOneAudit } from '~/features/audit-logs';
-import useDebounce from '~/hooks/use-debounce';
+import { useDebounce } from '~/hooks';
 import { DateFormatter } from '~/lib/time-formatter';
 import { Input } from '~/components/ui/input';
 import { DataTablePagination } from '~/components/transaction-records/data-table-pagination';

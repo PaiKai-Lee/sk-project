@@ -28,7 +28,7 @@ import {
 } from '~/features/transactions';
 import { Link } from 'react-router';
 import { RelativeTimeFormatter } from '~/lib/time-formatter';
-export function meta({ }: Route.MetaArgs) {
+export function meta({}: Route.MetaArgs) {
   return [
     { title: 'overview' },
     { name: 'description', content: 'overview page' },

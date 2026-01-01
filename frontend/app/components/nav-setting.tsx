@@ -1,6 +1,6 @@
 import { Languages, LogOut } from 'lucide-react';
-import { useAuth } from '~/context/auth';
-import { usePreference, type Language } from '~/context/preference';
+import { useAuth, usePreference } from '~/hooks';
+import type { Language } from '~/context/preference';
 
 import {
   DropdownMenu,

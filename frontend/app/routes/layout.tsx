@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { AuthClient, authQueryKeys } from '~/features/auth';
 import { useEffect } from 'react';
 import { SiteHeader } from '~/components/site-header';
-import { useAuth } from '~/context/auth';
+import { useAuth } from '~/hooks';
 import { Skeleton } from '~/components/ui/skeleton';
 import { AppVersion } from '~/components/app-version';
 export default function Layout() {

@@ -16,7 +16,7 @@ import {
   type SortingState,
   type VisibilityState,
 } from '@tanstack/react-table';
-import useDebounce from '~/hooks/use-debounce';
+import { useDebounce } from '~/hooks';
 import { Input } from '~/components/ui/input';
 import { DateFormatter } from '~/lib/time-formatter';
 import { Button } from '~/components/ui/button';
@@ -27,7 +27,7 @@ import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { SpecificTransactionDialog } from '~/components/transaction-records/specificTransaction-dialog';
 
-export function meta({ }: Route.MetaArgs) {
+export function meta({}: Route.MetaArgs) {
   return [
     { title: 'transaction-records' },
     { name: 'description', content: 'transaction-records page' },

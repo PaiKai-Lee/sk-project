@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useMemo,
-} from 'react';
+import { createContext, useState, useCallback, useMemo } from 'react';
 import { AuthClient } from '~/features/auth';
 import type { ILoginResponse } from '~/features/auth';
 import { tokenManager } from '~/lib/token-manager';
@@ -43,7 +37,7 @@ type AuthProviderState = {
   logout: () => AsyncResult<null>;
 };
 
-const AuthProviderContext = createContext<AuthProviderState | undefined>(
+export const AuthProviderContext = createContext<AuthProviderState | undefined>(
   undefined
 );
 
@@ -99,13 +93,3 @@ export function AuthProvider({ children }: AuthProviderProps) {
     </AuthProviderContext.Provider>
   );
 }
-
-export const useAuth = () => {
-  const context = useContext(AuthProviderContext);
-
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-
-  return context;
-};

@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useNavigate } from 'react-router';
 import { AuthClient, authQueryKeys } from '~/features/auth';
-import { useAuth } from '~/context/auth';
+import { useAuth } from '~/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 

@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useMemo,
-} from 'react';
+import { createContext, useState, useCallback, useMemo } from 'react';
 type TransactionProviderProps = {
   children: React.ReactNode;
 };
@@ -41,7 +35,7 @@ type TransactionProviderState = {
   totalWithdraw: number;
 };
 
-const TransactionProviderContext = createContext<
+export const TransactionProviderContext = createContext<
   TransactionProviderState | undefined
 >(undefined);
 
@@ -123,15 +117,3 @@ export function TransactionProvider({ children }: TransactionProviderProps) {
     </TransactionProviderContext.Provider>
   );
 }
-
-export const useTransaction = () => {
-  const context = useContext(TransactionProviderContext);
-
-  if (context === undefined) {
-    throw new Error(
-      'useTransaction must be used within an TransactionProvider'
-    );
-  }
-
-  return context;
-};

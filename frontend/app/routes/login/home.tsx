@@ -3,7 +3,6 @@ import { LoginForm } from '~/components/login/login-form';
 import { toast } from 'sonner';
 import { tokenManager } from '~/lib/token-manager';
 import { redirect } from 'react-router';
-// import AuthClient from '~/api/auth';
 import { AuthClient } from '~/features/auth';
 
 export function meta({}: Route.MetaArgs) {
