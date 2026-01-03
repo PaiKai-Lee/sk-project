@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Route } from '../user/+types/home';
 import { UserClient, userQueryKeys } from '~/features/users';
 import { useMemo, useState } from 'react';
@@ -26,6 +26,7 @@ import { CreateUserSheet } from '~/components/admin/user-management/create-user-
 import { EditUserSheet } from '~/components/admin/user-management/edit-user-sheet';
 import { useTranslation } from 'react-i18next';
 import type { IUser } from '~/features/users/types';
+import { useUsersQuery } from '~/hooks/queries/use-users-query';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -46,23 +47,11 @@ export default function AdminPage() {
     () => ['balance', 'department', 'role', 'isInit', 'isDisable', 'version'],
     []
   );
-  const userQuery = useQuery({
-    queryKey: userQueryKeys.getUsers({
+  const usersQuery = useUsersQuery({
+    params: {
       showDisable: true,
-      fields: selectedFields,
-    }),
-    queryFn: async () => {
-      const params = new URLSearchParams();
-      params.append('showDisable', 'true');
-      selectedFields.forEach((field) => {
-        params.append('fields', field);
-      });
-      const { data } = await UserClient.getUsers({
-        params,
-      });
-      return data;
-    },
-    select: (data) => data.data as IUser[],
+      fields: selectedFields
+    }
   });
 
   const userSwitchMutation = useMutation({
@@ -246,7 +235,7 @@ export default function AdminPage() {
         setIsEditOpen={setIsEditOpen}
         selectedUser={selectedUser}
       />
-      <DataTable columns={columns} data={userQuery?.data || []} />
+      <DataTable columns={columns} data={usersQuery?.data || []} />
       <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

@@ -37,32 +37,31 @@ export function useTransactionListQuery(params: GetTransactionListParams) {
       filters: JSON.stringify(params.filters),
     }),
     queryFn: async () => {
-      const apiParams = new URLSearchParams();
-      apiParams.append('page', (pagination.pageIndex + 1).toString());
-      apiParams.append('pageSize', pagination.pageSize.toString());
+      const searchParams = new URLSearchParams();
+      searchParams.append('page', (pagination.pageIndex + 1).toString());
+      searchParams.append('pageSize', pagination.pageSize.toString());
       if (sorting.length > 0) {
         sorting.forEach((item) => {
-          apiParams.append('sort', `${item.id}:${item.desc ? 'desc' : 'asc'}`);
+          searchParams.append('sort', `${item.id}:${item.desc ? 'desc' : 'asc'}`);
         });
       }
       if (filters.length > 0) {
         filters.forEach((item) => {
           if (item.id === 'createdBy') {
-            apiParams.append('createdBy', `${item.value}`);
+            searchParams.append('createdBy', `${item.value}`);
           }
           if (item.id === 'userName') {
-            apiParams.append('userName', `${item.value}`);
+            searchParams.append('userName', `${item.value}`);
           }
           if (item.id === 'transactionId') {
-            apiParams.append('transactionId', `${item.value}`);
+            searchParams.append('transactionId', `${item.value}`);
           }
         });
       }
-      const { data } = await TransactionsClient.getTransactions({
-        params: apiParams,
+      return TransactionsClient.getTransactions({
+        params: searchParams,
       });
-      return data;
     },
-    select: (data) => data.data,
+    select: ({data}) => data.data,
   });
 }

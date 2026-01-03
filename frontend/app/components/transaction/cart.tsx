@@ -68,7 +68,7 @@ export function Cart() {
       toast.success('交易提交成功');
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: userQueryKeys.getUsers({ showDisable: 'false' }),
+          queryKey: userQueryKeys.getUsers({ showDisable: false }),
         }),
         queryClient.invalidateQueries({
           queryKey: overviewQueryKeys.all,

@@ -1,28 +1,20 @@
-import { useQuery } from '@tanstack/react-query';
 import { Outlet } from 'react-router';
 import { toast } from 'sonner';
 import { TransactionProvider } from '~/context/transaction';
 import { Skeleton } from '~/components/ui/skeleton';
-import { UserClient, userQueryKeys } from '~/features/users';
+import { useUsersQuery } from '~/hooks/queries/use-users-query';
 
 export default function TransactionLayout() {
-  const usersQuery = useQuery({
-    queryKey: userQueryKeys.getUsers({
-      showDisable: 'false',
+
+  const usersQuery = useUsersQuery({
+    params:{
+      showDisable: false,
       fields: ['balance'],
       sorting: [{ id: 'balance', desc: true }],
-    }),
-    queryFn: async () => {
-      const params = new URLSearchParams();
-      params.append('showDisable', 'false');
-      params.append('fields', 'balance');
-      params.append('sort', 'balance:desc');
-      const { data } = await UserClient.getUsers({
-        params,
-      });
-      return data;
     },
-    refetchOnWindowFocus: false,
+    options:{
+      refetchOnWindowFocus: false,
+    }
   });
 
   if (usersQuery.isLoading) {

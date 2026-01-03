@@ -26,21 +26,14 @@ import {
   NotificationClient,
   notificationQueryKeys,
 } from '~/features/notifications';
-import { UserClient, userQueryKeys } from '~/features/users';
 import type { IUser } from '~/features/users';
+import { useUsersQuery } from '~/hooks/queries/use-users-query';
 
 export function CreateNotificationSheet() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const form = useForm();
-
-  const usersQuery = useQuery({
-    queryKey: userQueryKeys.getUsers(),
-    queryFn: async () => {
-      const { data } = await UserClient.getUsers();
-      return data.data;
-    },
-  });
+  const usersQuery = useUsersQuery();
 
   const createMutation = useMutation({
     mutationFn: (data: {

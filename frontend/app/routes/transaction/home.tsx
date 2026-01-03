@@ -48,13 +48,13 @@ export default function TransactionPage() {
     setIsCartChecked,
   } = useTransaction();
   const { usersQuery } = useOutletContext<{
-    usersQuery: UseQueryResult<IResponseData<IUser[]>, Error>;
+    usersQuery: UseQueryResult<IUser[], Error>;
   }>();
 
   useEffect(() => {
     if (usersQuery.data) {
       setTransactionItems(
-        usersQuery.data.data.map((user) => ({
+        usersQuery.data.map((user) => ({
           name: user.name,
           uid: user.uid,
           balance: user?.balance || 0,
