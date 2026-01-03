@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { overviewQueryKeys } from '~/features/overview';
-import { OverviewClient } from '~/features/overview';
+import { overviewQueryKeys, OverviewClient } from '~/features/overview';
 
 export function useOverviewQuery() {
   return useQuery({

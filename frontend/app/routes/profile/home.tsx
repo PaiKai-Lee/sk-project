@@ -3,8 +3,7 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Text } from '~/components/ui/typography';
-import { useQuery } from '@tanstack/react-query';
-import { MeClient, meQueryKeys, type IBalanceLog } from '~/features/me';
+import { type IBalanceLog } from '~/features/me';
 import {
   getCoreRowModel,
   useReactTable,
@@ -16,6 +15,7 @@ import { DataTablePagination } from '~/components/me/balance-logs/data-table-pag
 import { DateFormatter } from '~/lib/time-formatter';
 import { Badge } from '~/components/ui/badge';
 import { Separator } from '~/components/ui/separator';
+import { useBalanceLogsQuery, useMeQuery } from '~/hooks/queries/use-me-query';
 
 export function meta({}: Route.MetaArgs) {
   const { t } = useTranslation();
@@ -27,29 +27,16 @@ export function meta({}: Route.MetaArgs) {
 
 export default function ProfilePage() {
   const { t } = useTranslation();
-  const { data: profile, isLoading } = useQuery({
-    queryKey: meQueryKeys.get(),
-    queryFn: () => MeClient.get(),
-    select: ({ data }) => data.data,
-  });
-
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
 
-  const balanceLogsQuery = useQuery({
-    queryKey: meQueryKeys.getBalanceLogs({
-      page: pagination.pageIndex + 1,
-      pageSize: pagination.pageSize,
-    }),
-    queryFn: () =>
-      MeClient.getBalanceLogs({
-        page: pagination.pageIndex + 1,
-        pageSize: pagination.pageSize,
-      }),
-    select: ({ data }) => data.data,
-  });
+  const meQuery = useMeQuery();
+  const balanceLogsQuery = useBalanceLogsQuery({
+    page: pagination.pageIndex + 1,
+    pageSize: pagination.pageSize,
+  })
 
   const columns = useMemo<ColumnDef<IBalanceLog>[]>(
     () => [
@@ -83,7 +70,7 @@ export default function ProfilePage() {
     rowCount: balanceLogsQuery.data?.pagination.total,
   });
 
-  if (isLoading || !profile) {
+  if (meQuery.isLoading || !meQuery.data) {
     return <p>loading ....</p>;
   }
 
@@ -93,9 +80,9 @@ export default function ProfilePage() {
         <CardContent className="p-6 flex items-center space-x-6 h-20">
           <div className="flex items-center space-x-4">
             <div className="space-y-0.5">
-              <Text className="font-bold text-lg">{profile.name}</Text>
+              <Text className="font-bold text-lg">{meQuery.data?.name}</Text>
               <Text className="text-sm text-muted-foreground">
-                {t('profile.uid')}: {profile.uid}
+                {t('profile.uid')}: {meQuery.data.uid}
               </Text>
             </div>
           </div>
@@ -106,7 +93,7 @@ export default function ProfilePage() {
               {t('profile.role')}:
             </span>
             <Badge className="bg-primary hover:bg-primary/90 rounded-full px-4 py-1">
-              {profile.role.name}
+              {meQuery.data.role.name}
             </Badge>
           </div>
 
@@ -117,7 +104,7 @@ export default function ProfilePage() {
               {t('profile.department')}:
             </span>
             <Badge variant="secondary" className="rounded-full px-4 py-1">
-              {profile.department.name}
+              {meQuery.data.department.name}
             </Badge>
           </div>
 
@@ -133,7 +120,7 @@ export default function ProfilePage() {
                   style: 'currency',
                   currency: 'TWD',
                 })
-                  .format(profile.balance)
+                  .format(meQuery.data.balance)
                   .split('.')[0]
               }
             </Text>

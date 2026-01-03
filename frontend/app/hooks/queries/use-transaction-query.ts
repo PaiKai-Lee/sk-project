@@ -4,8 +4,7 @@ import {
   type PaginationState,
   type SortingState,
 } from '@tanstack/react-table';
-import { transactionQueryKeys } from '~/features/transactions';
-import { TransactionsClient } from '~/features/transactions';
+import { transactionQueryKeys, TransactionsClient } from '~/features/transactions';
 
 export function useTransactionDetailQuery(trxId: string) {
   return useQuery({

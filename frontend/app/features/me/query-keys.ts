@@ -4,5 +4,5 @@ export const meQueryKeys = {
   all: ['me'] as const,
   get: () => [...meQueryKeys.all, 'get'] as const,
   getBalanceLogs: (params: GetBalanceLogsDto) =>
-    [...meQueryKeys.all, 'get-balance-logs', params] as const,
+    [...meQueryKeys.all, 'balance-logs', params] as const,
 };
