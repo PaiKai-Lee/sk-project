@@ -5,16 +5,15 @@ import { Skeleton } from '~/components/ui/skeleton';
 import { useUsersQuery } from '~/hooks/queries/use-users-query';
 
 export default function TransactionLayout() {
-
   const usersQuery = useUsersQuery({
-    params:{
+    params: {
       showDisable: false,
       fields: ['balance'],
       sorting: [{ id: 'balance', desc: true }],
     },
-    options:{
+    options: {
       refetchOnWindowFocus: false,
-    }
+    },
   });
 
   if (usersQuery.isLoading) {

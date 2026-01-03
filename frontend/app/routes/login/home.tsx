@@ -3,7 +3,8 @@ import { LoginForm } from '~/components/login/login-form';
 import { toast } from 'sonner';
 import { tokenManager } from '~/lib/token-manager';
 import { redirect } from 'react-router';
-import { AuthClient } from '~/features/auth';
+import { AuthClient, authQueryKeys } from '~/features/auth';
+import { queryClient } from '~/lib/query-client';
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: 'login' }, { name: 'description', content: 'login page' }];
@@ -16,10 +17,10 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
       uid: formData.get('uid') as string,
       password: formData.get('password') as string,
     });
-    const accessToken = axiosData.data.accessToken;
-    const refreshToken = axiosData.data.refreshToken;
+    const { accessToken, refreshToken, profile } = axiosData.data;
     tokenManager.setAccessToken(accessToken);
     tokenManager.setRefreshToken(refreshToken);
+    queryClient.setQueryData(authQueryKeys.getProfile(), profile);
     return redirect('/');
   } catch (error) {
     console.log('error');

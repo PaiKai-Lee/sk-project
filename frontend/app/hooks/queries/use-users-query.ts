@@ -1,8 +1,10 @@
 import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
-import { UserClient, userQueryKeys, type IUsersResponse } from '~/features/users';
 import {
-  type SortingState,
-} from '@tanstack/react-table';
+  UserClient,
+  userQueryKeys,
+  type IUsersResponse,
+} from '~/features/users';
+import { type SortingState } from '@tanstack/react-table';
 
 type GetUsersParams = {
   showDisable?: boolean;
@@ -17,7 +19,7 @@ type UseUsersQueryOptions<TData = IUsersResponse> = Omit<
 
 export function useUsersQuery<TData = IUsersResponse>({
   params,
-  options
+  options,
 }: {
   params?: GetUsersParams;
   options?: UseUsersQueryOptions<TData>;
@@ -27,23 +29,27 @@ export function useUsersQuery<TData = IUsersResponse>({
     queryFn: async () => {
       if (!params) return await UserClient.getUsers();
       const searchParams = new URLSearchParams();
-      if( params.showDisable !== undefined) searchParams.append('showDisable', params.showDisable.toString());
-      if( params.fields ) {
+      if (params.showDisable !== undefined)
+        searchParams.append('showDisable', params.showDisable.toString());
+      if (params.fields) {
         params.fields.forEach((field) => {
           searchParams.append('fields', field);
-        })
+        });
       }
-      if( params.sorting ) {
+      if (params.sorting) {
         params.sorting.forEach((item) => {
-          searchParams.append('sort', `${item.id}:${item.desc ? 'desc' : 'asc'}`);
-        })
+          searchParams.append(
+            'sort',
+            `${item.id}:${item.desc ? 'desc' : 'asc'}`
+          );
+        });
       }
       return await UserClient.getUsers({
         params: searchParams,
       });
     },
     // Your select function is kept as is
-    select: ({data}) => data.data,
+    select: ({ data }) => data.data,
     ...options,
   });
 }

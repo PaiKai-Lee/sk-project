@@ -50,8 +50,8 @@ export default function AdminPage() {
   const usersQuery = useUsersQuery({
     params: {
       showDisable: true,
-      fields: selectedFields
-    }
+      fields: selectedFields,
+    },
   });
 
   const userSwitchMutation = useMutation({

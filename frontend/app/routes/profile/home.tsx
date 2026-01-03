@@ -36,7 +36,7 @@ export default function ProfilePage() {
   const balanceLogsQuery = useBalanceLogsQuery({
     page: pagination.pageIndex + 1,
     pageSize: pagination.pageSize,
-  })
+  });
 
   const columns = useMemo<ColumnDef<IBalanceLog>[]>(
     () => [

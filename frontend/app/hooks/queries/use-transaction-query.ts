@@ -4,7 +4,10 @@ import {
   type PaginationState,
   type SortingState,
 } from '@tanstack/react-table';
-import { transactionQueryKeys, TransactionsClient } from '~/features/transactions';
+import {
+  transactionQueryKeys,
+  TransactionsClient,
+} from '~/features/transactions';
 
 export function useTransactionDetailQuery(trxId: string) {
   return useQuery({
@@ -42,7 +45,10 @@ export function useTransactionListQuery(params: GetTransactionListParams) {
       searchParams.append('pageSize', pagination.pageSize.toString());
       if (sorting.length > 0) {
         sorting.forEach((item) => {
-          searchParams.append('sort', `${item.id}:${item.desc ? 'desc' : 'asc'}`);
+          searchParams.append(
+            'sort',
+            `${item.id}:${item.desc ? 'desc' : 'asc'}`
+          );
         });
       }
       if (filters.length > 0) {
@@ -62,6 +68,6 @@ export function useTransactionListQuery(params: GetTransactionListParams) {
         params: searchParams,
       });
     },
-    select: ({data}) => data.data,
+    select: ({ data }) => data.data,
   });
 }

@@ -1,12 +1,31 @@
-import { AuthProviderContext } from '~/context/auth';
-import { useContext } from 'react';
+import { useMemo } from 'react';
+import { useAuthProfileQuery } from './queries/use-auth-query';
+import {
+  useAuthLoginMutation,
+  useAuthLogoutMutation,
+} from './mutations/use-auth-mutation';
 
 export const useAuth = () => {
-  const context = useContext(AuthProviderContext);
+  const authProfileQuery = useAuthProfileQuery();
+  const authLoginMutation = useAuthLoginMutation();
+  const authLogoutMutation = useAuthLogoutMutation();
 
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  const isAdmin = useMemo(() => {
+    return (
+      authProfileQuery.data?.role === 'root' ||
+      authProfileQuery.data?.role === 'admin'
+    );
+  }, [authProfileQuery.data]);
 
-  return context;
+  return {
+    profile: authProfileQuery.data,
+    isAuthenticated: !!authProfileQuery.data,
+
+    isPendingProfile: authProfileQuery.isPending,
+    isLoadingProfile: authProfileQuery.isLoading,
+
+    login: authLoginMutation.mutate,
+    logout: authLogoutMutation.mutate,
+    isAdmin,
+  };
 };
