@@ -5,6 +5,7 @@ import { tokenManager } from '~/lib/token-manager';
 import { redirect } from 'react-router';
 import { AuthClient, authQueryKeys } from '~/features/auth';
 import { queryClient } from '~/lib/query-client';
+import { useEffect } from 'react';
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: 'login' }, { name: 'description', content: 'login page' }];
@@ -31,9 +32,11 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 
 export default function LoginPage({ actionData }: Route.ComponentProps) {
   // 如果登入失敗顯示錯誤，判斷action data
-  if (actionData) {
-    toast.error(actionData?.error);
-  }
+  useEffect(() => {
+    if (actionData?.error) {
+      toast.error(actionData.error);
+    }
+  }, [actionData]);
 
   return <LoginForm />;
 }

@@ -24,14 +24,16 @@ export function useAuthLoginMutation() {
 }
 
 export function useAuthLogoutMutation() {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   return useMutation({
     mutationFn: async () => {
       await AuthClient.logout();
-      tokenManager.removeAccessToken();
-      tokenManager.removeRefreshToken();
     },
     onSuccess: () => {
+      tokenManager.removeAccessToken();
+      tokenManager.removeRefreshToken();
+      queryClient.setQueryData(authQueryKeys.getProfile(), null);
       navigate('/login');
     },
     onError: (error) => {
