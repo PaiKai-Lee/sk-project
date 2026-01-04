@@ -1,6 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Route } from '../user/+types/home';
-import { UserClient, userQueryKeys } from '~/features/users';
 import { useMemo, useState } from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
 
@@ -27,6 +25,7 @@ import { EditUserSheet } from '~/components/admin/user-management/edit-user-shee
 import { useTranslation } from 'react-i18next';
 import type { IUser } from '~/features/users/types';
 import { useUsersQuery } from '~/hooks/queries/use-users-query';
+import { useUserStatusSwitchMutation } from '~/hooks/mutations/use-users-mutation';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -37,7 +36,6 @@ export function meta({}: Route.MetaArgs) {
 
 export default function AdminPage() {
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
 
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -54,32 +52,17 @@ export default function AdminPage() {
     },
   });
 
-  const userSwitchMutation = useMutation({
-    mutationFn: (value: {
-      uid: string;
-      version: number;
-      isDisable: boolean;
-    }) => {
-      console.log(value);
-      const switchFunc = value.isDisable
-        ? UserClient.enableUser
-        : UserClient.disableUser;
-      return switchFunc(value.uid, value.version);
-    },
-    onSuccess: async (data) => {
-      await queryClient.invalidateQueries({
-        queryKey: userQueryKeys.all,
-      });
+  const userStatusSwitchMutation = useUserStatusSwitchMutation({
+    onSuccess: () => {
       toast.success(t('admin.switchSuccess'));
     },
-    onError: (error) => {
-      console.error(error);
+    onError: () => {
       toast.error(t('admin.switchFailed'));
     },
   });
 
   function handleConfirm() {
-    userSwitchMutation.mutate({
+    userStatusSwitchMutation.mutate({
       uid: selectedUser?.uid || '',
       version: selectedUser?.version || 0,
       isDisable: selectedUser?.isDisable || false,

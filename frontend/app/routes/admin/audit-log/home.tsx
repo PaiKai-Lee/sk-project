@@ -52,7 +52,7 @@ export default function auditLogPage() {
     pagination,
     sorting,
     filters: debounceFilters,
-  })
+  });
 
   const columns = useMemo<ColumnDef<IOneAudit>[]>(
     () => [

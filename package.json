@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "dev:client": "cd frontend && npm run dev",
-    "dev:server": "cd backend && npm run start:dev"
+    "dev:server": "cd backend && npm run start:dev",
+    "format:client": "npm run format --prefix frontend",
+    "format:server": "npm run format --prefix backend"
   },
   "keywords": ["transaction", "web", "app"],
   "author": "KaiLee",

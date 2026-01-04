@@ -3,8 +3,8 @@ import { auditLogQueryKeys, AuditLogClient } from '~/features/audit-logs';
 import {
   type PaginationState,
   type SortingState,
-  type ColumnFiltersState
-} from '@tanstack/react-table'
+  type ColumnFiltersState,
+} from '@tanstack/react-table';
 
 type GetAuditLogsParams = {
   pagination?: PaginationState;
@@ -23,11 +23,11 @@ export function useAuditLogQuery(params: GetAuditLogsParams = {}) {
     }),
     queryFn: async () => {
       const apiParams = new URLSearchParams();
-      if(pagination){
+      if (pagination) {
         apiParams.append('page', (pagination.pageIndex + 1).toString());
         apiParams.append('pageSize', pagination.pageSize.toString());
       }
-      if ( sorting && sorting.length > 0) {
+      if (sorting && sorting.length > 0) {
         sorting.forEach((item) => {
           apiParams.append('sort', `${item.id}:${item.desc ? 'desc' : 'asc'}`);
         });
