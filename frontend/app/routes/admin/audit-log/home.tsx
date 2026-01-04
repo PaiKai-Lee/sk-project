@@ -1,5 +1,4 @@
 import type { Route } from '../audit-log/+types/home';
-import { useQuery } from '@tanstack/react-query';
 import {
   getCoreRowModel,
   useReactTable,
@@ -15,13 +14,13 @@ import { useLocation } from 'react-router';
 import { ServerDataTable } from '~/components/admin/audit-log/server-data-table';
 import { Button } from '~/components/ui/button';
 import { Text } from '~/components/ui/typography';
-import { auditLogQueryKeys, AuditLogClient } from '~/features/audit-logs';
 import type { IOneAudit } from '~/features/audit-logs';
 import { useDebounce } from '~/hooks';
 import { DateFormatter } from '~/lib/time-formatter';
 import { Input } from '~/components/ui/input';
 import { DataTablePagination } from '~/components/transaction-records/data-table-pagination';
 import { toast } from 'sonner';
+import { useAuditLogQuery } from '~/hooks/queries/use-audit-log-query';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -48,6 +47,12 @@ export default function auditLogPage() {
     columnFilters,
     1000
   ) as ColumnFiltersState;
+
+  const auditLogQuery = useAuditLogQuery({
+    pagination,
+    sorting,
+    filters: debounceFilters,
+  })
 
   const columns = useMemo<ColumnDef<IOneAudit>[]>(
     () => [
@@ -100,35 +105,6 @@ export default function auditLogPage() {
     ],
     []
   );
-
-  const auditLogQuery = useQuery({
-    queryKey: auditLogQueryKeys.getAuditLogs({
-      page: pagination.pageIndex + 1,
-      pageSize: pagination.pageSize,
-      sorting: JSON.stringify(sorting),
-      filters: JSON.stringify(debounceFilters),
-    }),
-    queryFn: async () => {
-      const apiParams = new URLSearchParams();
-      apiParams.append('page', (pagination.pageIndex + 1).toString());
-      apiParams.append('pageSize', pagination.pageSize.toString());
-      if (sorting.length > 0) {
-        sorting.forEach((item) => {
-          apiParams.append('sort', `${item.id}:${item.desc ? 'desc' : 'asc'}`);
-        });
-      }
-      if (debounceFilters.length > 0) {
-        debounceFilters.forEach((item) => {
-          if (item.id === 'uid') {
-            apiParams.append('uid', `${item.value}`);
-          }
-        });
-      }
-      const { data } = await AuditLogClient.getAuditLogs({ params: apiParams });
-      return data;
-    },
-    select: (data) => data.data,
-  });
 
   const table = useReactTable({
     data: auditLogQuery?.data?.rows || [],
