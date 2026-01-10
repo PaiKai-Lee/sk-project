@@ -4,7 +4,7 @@ import { Button } from '~/components/ui/button';
 import { Separator } from '~/components/ui/separator';
 import { SidebarTrigger } from '~/components/ui/sidebar';
 import { routeItems } from './app-sidebar';
-import { useAuth } from '~/context/auth';
+import { useAuth } from '~/features/auth/hooks';
 import { Heading1, Text } from '~/components/ui/typography';
 import { CircleUser } from 'lucide-react';
 import { GitHubIcon } from './ui/icons';

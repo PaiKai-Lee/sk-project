@@ -12,14 +12,13 @@ import { Input } from '~/components/ui/input';
 
 import { z } from 'zod';
 import { useEffect, useState } from 'react';
-import { useTransaction } from '~/context/transaction';
+import { useTransaction } from '~/hooks';
 import { Cart } from '~/components/transaction/cart';
 import { Text } from '~/components/ui/typography';
 import { useOutletContext } from 'react-router';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { IUser } from '~/features/users';
-import type { IResponseData } from '~/features/types';
 
 const amountInputSchema = z
   .number({ message: 'must be a number' })
@@ -29,7 +28,7 @@ const detailInputSchema = z
   .string({ message: 'must be a string' })
   .max(30, { message: 'must be less than 30 character' });
 
-export function meta({ }: Route.MetaArgs) {
+export function meta({}: Route.MetaArgs) {
   return [
     { title: 'transaction' },
     { name: 'description', content: 'transaction page' },
@@ -48,13 +47,13 @@ export default function TransactionPage() {
     setIsCartChecked,
   } = useTransaction();
   const { usersQuery } = useOutletContext<{
-    usersQuery: UseQueryResult<IResponseData<IUser[]>, Error>;
+    usersQuery: UseQueryResult<IUser[], Error>;
   }>();
 
   useEffect(() => {
     if (usersQuery.data) {
       setTransactionItems(
-        usersQuery.data.data.map((user) => ({
+        usersQuery.data.map((user) => ({
           name: user.name,
           uid: user.uid,
           balance: user?.balance || 0,

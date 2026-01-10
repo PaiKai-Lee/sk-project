@@ -29,15 +29,15 @@ import {
 } from '~/components/ui/select';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useEffect } from 'react';
 import { Separator } from '~/components/ui/separator';
 import { useTranslation } from 'react-i18next';
-import { RoleClient, roleQueryKeys } from '~/features/roles';
-import { DepartmentClient, departmentQueryKeys } from '~/features/departments';
-import { UserClient, userQueryKeys } from '~/features/users';
 import type { IUser } from '~/features/users';
+import { useQuery } from '@tanstack/react-query';
+import { getDepartmentsOptions } from '~/features/departments/query';
+import { getRoleQueryOptions } from '~/features/roles/query';
+import { useUserEditMutation } from '~/features/users/query';
 
 const formSchema = z.object({
   uid: z.string({ message: '格式錯誤' }).min(1, { message: 'uid不得為空' }),
@@ -57,49 +57,18 @@ export function EditUserSheet(props: {
 }) {
   const { isEditOpen, setIsEditOpen, selectedUser } = props;
   const { t } = useTranslation();
-
   const FORM_ID = 'edit-user-form';
-  const queryClient = useQueryClient();
 
-  const roleQuery = useQuery({
-    queryKey: roleQueryKeys.getRoles(),
-    queryFn: () => RoleClient.getRoles(),
-    select: (data) => data.data.data,
-    staleTime: 60 * 1000 * 60,
-  });
+  const roleQuery = useQuery(getRoleQueryOptions());
+  const departmentQuery = useQuery(getDepartmentsOptions());
 
-  const departmentQuery = useQuery({
-    queryKey: departmentQueryKeys.getDepartments(),
-    queryFn: () => DepartmentClient.getDepartments(),
-    select: (data) => data.data.data,
-    staleTime: 60 * 1000 * 60,
-  });
-
-  const userEditMutation = useMutation({
-    mutationFn: (value: {
-      uid: string;
-      name: string;
-      roleId: number;
-      departmentId: number;
-      version: number;
-    }) => {
-      return UserClient.editUser(value.uid, {
-        name: value.name,
-        roleId: value.roleId,
-        departmentId: value.departmentId,
-        version: value.version,
-      });
-    },
-    onSuccess: async (data) => {
-      await queryClient.invalidateQueries({
-        queryKey: userQueryKeys.all,
-      });
+  const userEditMutation = useUserEditMutation({
+    onSuccess: () => {
       toast.success('更新成功');
       form.reset();
       setIsEditOpen(false);
     },
-    onError: (error) => {
-      console.error(error);
+    onError: () => {
       toast.error('更新失敗');
     },
   });

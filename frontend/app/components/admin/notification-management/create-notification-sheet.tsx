@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '~/components/ui/button';
 import {
   Sheet,
@@ -19,47 +19,21 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
-import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { Checkbox } from '~/components/ui/checkbox';
-import {
-  NotificationClient,
-  notificationQueryKeys,
-} from '~/features/notifications';
-import { UserClient, userQueryKeys } from '~/features/users';
 import type { IUser } from '~/features/users';
+import { getUsersQueryOptions } from '~/features/users/query';
+import { useCreateNotificationMutation } from '~/features/notifications/query';
 
 export function CreateNotificationSheet() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const form = useForm();
+  const usersQuery = useQuery(getUsersQueryOptions());
 
-  const usersQuery = useQuery({
-    queryKey: userQueryKeys.getUsers(),
-    queryFn: async () => {
-      const { data } = await UserClient.getUsers();
-      return data.data;
-    },
-  });
-
-  const createMutation = useMutation({
-    mutationFn: (data: {
-      title: string;
-      content: string;
-      targets: string[];
-    }) => {
-      return NotificationClient.createNotification(data);
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: notificationQueryKeys.all,
-      });
-      toast.success(t('notification.createSuccess'));
+  const createMutation = useCreateNotificationMutation({
+    onSuccess: () => {
       form.reset();
-    },
-    onError: (error) => {
-      console.error(error);
-      toast.error(t('notification.createFailed'));
     },
   });
 

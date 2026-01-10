@@ -13,7 +13,7 @@ import {
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Table } from 'lucide-react';
-import { usePreference } from '~/context/preference';
+import { usePreference } from '~/hooks';
 
 export function meta({}: Route.MetaArgs) {
   return [

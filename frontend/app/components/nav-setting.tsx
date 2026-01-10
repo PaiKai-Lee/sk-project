@@ -1,6 +1,7 @@
 import { Languages, LogOut } from 'lucide-react';
-import { useAuth } from '~/context/auth';
-import { usePreference, type Language } from '~/context/preference';
+import { usePreference } from '~/hooks';
+import { useAuth } from '~/features/auth/hooks';
+import type { Language } from '~/context/preference';
 
 import {
   DropdownMenu,
@@ -16,19 +17,16 @@ import {
   useSidebar,
 } from '~/components/ui/sidebar';
 import { ModeToggle } from './theme-toggle';
-import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
 export function NavSetting() {
   const { setLanguage } = usePreference();
   const { t } = useTranslation();
   const { isMobile } = useSidebar();
-  const navigate = useNavigate();
   const auth = useAuth();
 
-  async function handleLogout() {
-    await auth.logout();
-    return navigate('/login');
+  function handleLogout() {
+    return auth.logout();
   }
 
   function changeLanguage(lang: Language) {

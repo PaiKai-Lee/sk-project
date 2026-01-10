@@ -1,38 +1,38 @@
-import { Navigate, Outlet, useNavigate } from 'react-router';
-import { AuthClient, authQueryKeys } from '~/features/auth';
-import { useAuth } from '~/context/auth';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { Navigate, Outlet } from 'react-router';
+import { useAuth } from '~/features/auth/hooks';
+import { Skeleton } from '~/components/ui/skeleton';
+import { Card } from '~/components/ui/card';
 
 export default function LoginLayout() {
   const auth = useAuth();
-  const profileQuery = useQuery({
-    queryKey: authQueryKeys.getProfile(),
-    queryFn: async () => {
-      const { data } = await AuthClient.getProfile();
-      return data;
-    },
-    select: (data) => data.data,
-    retry: false,
-  });
 
-  useEffect(() => {
-    if (profileQuery.isSuccess) {
-      auth.setProfile(profileQuery.data);
-    }
-  }, [profileQuery.isSuccess]);
-
-  if (profileQuery.isSuccess && profileQuery.data) {
-    return <Navigate to="/" />;
-  }
-
-  if (profileQuery.isError) {
+  if (auth.isPendingProfile) {
     return (
       <div className="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
         <div className="w-full max-w-sm">
-          <Outlet />
+          <Card className="p-6">
+            <div className="space-y-3">
+              <Skeleton className="h-[18px] w-[40px]" />
+              <Skeleton className="h-[10px] w-[50%]" />
+            </div>
+            <Skeleton className="h-[50px] w-full" />
+            <Skeleton className="h-[50px] w-full" />
+            <Skeleton className="h-[50px] w-full" />
+          </Card>
         </div>
       </div>
     );
   }
+
+  if (auth.profile) {
+    return <Navigate to="/" replace />;
+  }
+
+  return (
+    <div className="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
+      <div className="w-full max-w-sm">
+        <Outlet />
+      </div>
+    </div>
+  );
 }

@@ -1,4 +1,4 @@
-import { useTransaction } from '~/context/transaction';
+import { useTransaction } from '~/hooks';
 import { Card } from '../ui/card';
 import { FileStack } from 'lucide-react';
 import {
@@ -31,8 +31,8 @@ import { Text } from '../ui/typography';
 import { Label } from '../ui/label';
 import { Switch } from '../ui/switch';
 import { useTranslation } from 'react-i18next';
-import { overviewQueryKeys } from '~/features/overview';
-import { userQueryKeys } from '~/features/users';
+import { userQueryKeys } from '~/features/users/query';
+import { overviewQueryKeys } from '~/features/overview/query';
 
 const formSchema = z.object({
   remark: z.string().max(30, { message: '備註長度不能超過 30 字' }),
@@ -68,7 +68,7 @@ export function Cart() {
       toast.success('交易提交成功');
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: userQueryKeys.getUsers({ showDisable: 'false' }),
+          queryKey: userQueryKeys.getUsers({ showDisable: false }),
         }),
         queryClient.invalidateQueries({
           queryKey: overviewQueryKeys.all,

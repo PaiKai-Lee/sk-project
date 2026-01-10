@@ -30,14 +30,14 @@ import {
 } from '~/components/ui/select';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { Separator } from '~/components/ui/separator';
 import { useTranslation } from 'react-i18next';
-import { RoleClient, roleQueryKeys } from '~/features/roles';
-import { DepartmentClient, departmentQueryKeys } from '~/features/departments';
-import { UserClient, userQueryKeys } from '~/features/users';
+import { useUserCreateMutation } from '~/features/users/query';
+import { getDepartmentsOptions } from '~/features/departments/query';
+import { getRoleQueryOptions } from '~/features/roles/query';
+import { useQuery } from '@tanstack/react-query';
 
 const formSchema = z.object({
   uid: z.string({ message: '格式錯誤' }).min(1, { message: 'uid不得為空' }),
@@ -53,42 +53,18 @@ const formSchema = z.object({
 export function CreateUserSheet() {
   const { t } = useTranslation();
   const FORM_ID = 'create-user-form';
-  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
 
-  const roleQuery = useQuery({
-    queryKey: roleQueryKeys.getRoles(),
-    queryFn: () => RoleClient.getRoles(),
-    select: (data) => data.data.data,
-    staleTime: 60 * 1000 * 60,
-  });
+  const roleQuery = useQuery(getRoleQueryOptions());
+  const departmentQuery = useQuery(getDepartmentsOptions());
 
-  const departmentQuery = useQuery({
-    queryKey: departmentQueryKeys.getDepartments(),
-    queryFn: () => DepartmentClient.getDepartments(),
-    select: (data) => data.data.data,
-    staleTime: 60 * 1000 * 60,
-  });
-
-  const userCreateMutation = useMutation({
-    mutationFn: (value: {
-      uid: string;
-      name?: string;
-      roleId: number;
-      departmentId: number;
-    }) => {
-      return UserClient.createUser(value);
-    },
-    onSuccess: async (data) => {
-      await queryClient.invalidateQueries({
-        queryKey: userQueryKeys.all,
-      });
+  const userCreateMutation = useUserCreateMutation({
+    onSuccess: () => {
       toast.success('新增成功');
       form.reset();
       setOpen(false);
     },
-    onError: (error) => {
-      console.error(error);
+    onError: () => {
       toast.error('新增失敗');
     },
   });

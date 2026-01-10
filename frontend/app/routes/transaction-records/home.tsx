@@ -1,10 +1,5 @@
 import type { Route } from '../transaction-records/+types/home';
-import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  TransactionsClient,
-  transactionQueryKeys,
-} from '~/features/transactions';
 import { ServerDataTable } from '~/components/transaction-records/data-table';
 import { DataTablePagination } from '~/components/transaction-records/data-table-pagination';
 import {
@@ -16,7 +11,7 @@ import {
   type SortingState,
   type VisibilityState,
 } from '@tanstack/react-table';
-import useDebounce from '~/hooks/use-debounce';
+import { useDebounce } from '~/hooks';
 import { Input } from '~/components/ui/input';
 import { DateFormatter } from '~/lib/time-formatter';
 import { Button } from '~/components/ui/button';
@@ -26,8 +21,13 @@ import { Loader } from 'lucide-react';
 import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { SpecificTransactionDialog } from '~/components/transaction-records/specificTransaction-dialog';
+import { useQuery } from '@tanstack/react-query';
+import {
+  getTransactionsDetailOptions,
+  getTransactionsListOptions,
+} from '~/features/transactions/query';
 
-export function meta({ }: Route.MetaArgs) {
+export function meta({}: Route.MetaArgs) {
   return [
     { title: 'transaction-records' },
     { name: 'description', content: 'transaction-records page' },
@@ -63,6 +63,17 @@ export default function TransactionRecordsHome() {
     1000
   ) as ColumnFiltersState;
 
+  const transactionDetailQuery = useQuery(
+    getTransactionsDetailOptions(transactionId as string)
+  );
+  const transactionListQuery = useQuery(
+    getTransactionsListOptions({
+      pagination,
+      sorting,
+      filters: debounceFilters,
+    })
+  );
+
   useEffect(() => {
     if (location.state) {
       setColumnFilters([
@@ -76,58 +87,6 @@ export default function TransactionRecordsHome() {
       setColumnFilters([]);
     };
   }, [location.state]);
-
-  const transactionQuery = useQuery({
-    queryKey: [
-      'transactions',
-      {
-        page: pagination.pageIndex + 1,
-        pageSize: pagination.pageSize,
-        sorting: JSON.stringify(sorting),
-        filters: JSON.stringify(debounceFilters),
-      },
-    ],
-    queryFn: async () => {
-      const apiParams = new URLSearchParams();
-      apiParams.append('page', (pagination.pageIndex + 1).toString());
-      apiParams.append('pageSize', pagination.pageSize.toString());
-      if (sorting.length > 0) {
-        sorting.forEach((item) => {
-          apiParams.append('sort', `${item.id}:${item.desc ? 'desc' : 'asc'}`);
-        });
-      }
-      if (debounceFilters.length > 0) {
-        debounceFilters.forEach((item) => {
-          if (item.id === 'createdBy') {
-            apiParams.append('createdBy', `${item.value}`);
-          }
-          if (item.id === 'userName') {
-            apiParams.append('userName', `${item.value}`);
-          }
-          if (item.id === 'transactionId') {
-            apiParams.append('transactionId', `${item.value}`);
-          }
-        });
-      }
-      const { data } = await TransactionsClient.getTransactions({
-        params: apiParams,
-      });
-      return data;
-    },
-    select: (data) => data.data,
-  });
-
-  const specificTransactionQuery = useQuery({
-    queryKey: transactionQueryKeys.getOneTransaction(transactionId as string),
-    enabled: !!transactionId,
-    queryFn: async () => {
-      const { data } = await TransactionsClient.getOneTransaction(
-        transactionId as string
-      );
-      return data;
-    },
-    select: (data) => data.data,
-  });
 
   function clickDetailHandler(e: React.MouseEvent<HTMLButtonElement>) {
     const transactionId = e.currentTarget.dataset.transactionId;
@@ -187,7 +146,7 @@ export default function TransactionRecordsHome() {
   );
 
   const table = useReactTable({
-    data: transactionQuery?.data?.rows || [],
+    data: transactionListQuery?.data?.rows || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
@@ -198,11 +157,11 @@ export default function TransactionRecordsHome() {
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     state: { columnFilters, pagination, sorting, columnVisibility },
-    rowCount: transactionQuery?.data?.pagination.total,
+    rowCount: transactionListQuery?.data?.pagination.total,
   });
 
-  if (transactionQuery.isError) {
-    toast.error(transactionQuery.error.message);
+  if (transactionListQuery.isError) {
+    toast.error(transactionListQuery.error.message);
   }
 
   return (
@@ -238,14 +197,14 @@ export default function TransactionRecordsHome() {
             table?.getColumn('transactionId')?.setFilterValue(e.target.value)
           }
         />
-        {transactionQuery.isFetching && <Loader className="animate-spin" />}
+        {transactionListQuery.isFetching && <Loader className="animate-spin" />}
       </div>
-      {transactionQuery.isSuccess && <ServerDataTable table={table} />}
+      {transactionListQuery.isSuccess && <ServerDataTable table={table} />}
       <DataTablePagination table={table} />
       <SpecificTransactionDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        specificTransactionData={specificTransactionQuery.data}
+        specificTransactionData={transactionDetailQuery.data}
       />
     </>
   );

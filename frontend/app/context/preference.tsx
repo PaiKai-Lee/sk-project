@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect } from 'react';
-import { useLocalStorage } from '~/hooks/use-local-storage';
+import { createContext, useEffect } from 'react';
+import { useLocalStorage } from '~/hooks';
 import i18n, { resources } from '~/lib/i18n';
 export type Language = keyof typeof resources;
 export type Theme = 'light' | 'dark' | 'system';
@@ -11,7 +11,7 @@ interface IPreferenceContext {
   setTheme: (theme: Theme) => void;
 }
 
-const PreferenceProviderContext = createContext<IPreferenceContext>({
+export const PreferenceProviderContext = createContext<IPreferenceContext>({
   language: 'en',
   setLanguage: () => {},
   theme: 'system',
@@ -53,14 +53,4 @@ export function PreferenceProvider({
       {children}
     </PreferenceProviderContext.Provider>
   );
-}
-
-export function usePreference() {
-  const context = useContext(PreferenceProviderContext);
-
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an PreferenceProviderContext');
-  }
-
-  return context;
 }

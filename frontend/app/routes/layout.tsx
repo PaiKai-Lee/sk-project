@@ -1,36 +1,14 @@
 import { SidebarInset, SidebarProvider } from '~/components/ui/sidebar';
 import { AppSidebar } from '~/components/app-sidebar';
 import { Navigate, Outlet } from 'react-router';
-import { useQuery } from '@tanstack/react-query';
-import { AuthClient, authQueryKeys } from '~/features/auth';
-import { useEffect } from 'react';
 import { SiteHeader } from '~/components/site-header';
-import { useAuth } from '~/context/auth';
+import { useAuth } from '~/features/auth/hooks';
 import { Skeleton } from '~/components/ui/skeleton';
 import { AppVersion } from '~/components/app-version';
 export default function Layout() {
   const auth = useAuth();
-  const profileQuery = useQuery({
-    queryKey: authQueryKeys.getProfile(),
-    queryFn: async () => {
-      const { data } = await AuthClient.getProfile();
-      return data;
-    },
-    select: (rawData) => rawData.data,
-    retry: false,
-  });
 
-  useEffect(() => {
-    if (profileQuery.data) {
-      auth.setProfile(profileQuery.data);
-    }
-  }, [profileQuery.data]);
-
-  if (profileQuery.isError) {
-    return <Navigate to="/login" />;
-  }
-
-  if (profileQuery.isLoading) {
+  if (auth.isLoadingProfile) {
     return (
       <div className="flex flex-col flex-1 h-screen gap-4 p-4 lg:flex-row">
         <Skeleton className="h-screen hidden lg:block lg:basis-1/5" />
@@ -39,7 +17,7 @@ export default function Layout() {
     );
   }
 
-  if (profileQuery.isSuccess && profileQuery.data) {
+  if (auth.profile) {
     return (
       <SidebarProvider>
         <AppSidebar />
@@ -53,4 +31,6 @@ export default function Layout() {
       </SidebarProvider>
     );
   }
+
+  return <Navigate to="/login" />;
 }

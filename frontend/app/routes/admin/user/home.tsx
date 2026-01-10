@@ -1,6 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Route } from '../user/+types/home';
-import { UserClient, userQueryKeys } from '~/features/users';
 import { useMemo, useState } from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
 
@@ -26,23 +24,11 @@ import { CreateUserSheet } from '~/components/admin/user-management/create-user-
 import { EditUserSheet } from '~/components/admin/user-management/edit-user-sheet';
 import { useTranslation } from 'react-i18next';
 import type { IUser } from '~/features/users/types';
-// export type User = {
-//   id: string;
-//   uid: string;
-//   name: string;
-//   balance: number;
-//   role: {
-//     id: number;
-//     name: string;
-//   };
-//   department: {
-//     id: number;
-//     name: string;
-//   };
-//   isInit: boolean;
-//   isDisable: boolean;
-//   version: number;
-// };
+import { useQuery } from '@tanstack/react-query';
+import {
+  getUsersQueryOptions,
+  useUserStatusSwitchMutation,
+} from '~/features/users/query';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -53,7 +39,6 @@ export function meta({}: Route.MetaArgs) {
 
 export default function AdminPage() {
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
 
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -63,51 +48,25 @@ export default function AdminPage() {
     () => ['balance', 'department', 'role', 'isInit', 'isDisable', 'version'],
     []
   );
-  const userQuery = useQuery({
-    queryKey: userQueryKeys.getUsers({
+
+  const usersQuery = useQuery(
+    getUsersQueryOptions({
       showDisable: true,
       fields: selectedFields,
-    }),
-    queryFn: async () => {
-      const params = new URLSearchParams();
-      params.append('showDisable', 'true');
-      selectedFields.forEach((field) => {
-        params.append('fields', field);
-      });
-      const { data } = await UserClient.getUsers({
-        params,
-      });
-      return data;
-    },
-    select: (data) => data.data as IUser[],
-  });
+    })
+  );
 
-  const userSwitchMutation = useMutation({
-    mutationFn: (value: {
-      uid: string;
-      version: number;
-      isDisable: boolean;
-    }) => {
-      console.log(value);
-      const switchFunc = value.isDisable
-        ? UserClient.enableUser
-        : UserClient.disableUser;
-      return switchFunc(value.uid, value.version);
-    },
-    onSuccess: async (data) => {
-      await queryClient.invalidateQueries({
-        queryKey: userQueryKeys.all,
-      });
+  const userStatusSwitchMutation = useUserStatusSwitchMutation({
+    onSuccess: () => {
       toast.success(t('admin.switchSuccess'));
     },
-    onError: (error) => {
-      console.error(error);
+    onError: () => {
       toast.error(t('admin.switchFailed'));
     },
   });
 
   function handleConfirm() {
-    userSwitchMutation.mutate({
+    userStatusSwitchMutation.mutate({
       uid: selectedUser?.uid || '',
       version: selectedUser?.version || 0,
       isDisable: selectedUser?.isDisable || false,
@@ -263,7 +222,7 @@ export default function AdminPage() {
         setIsEditOpen={setIsEditOpen}
         selectedUser={selectedUser}
       />
-      <DataTable columns={columns} data={userQuery?.data || []} />
+      <DataTable columns={columns} data={usersQuery?.data || []} />
       <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

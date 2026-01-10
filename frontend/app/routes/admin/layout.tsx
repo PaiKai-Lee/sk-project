@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from 'react-router';
-import { useAuth } from '~/context/auth';
+import { useAuth } from '~/features/auth/hooks';
 
 export default function AdminLayout() {
   const auth = useAuth();
