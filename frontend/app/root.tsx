@@ -17,6 +17,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { LoaderPinwheel } from 'lucide-react';
 import { queryClient } from './lib/query-client';
 import './lib/i18n';
+import { AppVersion } from './components/app-version';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -59,6 +60,7 @@ export default function App() {
     <PreferenceProvider>
       <QueryClientProvider client={queryClient}>
         <Outlet />
+        <AppVersion />
         {process.env.NODE_ENV !== 'production' && (
           <ReactQueryDevtools initialIsOpen={false} />
         )}

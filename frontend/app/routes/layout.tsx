@@ -4,7 +4,6 @@ import { Navigate, Outlet } from 'react-router';
 import { SiteHeader } from '~/components/site-header';
 import { useAuth } from '~/features/auth/hooks';
 import { Skeleton } from '~/components/ui/skeleton';
-import { AppVersion } from '~/components/app-version';
 export default function Layout() {
   const auth = useAuth();
 
@@ -27,7 +26,6 @@ export default function Layout() {
             <Outlet />
           </div>
         </SidebarInset>
-        <AppVersion />
       </SidebarProvider>
     );
   }
