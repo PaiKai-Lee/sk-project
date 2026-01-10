@@ -31,8 +31,8 @@ import { Text } from '../ui/typography';
 import { Label } from '../ui/label';
 import { Switch } from '../ui/switch';
 import { useTranslation } from 'react-i18next';
-import { overviewQueryKeys } from '~/features/overview';
-import { userQueryKeys } from '~/features/users';
+import { userQueryKeys } from '~/features/users/query';
+import { overviewQueryKeys } from '~/features/overview/query';
 
 const formSchema = z.object({
   remark: z.string().max(30, { message: '備註長度不能超過 30 字' }),

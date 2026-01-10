@@ -15,7 +15,8 @@ import { DataTablePagination } from '~/components/me/balance-logs/data-table-pag
 import { DateFormatter } from '~/lib/time-formatter';
 import { Badge } from '~/components/ui/badge';
 import { Separator } from '~/components/ui/separator';
-import { useBalanceLogsQuery, useMeQuery } from '~/hooks/queries/use-me-query';
+import { useQuery } from '@tanstack/react-query';
+import { getMeBalanceOptions, getMeQueryOptions } from '~/features/me/query';
 
 export function meta({}: Route.MetaArgs) {
   const { t } = useTranslation();
@@ -32,11 +33,13 @@ export default function ProfilePage() {
     pageSize: 10,
   });
 
-  const meQuery = useMeQuery();
-  const balanceLogsQuery = useBalanceLogsQuery({
-    page: pagination.pageIndex + 1,
-    pageSize: pagination.pageSize,
-  });
+  const meQuery = useQuery(getMeQueryOptions());
+  const meBalanceLogsQuery = useQuery(
+    getMeBalanceOptions({
+      page: pagination.pageIndex + 1,
+      pageSize: pagination.pageSize,
+    })
+  );
 
   const columns = useMemo<ColumnDef<IBalanceLog>[]>(
     () => [
@@ -59,7 +62,7 @@ export default function ProfilePage() {
   );
 
   const table = useReactTable({
-    data: balanceLogsQuery.data?.balanceLogs || [],
+    data: meBalanceLogsQuery.data?.balanceLogs || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
@@ -67,7 +70,7 @@ export default function ProfilePage() {
     state: {
       pagination,
     },
-    rowCount: balanceLogsQuery.data?.pagination.total,
+    rowCount: meBalanceLogsQuery.data?.pagination.total,
   });
 
   if (meQuery.isLoading || !meQuery.data) {

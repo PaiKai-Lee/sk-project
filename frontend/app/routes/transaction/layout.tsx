@@ -2,21 +2,20 @@ import { Outlet } from 'react-router';
 import { toast } from 'sonner';
 import { TransactionProvider } from '~/context/transaction';
 import { Skeleton } from '~/components/ui/skeleton';
-import { useUsersQuery } from '~/hooks/queries/use-users-query';
+import { useQuery } from '@tanstack/react-query';
+import { getUsersQueryOptions } from '~/features/users/query';
 
 export default function TransactionLayout() {
-  const usersQuery = useUsersQuery({
-    params: {
+  const usersQuery = useQuery({
+    ...getUsersQueryOptions({
       showDisable: false,
       fields: ['balance'],
       sorting: [{ id: 'balance', desc: true }],
-    },
-    options: {
-      refetchOnWindowFocus: false,
-    },
+    }),
+    refetchOnWindowFocus: false,
   });
 
-  if (usersQuery.isLoading) {
+  if (usersQuery.isPending) {
     return (
       <div className="flex flex-col gap-5 lg:flex-row">
         <div className="basis-3/5">

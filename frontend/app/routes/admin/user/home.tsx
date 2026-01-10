@@ -24,8 +24,11 @@ import { CreateUserSheet } from '~/components/admin/user-management/create-user-
 import { EditUserSheet } from '~/components/admin/user-management/edit-user-sheet';
 import { useTranslation } from 'react-i18next';
 import type { IUser } from '~/features/users/types';
-import { useUsersQuery } from '~/hooks/queries/use-users-query';
-import { useUserStatusSwitchMutation } from '~/hooks/mutations/use-users-mutation';
+import { useQuery } from '@tanstack/react-query';
+import {
+  getUsersQueryOptions,
+  useUserStatusSwitchMutation,
+} from '~/features/users/query';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -45,12 +48,13 @@ export default function AdminPage() {
     () => ['balance', 'department', 'role', 'isInit', 'isDisable', 'version'],
     []
   );
-  const usersQuery = useUsersQuery({
-    params: {
+
+  const usersQuery = useQuery(
+    getUsersQueryOptions({
       showDisable: true,
       fields: selectedFields,
-    },
-  });
+    })
+  );
 
   const userStatusSwitchMutation = useUserStatusSwitchMutation({
     onSuccess: () => {

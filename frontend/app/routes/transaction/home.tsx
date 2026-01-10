@@ -19,7 +19,6 @@ import { useOutletContext } from 'react-router';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { IUser } from '~/features/users';
-import type { IResponseData } from '~/features/types';
 
 const amountInputSchema = z
   .number({ message: 'must be a number' })

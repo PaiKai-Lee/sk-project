@@ -2,7 +2,7 @@ import { SidebarInset, SidebarProvider } from '~/components/ui/sidebar';
 import { AppSidebar } from '~/components/app-sidebar';
 import { Navigate, Outlet } from 'react-router';
 import { SiteHeader } from '~/components/site-header';
-import { useAuth } from '~/hooks';
+import { useAuth } from '~/features/auth/hooks';
 import { Skeleton } from '~/components/ui/skeleton';
 import { AppVersion } from '~/components/app-version';
 export default function Layout() {

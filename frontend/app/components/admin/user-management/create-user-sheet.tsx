@@ -34,9 +34,10 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 import { Separator } from '~/components/ui/separator';
 import { useTranslation } from 'react-i18next';
-import { useDepartmentQuery } from '~/hooks/queries/use-department-query';
-import { useRoleQuery } from '~/hooks/queries/use-role-query';
-import { useUserCreateMutation } from '~/hooks/mutations/use-users-mutation';
+import { useUserCreateMutation } from '~/features/users/query';
+import { getDepartmentsOptions } from '~/features/departments/query';
+import { getRoleQueryOptions } from '~/features/roles/query';
+import { useQuery } from '@tanstack/react-query';
 
 const formSchema = z.object({
   uid: z.string({ message: '格式錯誤' }).min(1, { message: 'uid不得為空' }),
@@ -54,8 +55,8 @@ export function CreateUserSheet() {
   const FORM_ID = 'create-user-form';
   const [open, setOpen] = useState(false);
 
-  const roleQuery = useRoleQuery();
-  const departmentQuery = useDepartmentQuery();
+  const roleQuery = useQuery(getRoleQueryOptions());
+  const departmentQuery = useQuery(getDepartmentsOptions());
 
   const userCreateMutation = useUserCreateMutation({
     onSuccess: () => {

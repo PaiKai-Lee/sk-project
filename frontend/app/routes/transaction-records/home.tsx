@@ -21,10 +21,11 @@ import { Loader } from 'lucide-react';
 import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { SpecificTransactionDialog } from '~/components/transaction-records/specificTransaction-dialog';
+import { useQuery } from '@tanstack/react-query';
 import {
-  useTransactionDetailQuery,
-  useTransactionListQuery,
-} from '~/hooks/queries/use-transaction-query';
+  getTransactionsDetailOptions,
+  getTransactionsListOptions,
+} from '~/features/transactions/query';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -62,14 +63,16 @@ export default function TransactionRecordsHome() {
     1000
   ) as ColumnFiltersState;
 
-  const specificTransactionQuery = useTransactionDetailQuery(
-    transactionId as string
+  const transactionDetailQuery = useQuery(
+    getTransactionsDetailOptions(transactionId as string)
   );
-  const transactionQuery = useTransactionListQuery({
-    pagination,
-    sorting,
-    filters: debounceFilters,
-  });
+  const transactionListQuery = useQuery(
+    getTransactionsListOptions({
+      pagination,
+      sorting,
+      filters: debounceFilters,
+    })
+  );
 
   useEffect(() => {
     if (location.state) {
@@ -143,7 +146,7 @@ export default function TransactionRecordsHome() {
   );
 
   const table = useReactTable({
-    data: transactionQuery?.data?.rows || [],
+    data: transactionListQuery?.data?.rows || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
@@ -154,11 +157,11 @@ export default function TransactionRecordsHome() {
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     state: { columnFilters, pagination, sorting, columnVisibility },
-    rowCount: transactionQuery?.data?.pagination.total,
+    rowCount: transactionListQuery?.data?.pagination.total,
   });
 
-  if (transactionQuery.isError) {
-    toast.error(transactionQuery.error.message);
+  if (transactionListQuery.isError) {
+    toast.error(transactionListQuery.error.message);
   }
 
   return (
@@ -194,14 +197,14 @@ export default function TransactionRecordsHome() {
             table?.getColumn('transactionId')?.setFilterValue(e.target.value)
           }
         />
-        {transactionQuery.isFetching && <Loader className="animate-spin" />}
+        {transactionListQuery.isFetching && <Loader className="animate-spin" />}
       </div>
-      {transactionQuery.isSuccess && <ServerDataTable table={table} />}
+      {transactionListQuery.isSuccess && <ServerDataTable table={table} />}
       <DataTablePagination table={table} />
       <SpecificTransactionDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        specificTransactionData={specificTransactionQuery.data}
+        specificTransactionData={transactionDetailQuery.data}
       />
     </>
   );

@@ -34,9 +34,10 @@ import { useEffect } from 'react';
 import { Separator } from '~/components/ui/separator';
 import { useTranslation } from 'react-i18next';
 import type { IUser } from '~/features/users';
-import { useRoleQuery } from '~/hooks/queries/use-role-query';
-import { useDepartmentQuery } from '~/hooks/queries/use-department-query';
-import { useUserEditMutation } from '~/hooks/mutations/use-users-mutation';
+import { useQuery } from '@tanstack/react-query';
+import { getDepartmentsOptions } from '~/features/departments/query';
+import { getRoleQueryOptions } from '~/features/roles/query';
+import { useUserEditMutation } from '~/features/users/query';
 
 const formSchema = z.object({
   uid: z.string({ message: '格式錯誤' }).min(1, { message: 'uid不得為空' }),
@@ -58,8 +59,8 @@ export function EditUserSheet(props: {
   const { t } = useTranslation();
   const FORM_ID = 'edit-user-form';
 
-  const roleQuery = useRoleQuery();
-  const departmentQuery = useDepartmentQuery();
+  const roleQuery = useQuery(getRoleQueryOptions());
+  const departmentQuery = useQuery(getDepartmentsOptions());
 
   const userEditMutation = useUserEditMutation({
     onSuccess: () => {

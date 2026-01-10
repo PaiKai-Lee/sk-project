@@ -1,25 +1,31 @@
-import { useQuery } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
 import {
   type ColumnFiltersState,
   type PaginationState,
   type SortingState,
 } from '@tanstack/react-table';
-import {
-  transactionQueryKeys,
-  TransactionsClient,
-} from '~/features/transactions';
+import { TransactionsClient } from './api';
 
-export function useTransactionDetailQuery(trxId: string) {
-  return useQuery({
-    queryKey: transactionQueryKeys.getOneTransaction(trxId as string),
+export const transactionQueryKeys = {
+  all: ['transactions'],
+  getTransactions: (params?: any) => [
+    ...transactionQueryKeys.all,
+    'list',
+    params,
+  ],
+  getOneTransaction: (id: string) => [
+    ...transactionQueryKeys.all,
+    'detail',
+    id,
+  ],
+} as const;
+
+export function getTransactionsDetailOptions(trxId: string) {
+  return queryOptions({
+    queryKey: transactionQueryKeys.getOneTransaction(trxId),
+    queryFn: () => TransactionsClient.getOneTransaction(trxId),
     enabled: !!trxId,
-    queryFn: async () => {
-      const { data } = await TransactionsClient.getOneTransaction(
-        trxId as string
-      );
-      return data;
-    },
-    select: (data) => data.data,
+    select: (result) => result.data.data,
     staleTime: 1000 * 60,
   });
 }
@@ -30,9 +36,9 @@ type GetTransactionListParams = {
   filters: ColumnFiltersState; // already debounced
 };
 
-export function useTransactionListQuery(params: GetTransactionListParams) {
+export function getTransactionsListOptions(params: GetTransactionListParams) {
   const { pagination, sorting, filters } = params;
-  return useQuery({
+  return queryOptions({
     queryKey: transactionQueryKeys.getTransactions({
       page: params.pagination.pageIndex + 1,
       pageSize: params.pagination.pageSize,
@@ -68,6 +74,6 @@ export function useTransactionListQuery(params: GetTransactionListParams) {
         params: searchParams,
       });
     },
-    select: ({ data }) => data.data,
+    select: (result) => result.data.data,
   });
 }

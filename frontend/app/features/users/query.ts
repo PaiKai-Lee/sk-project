@@ -1,5 +1,51 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { UserClient, userQueryKeys } from '~/features/users';
+import {
+  useMutation,
+  useQueryClient,
+  queryOptions,
+} from '@tanstack/react-query';
+import { UserClient } from './api';
+import { type SortingState } from '@tanstack/react-table';
+
+export const userQueryKeys = {
+  all: ['users'],
+  getUsers: (params?: any) => [...userQueryKeys.all, 'list', params],
+  getOneUser: (id: string) => [...userQueryKeys.all, 'detail', id],
+} as const;
+
+type GetUsersParams = {
+  showDisable?: boolean;
+  fields?: string[];
+  sorting?: SortingState;
+};
+
+export function getUsersQueryOptions(params?: GetUsersParams) {
+  return queryOptions({
+    queryKey: userQueryKeys.getUsers(params),
+    queryFn: async () => {
+      if (!params) return await UserClient.getUsers();
+      const searchParams = new URLSearchParams();
+      if (params.showDisable !== undefined)
+        searchParams.append('showDisable', params.showDisable.toString());
+      if (params.fields) {
+        params.fields.forEach((field) => {
+          searchParams.append('fields', field);
+        });
+      }
+      if (params.sorting) {
+        params.sorting.forEach((item) => {
+          searchParams.append(
+            'sort',
+            `${item.id}:${item.desc ? 'desc' : 'asc'}`
+          );
+        });
+      }
+      return await UserClient.getUsers({
+        params: searchParams,
+      });
+    },
+    select: (result) => result.data.data,
+  });
+}
 
 export function useUserCreateMutation({
   onSuccess,

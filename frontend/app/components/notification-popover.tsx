@@ -8,69 +8,36 @@ import {
 } from '~/components/ui/card';
 import { ScrollArea } from '~/components/ui/scroll-area';
 import { cn } from '~/lib/utils';
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
 import { Fragment, useState } from 'react';
 import { DateFormatter } from '~/lib/time-formatter';
-import { UserNotificationClient } from '~/features/user-notifications';
-import type {
-  IUserNotification,
-  IUserNotificationsResponse,
-} from '~/features/user-notifications';
-import { userNotificationQueryKeys } from '~/features/user-notifications';
-import type { AxiosError } from 'axios';
+import type { IUserNotification } from '~/features/user-notifications';
 import { Bell } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from './ui/button';
 import { Text } from './ui/typography';
+import {
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
+import {
+  userNotificationQueryKeys,
+  getUnreadNotificationsCountOptions,
+  getUserNotificationsOptions,
+  useMarkAllAsReadMutation,
+} from '~/features/user-notifications/query';
 
 export function NotificationPopover() {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-  const userNotificationQuery = useInfiniteQuery<
-    IUserNotificationsResponse['data']['data'],
-    AxiosError
-  >({
-    queryKey: userNotificationQueryKeys.getUserNotifications(),
-    queryFn: async ({ pageParam }) => {
-      const params = new URLSearchParams();
-      params.append('limit', '5'); // Set a default limit for pagination
-      if (pageParam) {
-        params.append('cursor', String(pageParam));
-      }
-
-      const { data } = await UserNotificationClient.getUserNotifications({
-        params,
-      });
-      return data.data;
-    },
-    getNextPageParam: (lastPage) => lastPage.cursorPagination.nextCursor,
-    initialPageParam: undefined,
+  const userNotificationQuery = useInfiniteQuery(getUserNotificationsOptions());
+  const unReadNotificationCountQuery = useQuery({
+    ...getUnreadNotificationsCountOptions(),
+    refetchInterval: 60 * 1000,
   });
 
-  const { data: unReadCount } = useQuery({
-    queryKey: userNotificationQueryKeys.getUnreadNotificationsCount(),
-    queryFn: async () => {
-      const { data } =
-        await UserNotificationClient.getUnreadNotificationsCount();
-      return data.data;
-    },
-    refetchInterval: 60 * 1000, // Refresh every minute
-  });
-
-  const markAllAsReadMutation = useMutation({
-    mutationFn: () => UserNotificationClient.markAllNotificationsAsRead(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: userNotificationQueryKeys.getUnreadNotificationsCount(),
-      });
-    },
-  });
+  const markAllAsReadMutation = useMarkAllAsReadMutation();
 
   const handleOpenChange = (open: boolean) => {
     if (open) {
@@ -78,7 +45,11 @@ export function NotificationPopover() {
         queryKey: userNotificationQueryKeys.getUserNotifications(),
       });
     }
-    if (open && unReadCount && unReadCount > 0) {
+    if (
+      open &&
+      unReadNotificationCountQuery.data &&
+      unReadNotificationCountQuery.data > 0
+    ) {
       markAllAsReadMutation.mutate();
     }
     setOpen(open);
@@ -90,7 +61,8 @@ export function NotificationPopover() {
         <Button variant="ghost" size="icon" className="cursor-pointer">
           <Bell
             className={cn(
-              unReadCount && unReadCount > 0
+              unReadNotificationCountQuery.data &&
+                unReadNotificationCountQuery?.data > 0
                 ? 'size-6 animate-bounce text-destructive'
                 : 'size-5'
             )}

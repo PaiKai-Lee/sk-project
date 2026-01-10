@@ -22,8 +22,10 @@ import { Button } from '~/components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { RelativeTimeFormatter } from '~/lib/time-formatter';
-import { useOverviewQuery } from '~/hooks/queries/use-overview-query';
-import { useTransactionDetailQuery } from '~/hooks/queries/use-transaction-query';
+import { useQuery } from '@tanstack/react-query';
+import { getOverviewOptions } from '~/features/overview/query';
+import { getTransactionsDetailOptions } from '~/features/transactions/query';
+
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'overview' },
@@ -37,9 +39,9 @@ export default function OverviewPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [transactionId, setTransactionId] = useState<string | null>(null);
 
-  const overviewQuery = useOverviewQuery();
-  const specificTransactionQuery = useTransactionDetailQuery(
-    transactionId as string
+  const overviewQuery = useQuery(getOverviewOptions());
+  const transactionDetailQuery = useQuery(
+    getTransactionsDetailOptions(transactionId as string)
   );
 
   function handleTransactionClick(transactionId: string) {
@@ -153,7 +155,7 @@ export default function OverviewPage() {
       <SpecificTransactionDialog
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
-        specificTransactionData={specificTransactionQuery.data}
+        specificTransactionData={transactionDetailQuery.data}
       />
     </>
   );

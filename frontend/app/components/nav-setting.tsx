@@ -1,5 +1,6 @@
 import { Languages, LogOut } from 'lucide-react';
-import { useAuth, usePreference } from '~/hooks';
+import { usePreference } from '~/hooks';
+import { useAuth } from '~/features/auth/hooks';
 import type { Language } from '~/context/preference';
 
 import {

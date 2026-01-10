@@ -1,12 +1,16 @@
 import { useMemo } from 'react';
-import { useAuthProfileQuery } from './queries/use-auth-query';
+import { useQuery } from '@tanstack/react-query';
 import {
+  getAuthProfileOptions,
   useAuthLoginMutation,
   useAuthLogoutMutation,
-} from './mutations/use-auth-mutation';
+} from '../query';
 
 export const useAuth = () => {
-  const authProfileQuery = useAuthProfileQuery();
+  const authProfileQuery = useQuery({
+    ...getAuthProfileOptions(),
+    retry: false,
+  });
   const authLoginMutation = useAuthLoginMutation();
   const authLogoutMutation = useAuthLogoutMutation();
 

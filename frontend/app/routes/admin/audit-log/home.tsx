@@ -14,13 +14,14 @@ import { useLocation } from 'react-router';
 import { ServerDataTable } from '~/components/admin/audit-log/server-data-table';
 import { Button } from '~/components/ui/button';
 import { Text } from '~/components/ui/typography';
-import type { IOneAudit } from '~/features/audit-logs';
 import { useDebounce } from '~/hooks';
 import { DateFormatter } from '~/lib/time-formatter';
 import { Input } from '~/components/ui/input';
 import { DataTablePagination } from '~/components/transaction-records/data-table-pagination';
 import { toast } from 'sonner';
-import { useAuditLogQuery } from '~/hooks/queries/use-audit-log-query';
+import { useQuery } from '@tanstack/react-query';
+import type { IOneAudit } from '~/features/audit-logs';
+import { getAuditLogsOptions } from '~/features/audit-logs/query';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -48,10 +49,13 @@ export default function auditLogPage() {
     1000
   ) as ColumnFiltersState;
 
-  const auditLogQuery = useAuditLogQuery({
-    pagination,
-    sorting,
-    filters: debounceFilters,
+  const auditLogQuery = useQuery({
+    ...getAuditLogsOptions({
+      pagination,
+      sorting,
+      filters: debounceFilters,
+    }),
+    select: (data) => data.data,
   });
 
   const columns = useMemo<ColumnDef<IOneAudit>[]>(

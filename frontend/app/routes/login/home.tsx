@@ -3,7 +3,8 @@ import { LoginForm } from '~/components/login/login-form';
 import { toast } from 'sonner';
 import { tokenManager } from '~/lib/token-manager';
 import { redirect } from 'react-router';
-import { AuthClient, authQueryKeys } from '~/features/auth';
+import { AuthClient } from '~/features/auth';
+import { authQueryKeys } from '~/features/auth/query';
 import { queryClient } from '~/lib/query-client';
 import { useEffect } from 'react';
 
@@ -24,7 +25,6 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
     queryClient.setQueryData(authQueryKeys.getProfile(), profile);
     return redirect('/');
   } catch (error) {
-    console.log('error');
     console.error(error);
     return { error: '登入失敗' };
   }

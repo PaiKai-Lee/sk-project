@@ -22,7 +22,8 @@ import {
 import { NavSetting } from '~/components/nav-setting';
 import { Link, useLocation } from 'react-router';
 import { useEffect } from 'react';
-import { useAuth, useIsMobile } from '~/hooks';
+import { useIsMobile } from '~/hooks';
+import { useAuth } from '~/features/auth/hooks';
 import { useTranslation } from 'react-i18next';
 
 // TODO 後續群組處理 管理頁面,交易頁面
