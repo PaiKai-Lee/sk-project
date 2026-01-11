@@ -17,6 +17,9 @@ import { Badge } from '~/components/ui/badge';
 import { Separator } from '~/components/ui/separator';
 import { useQuery } from '@tanstack/react-query';
 import { getMeBalanceOptions, getMeQueryOptions } from '~/features/me/query';
+import { Button } from '~/components/ui/button';
+import { SpecificTransactionDialog } from '~/components/transaction-records/specificTransaction-dialog';
+import { getTransactionsDetailOptions } from '~/features/transactions/query';
 
 export function meta({}: Route.MetaArgs) {
   const { t } = useTranslation();
@@ -28,10 +31,16 @@ export function meta({}: Route.MetaArgs) {
 
 export default function ProfilePage() {
   const { t } = useTranslation();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [transactionId, setTransactionId] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
+
+  const transactionDetailQuery = useQuery(
+    getTransactionsDetailOptions(transactionId as string)
+  );
 
   const meQuery = useQuery(getMeQueryOptions());
   const meBalanceLogsQuery = useQuery(
@@ -40,6 +49,11 @@ export default function ProfilePage() {
       pageSize: pagination.pageSize,
     })
   );
+
+  function handleTransactionClick(transactionId: string) {
+    setIsDialogOpen(true);
+    setTransactionId(transactionId);
+  }
 
   const columns = useMemo<ColumnDef<IBalanceLog>[]>(
     () => [
@@ -50,6 +64,26 @@ export default function ProfilePage() {
       {
         accessorKey: 'currentBalance',
         header: () => t('profile.currentBalance'),
+      },
+      {
+        accessorKey: 'reference',
+        header: () => t('profile.reference'),
+        cell: (info) => {
+          if (info.row.original.reference?.startsWith('TRX-')) {
+            return (
+              <Button
+                variant="link"
+                className="p-0 pr-2 cursor-pointer"
+                onClick={() =>
+                  handleTransactionClick(info.row.original.reference as string)
+                }
+              >
+                {info.row.original.reference}
+              </Button>
+            );
+          }
+          return info.row.original.reference;
+        },
       },
       {
         accessorKey: 'createdAt',
@@ -139,6 +173,11 @@ export default function ProfilePage() {
           <DataTablePagination table={table} />
         </CardContent>
       </Card>
+      <SpecificTransactionDialog
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        specificTransactionData={transactionDetailQuery.data}
+      />
     </div>
   );
 }

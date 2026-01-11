@@ -28,6 +28,7 @@ export interface IBalanceLog {
   id: number;
   value: number;
   currentBalance: number;
+  reference: string | null;
   createdAt: string;
 }
 
