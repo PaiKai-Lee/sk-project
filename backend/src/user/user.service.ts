@@ -40,7 +40,7 @@ export class UserService {
     private readonly prisma: PrismaService,
     private readonly bcryptService: BcryptService,
     private readonly eventEmitter: EventEmitter2,
-  ) { }
+  ) {}
 
   async getUsers(getUsersQueryDto: GetUsersQueryDto) {
     this.logger.debug('getUsers');
@@ -377,11 +377,7 @@ export class UserService {
 
   async getUserBalanceLogs(uid: string, getBalanceLogsDto: GetBalanceLogsDto) {
     this.logger.debug(`getUserBalanceLogs: ${uid}`);
-    const {
-      page = 1,
-      pageSize = 10,
-      all = false
-    } = getBalanceLogsDto;
+    const { page = 1, pageSize = 10, all = false } = getBalanceLogsDto;
 
     const skip = all ? undefined : (page - 1) * pageSize;
     const take = all ? undefined : pageSize;
@@ -412,6 +408,7 @@ export class UserService {
           id: true,
           value: true,
           currentBalance: true,
+          reference: true,
           createdAt: true,
         },
       }),

@@ -156,7 +156,7 @@ export class TransactionService {
     const createTransactionResult = await this.prisma.$transaction(
       async (tx) => {
         const userBalanceLog: Prisma.UserBalanceLogCreateManyInput[] = [];
-
+        const transactionId = this.transactionHelper.generateTrxId();
         for (const item of createTransactionItemsDto) {
           const user = await tx.user.update({
             where: {
@@ -177,9 +177,9 @@ export class TransactionService {
             uid: user.uid,
             value: item.value,
             currentBalance: user.balance,
+            reference: transactionId,
           });
         }
-        const transactionId = this.transactionHelper.generateTrxId();
         // 建立清單跟清單項目
         await tx.transaction.create({
           data: {
