@@ -1,0 +1,26 @@
+meta {
+  name: Enable User
+  type: http
+  seq: 5
+}
+
+patch {
+  url: http://localhost:3000/api/users/:uid/enable
+  body: json
+  auth: inherit
+}
+
+params:path {
+  uid: ts001
+}
+
+body:json {
+  {
+    "version": 5
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

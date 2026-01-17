@@ -1,0 +1,28 @@
+meta {
+  name: Login
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "uid": "ts01",
+    "password": "66666666"
+  }
+}
+
+vars:post-response {
+  access-token: res.body.data.accessToken
+  refresh-token: res.body.data.refreshToken
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

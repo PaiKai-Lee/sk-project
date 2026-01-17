@@ -1,0 +1,21 @@
+meta {
+  name: Logout
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/auth/logout
+  body: none
+  auth: inherit
+}
+
+script:post-response {
+  bru.deleteVar('access-token');
+  bru.deleteVar('refresh-token');
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

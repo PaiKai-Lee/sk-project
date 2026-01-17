@@ -1,0 +1,20 @@
+meta {
+  name: Mark One Notification
+  type: http
+  seq: 4
+}
+
+patch {
+  url: http://localhost:3000/api/user-notifications/:id/mark-read
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: 2
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

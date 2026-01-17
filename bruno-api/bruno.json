@@ -1,0 +1,15 @@
+{
+  "version": "1",
+  "name": "Sk Project",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ],
+  "size": 0.007798194885253906,
+  "filesCount": 43,
+  "presets": {
+    "requestType": "http",
+    "requestUrl": "{{baseUrl}}"
+  }
+}
