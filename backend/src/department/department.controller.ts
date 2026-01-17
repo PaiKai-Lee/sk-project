@@ -7,7 +7,7 @@ export class DepartmentController {
   constructor(private readonly departmentService: DepartmentService) {}
 
   @Get()
-  async getRoles() {
+  async getDepartments() {
     return this.departmentService.getDepartments();
   }
 }

@@ -38,7 +38,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('profile')
-  async getProfile() {
+  getProfile() {
     return this.authService.getProfile();
   }
 }
