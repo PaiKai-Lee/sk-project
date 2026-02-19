@@ -4,26 +4,29 @@
 
 ## 功能特色
 
-- **前端**：使用 Vite 進行建置，React 和 TypeScript 開發，整合了 Tailwind CSS & Shadcn UI Library 和國際化 i18n。
-- **後端**：使用 NestJS 框架，TypeScript 編寫，透過 Prisma ORM 與資料庫進行互動。
-- **驗證機制**：包含完整的 JWT 登入、權限驗證 (RBAC) 和路由守衛。
-- **資料庫**：使用 Prisma 進行資料庫遷移和種子資料填充。
+公司內部使用的重購管理工具，主要用於處理同事之間因公務或團體消費所產生的墊付款項。
+
+使用者可以在系統中建立消費紀錄，清楚記錄每筆支出內容與分攤對象，並透過系統自動計算與扣款，讓帳務管理更加透明且有效率。
+
+- 簡化同事之間的墊款與分帳流程
+- 提供清楚的消費紀錄與查詢功能
 
 ## 技術堆疊
 
-- **前端**:
+- **前端**：使用 Vite 進行建置，React 和 TypeScript 開發，整合了 Tailwind CSS & Shadcn UI Library 和國際化 i18n。
   - React
   - Vite
   - TypeScript
   - React Router v7
   - Tailwind CSS / Shadcn UI
   - i18next
-
-- **後端**:
+- **後端**：使用 NestJS 框架，TypeScript 編寫，透過 Prisma ORM 與資料庫進行互動。
   - NestJS
   - TypeScript
   - Prisma
   - JWT (JSON Web Token)
+- **驗證機制**：包含完整的 JWT 登入、權限驗證 (RBAC) 和路由守衛。
+- **資料庫**：使用 Prisma 進行資料庫遷移和種子資料填充。
 
 ## 系統需求
 
