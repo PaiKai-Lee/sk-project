@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { IOneTransaction } from '~/features/transactions';
 import { Skeleton } from '../ui/skeleton';
@@ -18,6 +19,10 @@ import {
 } from '../ui/table';
 import { Text } from '../ui/typography';
 import { DateFormatter } from '~/lib/time-formatter';
+import { Button } from '../ui/button';
+import { ClipboardCopy } from 'lucide-react';
+import { toast } from 'sonner';
+import { useImageClipboard } from '~/hooks/use-clipboard';
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -27,30 +32,49 @@ type Props = {
 export function SpecificTransactionDialog(props: Props) {
   const { open, onOpenChange, specificTransactionData } = props;
   const { t } = useTranslation();
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const { imageClipboard, status } = useImageClipboard(dialogRef, {
+    onSuccess: () => toast.success(t('common.copySuccess')),
+    onError: () => toast.error(t('common.copyFailed')),
+  });
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto md:max-w-2xl lg:max-w-3xl">
-        <DialogHeader>
-          <DialogTitle>{t('transaction.transactionDetails')}</DialogTitle>
-          <DialogDescription asChild>
-            <div className="flex flex-col gap-1 lg:flex-row">
-              <Text className="md:basis-1/2">
-                <strong>{t('transaction.transactionId')}:</strong>{' '}
-                {specificTransactionData?.transactionId}
-              </Text>
-              <Text className="md:basis-1/2">
-                <strong>{t('transaction.remark')}:</strong>{' '}
-                {specificTransactionData?.remark}
-              </Text>
+        <div ref={dialogRef} className="bg-background">
+          <DialogHeader>
+            <div className="flex items-center space-x-4">
+              <DialogTitle>{t('transaction.transactionDetails')}</DialogTitle>
+              <Button
+                variant="outline"
+                size="icon"
+                className="cursor-pointer"
+                disabled={status !== 'initial'}
+                onClick={imageClipboard}
+              >
+                <ClipboardCopy />
+              </Button>
             </div>
-          </DialogDescription>
-        </DialogHeader>
-        {!specificTransactionData && (
-          <Skeleton className="h-[100px] w-full animate-pulse" />
-        )}
-        {specificTransactionData && (
-          <TransactionDetails specificTransaction={specificTransactionData} />
-        )}
+            <DialogDescription asChild>
+              <div className="flex flex-col gap-1 lg:flex-row">
+                <Text className="md:basis-1/2">
+                  <strong>{t('transaction.transactionId')}:</strong>{' '}
+                  {specificTransactionData?.transactionId}
+                </Text>
+                <Text className="md:basis-1/2">
+                  <strong>{t('transaction.remark')}:</strong>{' '}
+                  {specificTransactionData?.remark}
+                </Text>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          {!specificTransactionData && (
+            <Skeleton className="h-[100px] w-full animate-pulse" />
+          )}
+          {specificTransactionData && (
+            <TransactionDetails specificTransaction={specificTransactionData} />
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   );

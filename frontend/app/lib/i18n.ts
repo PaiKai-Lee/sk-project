@@ -11,6 +11,8 @@ export const resources = {
         changeLanguage: 'Change Language',
         account: 'Account',
         profile: 'Profile',
+        copySuccess: 'Copy success',
+        copyFailed: 'Copy failed',
       },
       auth: {
         login: 'Login',
@@ -134,6 +136,8 @@ export const resources = {
         changeLanguage: '語言切換',
         account: '帳戶',
         profile: '個人資料',
+        copySuccess: '複製成功',
+        copyFailed: '複製失敗',
       },
       auth: {
         login: '登入',
