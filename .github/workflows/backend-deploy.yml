@@ -60,6 +60,17 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_PORT || 22 }}
           script: |
+            # 手動喚醒 fnm 環境
+            # 1. 將 fnm 的預設安裝路徑加入 PATH (確保系統找得到 fnm 指令)
+            export PATH="$HOME/.local/share/fnm:$PATH"
+            
+            # 2. 執行 fnm 初始化，載入 Node.js 與 npm
+            eval "`fnm env`"
+
+            # 驗證是否成功載入 (在 GitHub Actions Log 中印出版本號)
+            echo "Node version:" && node -v
+            echo "NPM version:" && npm -v
+
             PROJECT_PATH="/var/www/${{ secrets.PROJECT_NAME }}/backend"
             cd $PROJECT_PATH
             

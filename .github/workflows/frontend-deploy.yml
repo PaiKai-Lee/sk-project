@@ -44,9 +44,9 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_PORT || 22 }}
-          source: "./frontend/build/*"
+          source: "./frontend/build/client/*"
           target: "/var/www/${{ secrets.PROJECT_NAME }}/frontend_tmp"
-          strip_components: 2 # 剝離 ./frontend/build 兩層目錄，只上傳內容物
+          strip_components: 3 # 剝離 ./frontend/build 兩層目錄，只上傳內容物
       
       # 第二步：登入伺服器，進行資料夾瞬間替換，確保服務不中斷
       - name: Swap Directories via SSH
