@@ -1,0 +1,87 @@
+name: Backend Deploy
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'backend/**'
+  pull_request:
+    branches: [master]
+    paths:
+      - 'backend/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+      
+      # 1. 在 Runner 上安裝所有依賴（包含 devDependencies，因為編譯需要 TS）
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+      
+      # 2. 在 Runner 上進行編譯 (產生 dist 目錄)
+      - name: Build
+        working-directory: ./backend
+        run: npm run build
+        if: success() && github.event_name == 'push'
+      
+      # 3. 將編譯好的產物、配置檔傳送到伺服器 (不傳送 node_modules 與 .ts 原始碼)
+      - name: Copy files to Server via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          # 這裡假設編譯產物在 dist 資料夾，並包含必要的 PM2 配置檔
+          source: "backend/dist/*,backend/package.json,backend/package-lock.json,backend/ecosystem.config.js,backend/prisma/*"
+          target: "/var/www/${{ secrets.PROJECT_NAME }}/backend"
+          strip_components: 1 # 去除 "backend/" 前綴
+      
+      # 4. 登入伺服器進行安裝、資料庫遷移與平滑重啟
+      - name: Deploy and Reload via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          script: |
+            PROJECT_PATH="/var/www/${{ secrets.PROJECT_NAME }}/backend"
+            cd $PROJECT_PATH
+            
+            # 1. 安裝正式環境依賴 (包含 @prisma/client)
+            npm ci --omit=dev
+            
+            # 2. 重新生成 Prisma Client (極度重要！)
+            # 雖然在 GitHub Runner 已經 build 過了，但 Runner 的作業系統架構
+            # 可能跟遠端伺服器 (Ubuntu/Debian) 不一樣。在伺服器上重新 generate
+            # 可以確保 Prisma 抓到正確的 Query Engine (C / Rust 編譯檔)。
+            npx prisma generate
+            
+            # 3. 執行資料庫遷移
+            # 這裡加上 || exit 1 確保如果 Migration 失敗，後續的部署會立刻終止。
+            echo "Running Database Migrations..."
+            npx prisma migrate deploy || { echo 'Migration failed!'; exit 1; }
+            
+            # 4. 確保 Migration 成功後，才使用 PM2 平滑重啟
+            if pm2 list | grep -q "${{ secrets.PROJECT_NAME }}"; then
+              echo "Reloading existing PM2 process..."
+              pm2 reload ${{ secrets.PROJECT_NAME }} --update-env
+            else
+              echo "Starting new PM2 process..."
+              pm2 start ecosystem.config.js
+            fi
+            
+            pm2 save

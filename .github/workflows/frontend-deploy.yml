@@ -1,0 +1,72 @@
+name: Frontend Deploy
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'frontend/**'
+  pull_request:
+    branches: [master]
+    paths:
+      - 'frontend/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci
+      
+      - name: Build
+        working-directory: ./frontend
+        run: npm run build
+      
+      # 第一步：先將編譯好的檔案從 GitHub Runner 傳送到伺服器的「暫存區」
+      - name: Copy files to Server via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          source: "./frontend/build/*"
+          target: "/var/www/${{ secrets.PROJECT_NAME }}/frontend_tmp"
+          strip_components: 2 # 剝離 ./frontend/build 兩層目錄，只上傳內容物
+      
+      # 第二步：登入伺服器，進行資料夾瞬間替換，確保服務不中斷
+      - name: Swap Directories via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          script: |
+            # 進入專案根目錄
+            cd /var/www/${{ secrets.PROJECT_NAME }}
+            
+            # 確保暫存目錄存在 (容錯處理)
+            if [ ! -d "frontend_tmp" ]; then
+              echo "Error: frontend_tmp directory not found!"
+              exit 1
+            fi
+            
+            # 將目前的線上版本備份 (以便發生問題時可以快速 Rollback)
+            if [ -d "frontend" ]; then
+              mv frontend frontend_backup_$(date +%Y%m%d%H%M%S)
+            fi
+            
+            # 將剛剛上傳的暫存資料夾更名為正式資料夾 (瞬間切換)
+            mv frontend_tmp frontend
